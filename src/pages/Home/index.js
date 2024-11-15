@@ -14,6 +14,10 @@ import FriendPage from "~/pages/Friends/FriendPage";
 import EditProfile from "~/components/Elements/SettingsPage/EditProfile";
 import { CurentUser } from "~/MainRoutes";
 import PageNotFound from "~/pages/Pagenotfound";
+import GroupPage from "../Group/GroupPage";
+import CreateGroup from "../Group/CreateGroup";
+import ListGroup from "../Group/ListGroup";
+import DeleteAccountDialog from "../SettingsPage/DeleteAccount";
 ///context user
 
 const HomePage = () => {
@@ -51,19 +55,20 @@ const HomePage = () => {
                     <DefaultLayout />
                     <Routes>
                         {/* <Route path="/" element={<Test />} /> */}
-
                         <Route path="/newsfeed" element={<Newsfeed />} />
                         <Route path="/profile" element={<Profile />} />
                         <Route path="/friends" element={<FriendPage />} />
                         <Route path="/settings/editprofile" element={<EditProfile />} />
-                        <Route path="/settings" element={<SettingsPage />}></Route>
-
-                        <Route path="/settings" element={<Newsfeed />} />
-
+                        <Route path="/settings/deleteaccount" element={<DeleteAccountDialog />} />
+                        <Route path="/groups/create" element={<CreateGroup />} />{" "}
+                        <Route path="/groups/mygroup" element={<ListGroup />} />{" "}
+                        <Route path="/groups" element={<GroupPage />} />{" "}
+                        <Route path="/groups" element={<GroupPage />} />
+                        <Route path="/groups" element={<GroupPage />} />
+                        <Route path="/settings" element={<SettingsPage />} />
                         <Route path="/test" element={<Newsfeed />} />
                         <Route path="/login" element={<Login />} />
                         <Route path="/register" element={<Register />} />
-
                         {/* <Route exact path="*" element={<PageNotFound />} /> */}
                         {/* <Route
                     path="/chat"

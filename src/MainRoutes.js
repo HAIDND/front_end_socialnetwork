@@ -36,14 +36,15 @@ const useAuthLogger = () => {
 
 export const CurentUser = createContext();
 function MainRoutes() {
-    const [curentUser, setCurrentUser] = useState({});
+    const [curentUser, setCurrentUser] = useState();
+    const curentUserInfo = localStorage.getItem("user");
     const curentUserID = auth.isAuthenticated().userId;
     const curentUserToken = auth.isAuthenticated().token;
-    console.log("is usserid  " + curentUserID);
+    console.log("is usserid  " + curentUserInfo);
     // let curentUser;
     return (
         <>
-            <CurentUser.Provider value={{ curentUser, setCurrentUser, curentUserID, curentUserToken }}>
+            <CurentUser.Provider value={{ curentUser, setCurrentUser, curentUserID, curentUserToken, curentUserInfo }}>
                 <HomePage />
                 {/* <DefaultLayout /> */}
                 <Routes>

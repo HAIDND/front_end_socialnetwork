@@ -46,7 +46,7 @@ export default function Post() {
     useEffect(() => {
         const fetchPosts = async () => {
             try {
-                const data = await getPost(curentUserID, curentUserToken);
+                const data = await getPost(curentUserID);
                 setPostList(data); // Cập nhật danh sách bài post vào state
                 console.log("postList:", data);
             } catch (error) {
@@ -106,16 +106,13 @@ export default function Post() {
     return (
         <>
             {postList.map((item) => (
-                <Card key={item._id} sx={{ maxWidth: 800, margin: "0px auto", mt: 3, bgcolor: "GrayText" }}>
+                <Card
+                    key={item._id}
+                    sx={{ maxWidth: 800, margin: "0px auto", mt: 3, bgcolor: "#d7e1e2", border: "1px solid lightgrey" }}
+                >
                     <CardHeader
                         avatar={
-                            <Avatar
-                                sx={{ bgcolor: "red" }}
-                                aria-label="recipe"
-                                src="https://tse3.mm.bing.net/th?id=OIP.XKQRTYDnmhtXu-36EacQmAHaEK&pid=Api&P=0&h=180"
-                            >
-                                H
-                            </Avatar>
+                            <Avatar sx={{ bgcolor: "blue" }} aria-label="recipe" src={item?.userId?.avatar}></Avatar>
                         }
                         title={item?.userId?.username}
                         subheader={item?.createdAt + " with role " + item?.visibility}
@@ -194,8 +191,13 @@ const CommentList = ({ comments, onAddComment }) => {
                     {comments.length > 0 ? (
                         comments.map((comment, index) => (
                             <React.Fragment key={index}>
+                                <Avatar
+                                    sx={{ bgcolor: "blue" }}
+                                    aria-label="recipe"
+                                    src={comment?.userId?.avatar}
+                                ></Avatar>
                                 <ListItem alignItems="flex-start">
-                                    <ListItemText primary={comment?.userId} secondary={comment?.comment} />
+                                    <ListItemText primary={comment?.userId?.username} secondary={comment?.comment} />
                                 </ListItem>
                                 <Divider />
                             </React.Fragment>

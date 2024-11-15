@@ -1,11 +1,12 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { Box, Typography, Button, Avatar, Grid } from "@mui/material";
 
 import Sidebar from "~/components/Layouts/Sidebar";
 import { CurentUser } from "~/MainRoutes";
-import { getListFriend } from "~/services/friendServices/friendService";
+import { addFriend, addFriendAPI, getListFriend } from "~/services/friendServices/friendService";
+import { listUser, readUser } from "~/services/userServices/userService";
 
-const FriendRequestCard = ({ request, onDelete }) => {
+const FriendRequestCard = ({ request, onAdd }) => {
     return (
         <Box
             sx={{
@@ -24,40 +25,43 @@ const FriendRequestCard = ({ request, onDelete }) => {
             }}
         >
             <Box>
-                <Avatar src={request.avatar} alt={request.name} sx={{ width: 80, height: 80, margin: "0 auto" }} />
+                <Avatar src={request.avatar} alt={request.username} sx={{ width: 80, height: 80, margin: "0 auto" }} />
                 <Typography variant="body1" fontWeight="600" mt={1}>
                     {request.username}
                 </Typography>
-                {request.mutualFriends && (
+                {request?.following && (
                     <Typography variant="caption" color="textSecondary">
-                        {request.mutualFriends} bạn chung
+                        {request?.following.lenght || 0} Friends
                     </Typography>
                 )}
             </Box>
             <Box sx={{ display: "flex", justifyContent: "space-around", mt: 2 }}>
                 <Button
                     variant="outlined"
-                    color="secondary"
-                    onClick={() => onDelete(request.id)}
+                    color="primary"
+                    onClick={() => {
+                        console.log(request._id);
+                        onAdd(request._id);
+                    }}
                     sx={{ textTransform: "none" }}
                 >
-                    Delete
+                    Add friend
                 </Button>
             </Box>
         </Box>
     );
 };
 
-const FriendRequestList = ({ requests, handldDelete }) => {
+const FriendRequestList = ({ list, handleAdd }) => {
     return (
         <Box sx={{ p: 3 }}>
             <Typography variant="h6" fontWeight="600" mb={2}>
-                List Friends
+                List User
             </Typography>
             <Grid container spacing={2}>
-                {requests.map((request) => (
-                    <Grid item key={request.id}>
-                        <FriendRequestCard request={request} onDelete={handldDelete} />
+                {list.map((request) => (
+                    <Grid item key={request._id}>
+                        <FriendRequestCard request={request} onAdd={handleAdd} />
                     </Grid>
                 ))}
             </Grid>
@@ -67,26 +71,38 @@ const FriendRequestList = ({ requests, handldDelete }) => {
                 sx={{ cursor: "pointer", mt: 2 }}
                 onClick={() => console.log("View all clicked")}
             >
-                {requests.leght ? "See all Friends" : "Have 0 friends"}
+                See all user
             </Typography>
         </Box>
     );
 };
 // Component chính
-const FriendList = () => {
-    const deleleFriend = (id) => {
-        console.log(`Accepted friend request with id: ${id}`);
-        // Thêm logic xử lý xác nhận lời mời ở đây
+const FriendSend = () => {
+    //value
+    const { curentUserID } = useContext(CurentUser);
+
+    const addFriend = (recipientID) => {
+        try {
+            addFriendAPI(recipientID).then((response) => {
+                if (response) {
+                    console.log("addFriendAPI");
+                    console.log(response);
+                    alert(response.message);
+                }
+            });
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     //caall api getList
     const [data, setData] = useState([]);
-    const { curentUserID } = useContext(CurentUser);
+
     useEffect(() => {
         try {
-            getListFriend(curentUserID).then((result) => {
+            listUser().then((result) => {
                 console.log(result);
-                console.log("result friend list");
+                console.log("result api list");
                 setData(result);
             });
         } catch (error) {
@@ -95,14 +111,9 @@ const FriendList = () => {
     }, []);
     return (
         <Grid container>
-            {/* {data.lenght ? (
-                <FriendRequestList requests={data} handleDelete={deleleFriend} />
-            ) : (
-                <FriendRequestList requests={data} handleDelete={deleleFriend} />
-            )} */}
-            <FriendRequestList requests={data} handleDelete={deleleFriend} />
+            <FriendRequestList list={data} handleAdd={addFriend} />
         </Grid>
     );
 };
 
-export default FriendList;
+export default FriendSend;

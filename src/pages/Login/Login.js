@@ -346,6 +346,7 @@ import auth from "~/services/authService/authHelper";
 import { CurentUser } from "~/MainRoutes";
 import { saveInfo } from "~/services/userServices/userService";
 export default function Login(props) {
+    const { setCurrentUser } = useContext(CurentUser);
     const [values, setValues] = useState({
         email: "",
         password: "",

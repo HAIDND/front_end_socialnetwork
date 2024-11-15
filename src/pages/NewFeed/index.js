@@ -27,16 +27,13 @@ function Newsfeed() {
             <Grid item flex={2} sx={{ overflow: "auto" }} display={{ xs: "none", md: "block" }}>
                 <Sidebar />
             </Grid>
-            <Grid item flex={3} sx={{ mt: 12, height: "100%", overflow: "auto", borderLeft: "1px solid lightgrey" }}>
+            <Grid item flex={3} sx={{ mt: 12, height: "100%", overflow: "auto" }}>
                 <CreatePostUI />
                 <NewsfeedContent />
                 {/* <Post />{" "} */}
             </Grid>
             <Grid item flex={2} sx={{ mt: 12, height: "100%", overflow: "auto" }}>
-                <FiendRequest requests={requests} onAccept={handleAccept} onDeny={handleDeny} />
-                <FiendRequest requests={requests} onAccept={handleAccept} onDeny={handleDeny} />
-                <FiendRequest requests={requests} onAccept={handleAccept} onDeny={handleDeny} />
-                <FiendRequest requests={requests} onAccept={handleAccept} onDeny={handleDeny} />
+                <FiendRequest />
             </Grid>
         </Grid>
     );

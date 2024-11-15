@@ -245,7 +245,15 @@ import React from "react";
 import { Drawer, Box, List, ListItem, ListItemIcon, ListItemText, IconButton } from "@mui/material";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faNewspaper, faUser, faMessage, faUserGroup, faGear } from "@fortawesome/free-solid-svg-icons";
+import {
+    faNewspaper,
+    faUser,
+    faMessage,
+    faUserGroup,
+    faGear,
+    faGroupArrowsRotate,
+    faPeopleGroup,
+} from "@fortawesome/free-solid-svg-icons";
 
 const Sidebar = () => {
     const listMenu = [
@@ -268,6 +276,11 @@ const Sidebar = () => {
             title: "Friends",
             path: "/friends",
             icon: faUserGroup,
+        },
+        {
+            title: "Groups",
+            path: "/groups",
+            icon: faPeopleGroup,
         },
         {
             title: "Settings",

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
     Box,
     Avatar,
@@ -12,18 +12,31 @@ import {
     Drawer,
 } from "@mui/material";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
-import VideoCameraFrontIcon from "@mui/icons-material/VideoCameraFront";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import { CurentUser } from "~/MainRoutes";
+import { createPost } from "~/services/postServices/postService";
+// Import hàm createPost
 
 const NewPost = ({ addUpdate }) => {
+    const { curentUserID, curentUserInfo } = useContext(CurentUser);
+
     const [postContent, setPostContent] = useState("");
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [selectedVideo, setSelectedVideo] = useState(null);
+    const [isPublic, setIsPublic] = useState(true);
     const [isToggleOpen, setIsToggleOpen] = useState(false);
 
+    // Hàm xử lý file ảnh
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         if (file) {
-            // Xử lý tệp ở đây (ví dụ: hiển thị ảnh hoặc tải lên server)
-            console.log("Selected file:", file);
+            const isImage = file.type.startsWith("image/");
+            const isVideo = file.type.startsWith("video/");
+            if (isImage) {
+                setSelectedImage(file);
+                console.log(file);
+            }
+            if (isVideo) setSelectedVideo(file);
         }
     };
 
@@ -35,67 +48,65 @@ const NewPost = ({ addUpdate }) => {
         setIsToggleOpen(!isToggleOpen);
     };
 
-    const handleSubmit = () => {
-        // Logic to handle post submission
-        if (postContent.trim()) {
-            addUpdate({ content: postContent }); // Pass the post content to the parent
-            setPostContent(""); // Clear the text field after submission
+    const handleVisibilityChange = (event) => {
+        setIsPublic(event.target.checked);
+    };
+
+    // Hàm submit bài viết
+    const handleSubmit = async () => {
+        if (postContent.trim() || selectedImage || selectedVideo) {
+            const visibility = isPublic ? "public" : "private";
+            const response = await createPost(postContent, selectedImage, selectedVideo, visibility);
+
+            if (response?.success) {
+                addUpdate(response.data);
+                setPostContent("");
+                setSelectedImage(null);
+                setSelectedVideo(null);
+            } else {
+                console.error("Failed to create post:", response?.error);
+            }
         }
     };
+
     const handleClose = () => {
         setIsToggleOpen(false);
     };
 
     return (
-        <Box
-            sx={{
-                padding: 2,
-                border: "1px solid #ccc",
-                borderRadius: 1,
-                boxShadow: 1,
-                backgroundColor: "white",
-            }}
-        >
+        <Box sx={{ padding: 2, border: "1px solid #ccc", borderRadius: 2, backgroundColor: "white" }}>
             <Box display="flex" alignItems="center" mb={2}>
-                <Avatar
-                    alt="User Name"
-                    src="https://tse3.mm.bing.net/th?id=OIP.XKQRTYDnmhtXu-36EacQmAHaEK&pid=Api&P=0&h=180"
-                />
-                <Typography variant="h6" sx={{ marginLeft: 2, textAlign: "center", color: "#000000" }}>
-                    Jony
+                <Avatar alt={curentUserInfo?.username} src={curentUserInfo?.avatar} />
+                <Typography variant="h6" sx={{ marginLeft: 2, textAlign: "center" }}>
+                    {curentUserInfo.username}
                 </Typography>
             </Box>
             <TextField
                 fullWidth
                 multiline
-                rows={4}
+                rows={2}
                 variant="outlined"
                 placeholder="What's on your mind?"
                 value={postContent}
                 onChange={handlePostChange}
-                sx={{ marginBottom: 2 }}
+                sx={{ marginBottom: 0 }}
             />
             <Box display="flex" justifyContent="space-between" alignItems="center">
                 <Box>
                     <input
-                        accept="image/*"
+                        accept="image/*,video/*"
                         id="file-input"
                         type="file"
-                        style={{ display: "none" }} // Ẩn input file
+                        style={{ display: "none" }}
                         onChange={handleFileChange}
                     />
                     <Tooltip title="Add Photo/Video">
                         <label htmlFor="file-input">
-                            <IconButton color="primary" aria-label="add photo/video" component="span">
+                            <IconButton color="primary" component="span">
                                 <AddPhotoAlternateIcon />
                             </IconButton>
                         </label>
                     </Tooltip>
-                    {/* <Tooltip title="Add Video">
-                        <IconButton color="primary" aria-label="add video">
-                            <VideoCameraFrontIcon />
-                        </IconButton>
-                    </Tooltip> */}
                     <Tooltip title="More Options">
                         <IconButton color="primary" onClick={handleToggleChange}>
                             <MoreHorizIcon />
@@ -103,21 +114,15 @@ const NewPost = ({ addUpdate }) => {
                     </Tooltip>
                 </Box>
                 <Drawer anchor="right" open={isToggleOpen} onClose={handleClose}>
-                    <Box
-                        sx={{
-                            width: 250,
-                            padding: 2,
-                            display: "flex",
-                            flexDirection: "column",
-                        }}
-                    >
-                        <FormControlLabel control={<Switch />} label="Chia sẻ công khai" />
-                        <FormControlLabel control={<Switch />} label="Đăng ẩn danh" />
-                        <FormControlLabel control={<Switch />} label="Chia sẻ vị trí" />
+                    <Box sx={{ width: 250, padding: 2 }}>
+                        <FormControlLabel
+                            control={<Switch checked={isPublic} onChange={handleVisibilityChange} />}
+                            label="Chia sẻ công khai"
+                        />
                     </Box>
                 </Drawer>
             </Box>
-            <Button variant="contained" color="primary" sx={{ marginTop: 2 }} onClick={handleSubmit}>
+            <Button variant="contained" color="primary" sx={{ marginTop: 0 }} onClick={handleSubmit}>
                 Post
             </Button>
         </Box>

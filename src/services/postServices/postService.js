@@ -1,7 +1,10 @@
 import { API_BASE_URL } from "~/config/apiConfig";
 import { comment } from "~/pages/post/api-post";
 
-const getPost = async (userID, token) => {
+const getPost = async (userID) => {
+    const storedToken = sessionStorage.getItem("jwt");
+    const tokenData = storedToken ? JSON.parse(storedToken) : null;
+    const token = tokenData?.token;
     try {
         // Gửi request lên server
         const response = await fetch(`http://localhost:4000/api/posts/userPosts`, {
@@ -18,7 +21,57 @@ const getPost = async (userID, token) => {
         console.error(err);
     }
 };
+//call api create post
+const createPost = async (content, image, video, visibility) => {
+    const storedToken = sessionStorage.getItem("jwt");
+    const tokenData = storedToken ? JSON.parse(storedToken) : null;
+    const token = tokenData?.token;
 
+    const formData = new FormData();
+    formData.append("content", content);
+    console.log(formData);
+    if (image) formData.append("image", image);
+    if (video) formData.append("video", video);
+    formData.append("visibility", visibility);
+    console.log("form lasttest");
+    console.log(formData);
+
+    try {
+        const response = await fetch("http://localhost:4000/api/posts/create", {
+            method: "POST",
+            headers: {
+                authorization: "Bearer " + token,
+            },
+            body: formData,
+        });
+        return await response.json();
+    } catch (error) {
+        console.error(error);
+        return { success: false, error };
+    }
+};
+
+// const createPost = async (content, image, video, visibility) => {
+//     const storedToken = sessionStorage.getItem("jwt");
+//     // Parse JSON thành object
+//     const tokenData = storedToken ? JSON.parse(storedToken) : null;
+//     // Kiểm tra và sử dụng token
+//     const token = tokenData.token;
+//     try {
+//         let response = await fetch("http://localhost:4000/api/posts/create", {
+//             method: "POST",
+//             headers: {
+//                 Accept: "application/json",
+//                 "Content-Type": "application/json",
+//                 authorization: "Bearer " + token, // Thêm Bearer token
+//             },
+//             body: JSON.stringify(content, image, video, visibility),
+//         });
+//         return await response.json();
+//     } catch (error) {
+//         console.log(error);
+//     }
+// };
 //call api like post
 const likePost = async (postId, token) => {
     try {
@@ -71,6 +124,7 @@ const createComment = async (data, token) => {
         console.log(error);
     }
 };
+
 const createUser = async (user) => {
     try {
         let response = await fetch("api/user/", {
@@ -171,4 +225,4 @@ const getInfo = () => {
     const storedUser = localStorage.getItem("user");
     return storedUser ? JSON.parse(storedUser) : { name: "none", email: "none" };
 };
-export { getPost, likePost, createComment, unLikePost };
+export { getPost, likePost, createComment, unLikePost, createPost };
