@@ -99,7 +99,6 @@ const Profile = ({ profileData }) => {
                         </Grid>
                     </Grid>
                 </Box>
-                <Post />
             </Grid>
         </Grid>
     );

@@ -11,14 +11,8 @@ import Sidebar from "~/components/Layouts/Sidebar";
 import { Padding } from "@mui/icons-material";
 import CreateGroup from "./CreateGroup";
 import axios from "axios";
-import { listGroupJoin } from "~/services/groupServices/groupService";
-import DetailGroup from "./DetailGroup";
+import { listGroupAll, listGroupJoin } from "~/services/groupServices/groupService";
 const GroupCard = ({ group, onJoin }) => {
-    const [dataGroup, setDataGroup] = useState(group);
-    const [isopen, setOpen] = useState(null);
-    const open = () => {
-        setOpen(true);
-    };
     return (
         <Card sx={{ maxWidth: 345, margin: "0 auto", boxShadow: 2 }}>
             <CardContent sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
@@ -40,15 +34,19 @@ const GroupCard = ({ group, onJoin }) => {
                 >
                     {group.privacy === "public" ? "Public Group" : "Private Group"}
                 </Typography>
-                <Button variant="contained" color="secondary" onClick={() => open()} sx={{ textTransform: "none" }}>
-                    Visit Group
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => onJoin(group._id)}
+                    sx={{ textTransform: "none" }}
+                >
+                    Join Group
                 </Button>
             </CardContent>
-            {isopen && <DetailGroup data={dataGroup} />}
         </Card>
     );
 };
-function ListGroup() {
+function ListGroupAll() {
     const cardItems = [
         { id: 1, name: "Create Group", icon: <AddIcon />, path: "/group/create" },
         { id: 2, name: "My Group", icon: <GroupsIcon />, path: "/group/mygroup" },
@@ -69,7 +67,7 @@ function ListGroup() {
     // Gọi API lấy danh sách group
     const fetchGroups = async () => {
         try {
-            listGroupJoin().then((groups) => {
+            listGroupAll().then((groups) => {
                 if (groups) {
                     setGroups(groups);
                     console.log("listGroupJoin");
@@ -110,7 +108,7 @@ function ListGroup() {
                 <Grid item flex={5} sx={{ mt: 2, padding: 10, mr: 5 }} container spacing={3} justifyContent="center">
                     <Box sx={{ padding: 4 }}>
                         <Typography variant="h4" sx={{ mb: 4, textAlign: "center" }}>
-                            My Groups
+                            Explore Groups
                         </Typography>
                         <Grid container spacing={3}>
                             {groups.map((group) => (
@@ -124,7 +122,6 @@ function ListGroup() {
                                     key={group._id}
                                 >
                                     <GroupCard group={group} onJoin={handleJoinGroup} />
-                                    {/* <DetailGroup /> */}
                                 </Grid>
                             ))}
                         </Grid>
@@ -135,4 +132,4 @@ function ListGroup() {
     );
 }
 
-export default ListGroup;
+export default ListGroupAll;

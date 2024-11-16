@@ -1,5 +1,4 @@
 import { API_BASE_URL } from "~/config/apiConfig";
-import { comment } from "~/pages/post/api-post";
 
 const getPost = async (userID) => {
     const storedToken = sessionStorage.getItem("jwt");
@@ -50,28 +49,33 @@ const createPost = async (content, image, video, visibility) => {
         return { success: false, error };
     }
 };
-
-// const createPost = async (content, image, video, visibility) => {
-//     const storedToken = sessionStorage.getItem("jwt");
-//     // Parse JSON thành object
-//     const tokenData = storedToken ? JSON.parse(storedToken) : null;
-//     // Kiểm tra và sử dụng token
-//     const token = tokenData.token;
-//     try {
-//         let response = await fetch("http://localhost:4000/api/posts/create", {
-//             method: "POST",
-//             headers: {
-//                 Accept: "application/json",
-//                 "Content-Type": "application/json",
-//                 authorization: "Bearer " + token, // Thêm Bearer token
-//             },
-//             body: JSON.stringify(content, image, video, visibility),
-//         });
-//         return await response.json();
-//     } catch (error) {
-//         console.log(error);
-//     }
-// };
+//cal api update commnet
+const updatePost = async (postId, content, image) => {
+    const storedToken = sessionStorage.getItem("jwt");
+    const tokenData = storedToken ? JSON.parse(storedToken) : null;
+    const token = tokenData?.token;
+    const formData = new FormData();
+    formData.append("postId", postId);
+    formData.append("content", content);
+    // console.log(formData);
+    if (image) formData.append("image", image);
+    // if (video) formData.append("video", video);
+    // formData.append("visibility", visibility);
+    console.log("form lasttest");
+    console.log(formData);
+    try {
+        let response = await fetch(`http://localhost:4000/api/posts/edit-post`, {
+            method: "PUT",
+            headers: {
+                authorization: "Bearer " + token, // Thêm Bearer token
+            },
+            body: formData,
+        });
+        return await response.json();
+    } catch (error) {
+        console.log(error);
+    }
+};
 //call api like post
 const likePost = async (postId, token) => {
     try {
@@ -125,104 +129,46 @@ const createComment = async (data, token) => {
     }
 };
 
-const createUser = async (user) => {
+//cal api update commnet
+const editComment = async (formData) => {
+    const storedToken = sessionStorage.getItem("jwt");
+    const tokenData = storedToken ? JSON.parse(storedToken) : null;
+    const token = tokenData?.token;
     try {
-        let response = await fetch("api/user/", {
-            method: "POST",
+        let response = await fetch(`http://localhost:4000/api/posts/edit-comment`, {
+            method: "PUT",
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
+                authorization: "Bearer " + token, // Thêm Bearer token
             },
-            body: JSON.stringify(user),
+            body: JSON.stringify(formData),
         });
         return await response.json();
     } catch (error) {
         console.log(error);
     }
 };
-const readUser = async (params) => {
+
+//cal api update commnet
+const deleteComment = async (postId, commentId) => {
+    const storedToken = sessionStorage.getItem("jwt");
+    const tokenData = storedToken ? JSON.parse(storedToken) : null;
+    const token = tokenData?.token;
     try {
-        let response = await fetch(`http://localhost:4000/api/users/` + params, {
-            method: "GET",
-            // signal: signal,
+        let response = await fetch(`http://localhost:4000/api/posts/delete-comment`, {
+            method: "post",
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
-                // Authorization: "Bearer " + credentials.t,
+                authorization: "Bearer " + token, // Thêm Bearer token
             },
+            body: JSON.stringify({ postId: postId, commentId: commentId }),
         });
         return await response.json();
     } catch (error) {
         console.log(error);
     }
 };
-// const create = async (user) => {
-//     // tạo mới một user  http://localhost:4000/api/users
-//     try {
-//         let response = await fetch(`http://localhost:4000/api/users/register`, {
-//             method: "POST",
-//             headers: {
-//                 Accept: "application/json",
-//                 "Content-Type": "application/json",
-//             },
-//             body: JSON.stringify(user),
-//         });
-//         return await response.json();
-//     } catch (err) {
-//         console.log(err);
-//     }
-// };
-// const updateUser = async (userID, token, userData) => {
-//     try {
-//         let response = await fetch("http://localhost:4000/api/user/" + userID, {
-//             method: "PUT",
-//             headers: {
-//                 Accept: "application/json",
-//                 "Content-Type": "application/json",
-//                 Authorization: "Bearer " + token,
-//             },
-//             body: JSON.stringify(userData),
-//         });
-//         return await response.json();
-//     } catch (err) {
-//         console.log(err);
-//     }
-// };
 
-const list = async (signal) => {
-    // lấy danh sách người dùng
-    try {
-        let response = await fetch("/api/users/", {
-            method: "GET",
-            signal: signal,
-        });
-        return await response.json();
-    } catch (err) {
-        console.log(err);
-    }
-};
-const deleteUser = async (params, credentials) => {
-    try {
-        let response = await fetch("api/user/" + params.userId, {
-            method: "DELETE",
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-                Authorization: "Bearer" + credentials.t,
-            },
-        });
-        return await response.json();
-    } catch (err) {
-        console.log(err);
-    }
-};
-
-const saveInfo = async (user) => {
-    localStorage.setItem("user", JSON.stringify(user));
-};
-
-const getInfo = () => {
-    const storedUser = localStorage.getItem("user");
-    return storedUser ? JSON.parse(storedUser) : { name: "none", email: "none" };
-};
-export { getPost, likePost, createComment, unLikePost, createPost };
+export { getPost, updatePost, likePost, createComment, unLikePost, createPost, editComment, deleteComment };

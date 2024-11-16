@@ -16,7 +16,7 @@ function GroupPage() {
         { id: 1, name: "Create Group", icon: <AddIcon />, path: "/groups/create" },
         { id: 2, name: "My Group", icon: <GroupsIcon />, path: "/groups/mygroup" },
         { id: 3, name: "Explore Group", icon: <SearchIcon />, path: "/groups/explore" },
-        { id: 4, name: "Chat Group", icon: <ChatIcon />, path: "/groups/chat" },
+        // { id: 4, name: "Chat Group", icon: <ChatIcon />, path: "/groups/chat" },
     ];
 
     const navigate = useNavigate();

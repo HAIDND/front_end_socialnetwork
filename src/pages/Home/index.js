@@ -18,6 +18,8 @@ import GroupPage from "../Group/GroupPage";
 import CreateGroup from "../Group/CreateGroup";
 import ListGroup from "../Group/ListGroup";
 import DeleteAccountDialog from "../SettingsPage/DeleteAccount";
+import ChatList from "../Chatting/ChatList";
+import ListGroupAll from "../Group/ListGroupAll";
 ///context user
 
 const HomePage = () => {
@@ -55,6 +57,8 @@ const HomePage = () => {
                     <DefaultLayout />
                     <Routes>
                         {/* <Route path="/" element={<Test />} /> */}
+                        <Route path="/home" element={<Newsfeed />} />
+                        <Route path="/" element={<Newsfeed />} />
                         <Route path="/newsfeed" element={<Newsfeed />} />
                         <Route path="/profile" element={<Profile />} />
                         <Route path="/friends" element={<FriendPage />} />
@@ -62,8 +66,8 @@ const HomePage = () => {
                         <Route path="/settings/deleteaccount" element={<DeleteAccountDialog />} />
                         <Route path="/groups/create" element={<CreateGroup />} />{" "}
                         <Route path="/groups/mygroup" element={<ListGroup />} />{" "}
-                        <Route path="/groups" element={<GroupPage />} />{" "}
-                        <Route path="/groups" element={<GroupPage />} />
+                        <Route path="/groups/explore" element={<ListGroupAll />} />{" "}
+                        <Route path="/chat" element={<ChatList />} />
                         <Route path="/groups" element={<GroupPage />} />
                         <Route path="/settings" element={<SettingsPage />} />
                         <Route path="/test" element={<Newsfeed />} />

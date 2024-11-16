@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import Post from "~/components/Elements/Post_MUI/postItem";
+import Post from "~/pages/NewFeed/postItem";
 
 function NewsfeedContent() {
     return (

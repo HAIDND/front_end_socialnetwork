@@ -63,11 +63,13 @@ const FriendRequestList = ({ requests, handleAccept, handleDeny }) => {
                 List Request
             </Typography>
             <Grid container spacing={2}>
-                {requests.map((request) => (
-                    <Grid item key={request._id}>
-                        <FriendRequestCard request={request} onAccept={handleAccept} onDeny={handleDeny} />
-                    </Grid>
-                ))}
+                {requests
+                    .filter((request) => request.status !== "accepted")
+                    .map((request) => (
+                        <Grid item key={request._id}>
+                            <FriendRequestCard request={request} onAccept={handleAccept} onDeny={handleDeny} />
+                        </Grid>
+                    ))}
             </Grid>
             <Typography
                 variant="body2"

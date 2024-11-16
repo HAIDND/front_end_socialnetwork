@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { Link, redirect } from "react-router-dom";
 import { useState } from "react";
 import {
@@ -37,7 +37,11 @@ import ChatWindow from "./ChatWindow";
 import ChatList from "./ChatList";
 import { logout } from "~/services/authService/authService";
 import auth from "~/services/authService/authHelper";
+import { CurentUser } from "~/MainRoutes";
 const NavHeader = () => {
+    const curentUserInfo = localStorage.getItem("user");
+    const { avatar } = curentUserInfo;
+    console.log(avatar);
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [settingsAnchorEl, setSettingsAnchorEl] = React.useState(null);
 
@@ -110,7 +114,7 @@ const NavHeader = () => {
                             <HomeIcon fontSize="large" />
                         </IconButton>
                     </Link>
-                    <IconButton color="inherit" sx={{ fontSize: 30 }}>
+                    {/* <IconButton color="inherit" sx={{ fontSize: 30 }}>
                         <VideoIcon fontSize="large" />
                     </IconButton>
                     <IconButton color="inherit" sx={{ fontSize: 30 }}>
@@ -118,7 +122,7 @@ const NavHeader = () => {
                     </IconButton>
                     <IconButton color="inherit" sx={{ fontSize: 30 }}>
                         <ShoppingBagIcon fontSize="large" />
-                    </IconButton>
+                    </IconButton> */}
                 </Box>
 
                 {/* Right Icons */}
@@ -142,7 +146,7 @@ const NavHeader = () => {
                         transformOrigin={{ vertical: "top", horizontal: "right" }}
                     >
                         <MenuItem>
-                            <Avatar src="images/user-8.png" />
+                            <Avatar src={curentUserInfo?.avatar} />
                             <ListItemText primary="Hendrix Stamp" secondary="There are many variations of pass.." />
                         </MenuItem>
                         <MenuItem>
@@ -150,7 +154,7 @@ const NavHeader = () => {
                             <ListItemText primary="Goria Coast" secondary="Mobile Apps UI Designer is require.." />
                         </MenuItem>
                     </Menu>
-                    {chatList && <ChatList />}
+                    {/* {chatList && <ChatList />} */}
                     {/* Settings Icon */}
                     <IconButton color="inherit" onClick={handleSettingsMenuOpen} sx={{ fontSize: 30 }}>
                         <SettingsIcon fontSize="large" />
@@ -194,7 +198,7 @@ const NavHeader = () => {
 
                     {/* Profile Avatar */}
                     <IconButton color="inherit" sx={{ fontSize: 30 }}>
-                        <Avatar src="images/profile-4.png" />
+                        <Avatar src={`${curentUserInfo?.avatar}`} />
                     </IconButton>
                     <IconButton color="inherit" sx={{ fontSize: 30 }} onClick={handleToggleLogout}>
                         <LogoutIcon fontSize="small" />
