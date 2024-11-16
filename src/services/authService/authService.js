@@ -50,6 +50,7 @@ const login = async (user) => {
 
 const logout = async () => {
     sessionStorage.removeItem("jwt");
+    localStorage.removeItem("user");
 };
 
 // const logout = async () => {

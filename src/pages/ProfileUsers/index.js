@@ -25,14 +25,8 @@ const Profile = ({ profileData }) => {
                 // Chỉ đặt error khi có lỗi từ server, không hiển thị mật khẩu
                 setData({ error: data.message });
             } else {
-                // Chuyển hướng khi đăng nhập thành công
                 setData(data);
                 setProfile(() => getInfo());
-                // auth.authenticate(data, () => {
-                //     setData(data);
-                //     console.log("set data profile ");
-                //     console.log(profile);
-                // });
             }
         });
     }, []);

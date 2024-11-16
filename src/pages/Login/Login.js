@@ -344,9 +344,11 @@ import { useState, useEffect, useContext } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import auth from "~/services/authService/authHelper";
 import { CurentUser } from "~/MainRoutes";
-import { saveInfo } from "~/services/userServices/userService";
+import { getInfo, readUser, saveInfo } from "~/services/userServices/userService";
 export default function Login(props) {
-    const { setCurrentUser } = useContext(CurentUser);
+    const { curentUser, setCurrentUser, curentUserProfile, setCurrentUserProfile, curentUserID, curentUserToken } =
+        useContext(CurentUser);
+
     const [values, setValues] = useState({
         email: "",
         password: "",
@@ -359,6 +361,10 @@ export default function Login(props) {
 
         login(user).then((data) => {
             console.log(data);
+
+            setCurrentUserProfile(() => {
+                readUser(data.userId);
+            });
             if (data.message) {
                 // Chỉ đặt error khi có lỗi từ server, không hiển thị mật khẩu
                 setValues({ ...values, error: data.message });

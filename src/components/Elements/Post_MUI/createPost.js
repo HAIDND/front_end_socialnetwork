@@ -18,7 +18,8 @@ import { createPost } from "~/services/postServices/postService";
 // Import hàm createPost
 
 const NewPost = ({ addUpdate }) => {
-    const { curentUserID, curentUserInfo } = useContext(CurentUser);
+    const { curentUser, setCurrentUser, curentUserProfile, setCurrentUserProfile, curentUserID, curentUserToken } =
+        useContext(CurentUser);
 
     const [postContent, setPostContent] = useState("");
     const [selectedImage, setSelectedImage] = useState(null);
@@ -76,9 +77,9 @@ const NewPost = ({ addUpdate }) => {
     return (
         <Box sx={{ padding: 2, border: "1px solid #ccc", borderRadius: 2, backgroundColor: "white" }}>
             <Box display="flex" alignItems="center" mb={2}>
-                <Avatar alt={curentUserInfo?.username} src={curentUserInfo?.avatar} />
+                <Avatar alt={curentUserProfile?.username} src={curentUserProfile?.avatar} />
                 <Typography variant="h6" sx={{ marginLeft: 2, textAlign: "center" }}>
-                    {curentUserInfo.username}
+                    {curentUserProfile?.username}
                 </Typography>
             </Box>
             <TextField

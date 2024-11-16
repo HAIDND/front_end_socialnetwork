@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from "react";
-import { Link, redirect } from "react-router-dom";
+import { Link, redirect, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import {
     AppBar,
@@ -39,12 +39,12 @@ import { logout } from "~/services/authService/authService";
 import auth from "~/services/authService/authHelper";
 import { CurentUser } from "~/MainRoutes";
 const NavHeader = () => {
-    const curentUserInfo = localStorage.getItem("user");
-    const { avatar } = curentUserInfo;
-    console.log(avatar);
+    const { curentUser, setCurrentUser, curentUserProfile, setCurrentUserProfile, curentUserID, curentUserToken } =
+        useContext(CurentUser);
+
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [settingsAnchorEl, setSettingsAnchorEl] = React.useState(null);
-
+    const navigate = useNavigate();
     const handleMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -69,7 +69,8 @@ const NavHeader = () => {
     };
     useEffect(() => {
         if (isLogout) {
-            handleLogout();
+            logout();
+            navigate("/login");
         }
     }, [isLogout]);
     const handleLogout = () => {
@@ -146,7 +147,7 @@ const NavHeader = () => {
                         transformOrigin={{ vertical: "top", horizontal: "right" }}
                     >
                         <MenuItem>
-                            <Avatar src={curentUserInfo?.avatar} />
+                            <Avatar src={curentUserProfile?.avatar} />
                             <ListItemText primary="Hendrix Stamp" secondary="There are many variations of pass.." />
                         </MenuItem>
                         <MenuItem>
@@ -198,7 +199,7 @@ const NavHeader = () => {
 
                     {/* Profile Avatar */}
                     <IconButton color="inherit" sx={{ fontSize: 30 }}>
-                        <Avatar src={`${curentUserInfo?.avatar}`} />
+                        <Avatar src={curentUserProfile?.avatar} />
                     </IconButton>
                     <IconButton color="inherit" sx={{ fontSize: 30 }} onClick={handleToggleLogout}>
                         <LogoutIcon fontSize="small" />

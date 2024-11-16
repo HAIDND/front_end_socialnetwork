@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
     TextField,
     Grid,
@@ -59,6 +59,7 @@ export default function Register() {
         e.preventDefault();
         console.log(formData);
     };
+    const navigate = useNavigate();
     const clickSubmit = () => {
         const user = {
             username: formData.firstName + formData.lastName || undefined,
@@ -68,11 +69,14 @@ export default function Register() {
         create(user).then((data) => {
             if (data.message) {
                 setFormData({ ...formData, error: data.message });
-                console.log("create success");
             } else {
                 setFormData({ ...formData, error: "", open: true });
             }
         });
+        alert("create success");
+        setTimeout(() => {
+            navigate("/login");
+        }, 1000);
     };
     return (
         // <Box

@@ -13,6 +13,7 @@ import SettingsPage from "./pages/SettingsPage";
 import FriendPage from "./pages/Friends/FriendPage";
 import EditProfile from "./components/Elements/SettingsPage/EditProfile";
 import PageNotFound from "./pages/Pagenotfound";
+import { getInfo, readUser, saveInfo } from "./services/userServices/userService";
 const useAuthLogger = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(auth.isAuthenticated());
     useEffect(() => {
@@ -37,30 +38,37 @@ const useAuthLogger = () => {
 export const CurentUser = createContext();
 function MainRoutes() {
     const [curentUser, setCurrentUser] = useState();
-    const curentUserInfo = localStorage.getItem("user");
+    const [curentUserProfile, setCurrentUserProfile] = useState();
     const curentUserID = auth.isAuthenticated().userId;
     const curentUserToken = auth.isAuthenticated().token;
-    console.log("is usserid  " + curentUserInfo);
-    // let curentUser;
+    useEffect(() => {
+        readUser(curentUserID).then((data) => {
+            if (data) {
+                // Chỉ đặt error khi có lỗi từ server, không hiển thị mật khẩu
+                setCurrentUserProfile(data);
+            } else {
+                alert("No profile !");
+            }
+        });
+    }, []);
     return (
         <>
-            <CurentUser.Provider value={{ curentUser, setCurrentUser, curentUserID, curentUserToken, curentUserInfo }}>
+            <CurentUser.Provider
+                value={{
+                    curentUser,
+                    setCurrentUser,
+                    curentUserProfile,
+                    setCurrentUserProfile,
+                    curentUserID,
+                    curentUserToken,
+                }}
+            >
                 <HomePage />
                 {/* <DefaultLayout /> */}
                 <Routes>
                     {!auth.isAuthenticated() && <Route path="/" element={<Login />} />}
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
-                    {/* <Route path="*" element={<PageNotFound />} /> */}
-                    {/* <Route exact path="*" element={<PageNotFound />} /> */}
-                    {/* <Route
-                    path="/chat"
-                    element={
-                        <PrivateRoute>
-                            <Chat />
-                        </PrivateRoute>
-                    }
-                /> */}
                 </Routes>
             </CurentUser.Provider>
         </>
