@@ -79,6 +79,13 @@ const NavHeader = () => {
         });
         redirect("/");
     };
+
+    //hanlde change data
+    const [keyword, setKeyWord] = useState([]);
+    const handleChange = (e) => {
+        setKeyWord(e.target.value);
+        console.log(keyword);
+    };
     // const handleLogout = (isLogout) => {isLogout :}
     return (
         <AppBar position="fixed" color="inherit" elevation={1} sx={{ padding: 1 }}>
@@ -106,7 +113,11 @@ const NavHeader = () => {
                     }}
                 >
                     <SearchIcon sx={{ mr: 1, color: "grey.500", fontSize: 30 }} />
-                    <InputBase placeholder="Start typing to search.." sx={{ width: "70%" }} />
+                    <InputBase
+                        placeholder="Start typing to search.."
+                        sx={{ width: "70%" }}
+                        value={() => handleChange()}
+                    />
                 </Box>
                 {/* Center Icons */}
                 <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>

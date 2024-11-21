@@ -17,7 +17,7 @@ const createUser = async (user) => {
 };
 const readUser = async (params) => {
     try {
-        let response = await fetch(`http://localhost:4000/api/users/` + params, {
+        let response = await fetch(`${API_BASE_URL}` + params, {
             method: "GET",
             // signal: signal,
             headers: {
@@ -31,59 +31,21 @@ const readUser = async (params) => {
         console.log(error);
     }
 };
-const create = async (user) => {
-    // tạo mới một user  http://localhost:4000/api/users
-    try {
-        let response = await fetch(`http://localhost:4000/api/users/register`, {
-            method: "POST",
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(user),
-        });
-        return await response.json();
-    } catch (err) {
-        console.log(err);
-    }
-};
-// const updateUser = async (userID, token, userData) => {
-//     try {
-//         let response = await fetch("http://localhost:4000/api/user/" + userID, {
-//             method: "PUT",
-//             headers: {
-//                 Accept: "application/json",
-//                 "Content-Type": "application/json",
-//                 Authorization: "Bearer " + token,
-//             },
-//             body: JSON.stringify(userData),
-//         });
-//         return await response.json();
-//     } catch (err) {
-//         console.log(err);
-//     }
-// };
-const updateUser = async (userData, image, userID) => {
+
+const updateUser = async (form, avatar, userID) => {
     const storedToken = sessionStorage.getItem("jwt");
     const tokenData = storedToken ? JSON.parse(storedToken) : null;
     const token = tokenData?.token;
 
-    // const formData = new FormData();
-    // formData.append("content", content);
-    // if (image) formData.append("image", image);
-    // if (video) formData.append("video", video);
-    // formData.append("visibility", visibility);
-
     try {
         const formData = new FormData();
-        if (image) formData.append("avatar", image);
-        console.log(userData);
+        if (avatar) formData.append("avatar", avatar);
+        console.log(form);
         // Duyệt qua các key trong userData và thêm vào FormData
-        for (let key in userData) {
-            formData.append(key, userData[key]);
-            console.log(key, userData[key]);
+        for (let key in form) {
+            formData.append(key, form[key]);
+            console.log(key, form[key]);
         }
-
         // Gửi request lên server
         const response = await fetch(`http://localhost:4000/api/users/` + userID, {
             method: "PUT",

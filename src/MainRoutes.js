@@ -4,14 +4,9 @@ import { useState, useEffect, createContext } from "react";
 
 import auth from "./services/authService/authHelper";
 import HomePage from "./pages/Home";
-import Newsfeed from "./pages/NewFeed";
 import Login from "./pages/Login/Login";
 import Register from "./pages/Register/Register";
-import DefaultLayout from "./components/Layouts/DefaultLayout";
-import Profile from "./pages/ProfileUsers";
-import SettingsPage from "./pages/SettingsPage";
-import FriendPage from "./pages/Friends/FriendPage";
-import EditProfile from "./components/Elements/SettingsPage/EditProfile";
+
 import PageNotFound from "./pages/Pagenotfound";
 import { getInfo, readUser, saveInfo } from "./services/userServices/userService";
 const useAuthLogger = () => {
@@ -50,7 +45,7 @@ function MainRoutes() {
                 alert("No profile !");
             }
         });
-    }, []);
+    }, [curentUserID]);
     return (
         <>
             <CurentUser.Provider
@@ -65,11 +60,11 @@ function MainRoutes() {
             >
                 <HomePage />
                 {/* <DefaultLayout /> */}
-                <Routes>
+                {/* <Routes>
                     {!auth.isAuthenticated() && <Route path="/" element={<Login />} />}
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
-                </Routes>
+                </Routes> */}
             </CurentUser.Provider>
         </>
     );

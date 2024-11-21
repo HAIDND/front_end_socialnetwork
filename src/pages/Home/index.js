@@ -11,7 +11,7 @@ import Register from "~/pages/Register/Register";
 import Profile from "~/pages/ProfileUsers";
 import SettingsPage from "~/pages/SettingsPage";
 import FriendPage from "~/pages/Friends/FriendPage";
-import EditProfile from "~/components/Elements/SettingsPage/EditProfile";
+
 import { CurentUser } from "~/MainRoutes";
 import PageNotFound from "~/pages/Pagenotfound";
 import GroupPage from "../Group/GroupPage";
@@ -20,6 +20,9 @@ import ListGroup from "../Group/ListGroup";
 import DeleteAccountDialog from "../SettingsPage/DeleteAccount";
 import ChatList from "../Chatting/ChatList";
 import ListGroupAll from "../Group/ListGroupAll";
+import EditProfile from "../ProfileUsers/EditProfile";
+import DetailGroup from "../Group/DetailGroup";
+import FormEditGroup from "../Group/FormEditGroup";
 ///context user
 
 const HomePage = () => {
@@ -64,9 +67,11 @@ const HomePage = () => {
                         <Route path="/friends" element={<FriendPage />} />
                         <Route path="/settings/editprofile" element={<EditProfile />} />
                         <Route path="/settings/deleteaccount" element={<DeleteAccountDialog />} />
-                        <Route path="/groups/create" element={<CreateGroup />} />{" "}
-                        <Route path="/groups/mygroup" element={<ListGroup />} />{" "}
-                        <Route path="/groups/explore" element={<ListGroupAll />} />{" "}
+                        <Route path="/groups/create" element={<CreateGroup />} />
+                        <Route path="/groups/mygroup" element={<ListGroup />} />
+                        <Route path="/groups/explore" element={<ListGroupAll />} />
+                        <Route path="/groups/update" element={<FormEditGroup />} />
+                        <Route path="/groups/:id" element={<DetailGroup />} />
                         <Route path="/chat" element={<ChatList />} />
                         <Route path="/groups" element={<GroupPage />} />
                         <Route path="/settings" element={<SettingsPage />} />

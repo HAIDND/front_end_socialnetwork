@@ -280,13 +280,16 @@
 
 // export default RegisterForm;
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Box, Avatar, Typography, IconButton, TextField, Button, Paper } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import SendIcon from "@mui/icons-material/Send";
-import { getChatWithUser } from "~/services/chatServices/chatService";
+import { getChatWithUser, sendMessage } from "~/services/chatServices/chatService";
+import { CurentUser } from "~/MainRoutes";
 
-const ChatWindow = ({ onClose }) => {
+const ChatWindow = ({ onClose, friend }) => {
+    //id user
+    const { curentUserID } = useContext(CurentUser);
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState("");
 
@@ -297,36 +300,57 @@ const ChatWindow = ({ onClose }) => {
 
     const [chats, setChats] = useState([]); // Khởi tạo là mảng rỗng
 
+    // useEffect(() => {
+    //     const fetchChatList = async () => {
+    //         try {
+    //             const data = await getChatWithUser();
+    //             if (Array.isArray(data)) {
+    //                 setChats(data);
+    //             } else {
+    //                 console.error("Dữ liệu không phải là mảng:", data);
+    //                 setChats([{ name: "duy" }]); // Đặt lại là mảng rỗng nếu dữ liệu không hợp lệ
+    //             }
+    //         } catch (error) {
+    //             console.error("Lỗi khi lấy danh sách chat:", error);
+    //         }
+    //     };
+
+    //     fetchChatList();
+    // }, []);
+
+    const handleSendMessage = async () => {
+        if (newMessage.trim() === "") return;
+
+        const message = {
+            receiverId: friend?._id,
+            content: newMessage,
+        };
+        try {
+            const response = await sendMessage(friend?._id, newMessage);
+            setMessages(...message, response.content);
+        } catch {
+            alert("error");
+        }
+        setMessages([...messages, message]);
+        setNewMessage("");
+    };
+    ///call lít chat
+    // const [chats, setChats] = useState([]); // Khởi tạo mảng rỗng
+    const userId = "672ebaf8c63b15d5410fe80d"; // ID người dùng mẫu
+
     useEffect(() => {
         const fetchChatList = async () => {
             try {
-                const data = await getChatWithUser();
-                if (Array.isArray(data)) {
-                    setChats(data);
-                } else {
-                    console.error("Dữ liệu không phải là mảng:", data);
-                    setChats([{ name: "duy" }]); // Đặt lại là mảng rỗng nếu dữ liệu không hợp lệ
-                }
+                const data = await getChatWithUser(friend?._id);
+                console.log("window chat " + data);
+                setChats(data); // Cập nhật mảng chats với dữ liệu từ API
             } catch (error) {
-                console.error("Lỗi khi lấy danh sách chat:", error);
+                console.error("Failed to fetch chats:", error);
             }
         };
 
         fetchChatList();
-    }, []);
-
-    const handleSendMessage = () => {
-        if (newMessage.trim() === "") return;
-
-        const message = {
-            sender: "You",
-            content: newMessage,
-            timestamp: new Date().toLocaleTimeString(),
-        };
-        setMessages([...messages, message]);
-        setNewMessage("");
-    };
-
+    }, [userId]);
     return (
         <Box
             component={Paper}
@@ -354,11 +378,11 @@ const ChatWindow = ({ onClose }) => {
                 }}
             >
                 <Box display="flex" alignItems="center">
-                    <Avatar src={chats?.avatar} alt="User Avatar" sx={{ marginRight: 2 }} />
+                    <Avatar src={friend?.avatar} alt="User Avatar" sx={{ marginRight: 2 }} />
                     <Box>
-                        <Typography variant="h6">{chats?.name}</Typography>
+                        <Typography variant="h6">{friend?.username}</Typography>
                         <Typography variant="body2" color="textSecondary">
-                            <span className="status-dot" /> {chats?.name}
+                            <span className="status-dot" /> {chats?.content}
                         </Typography>
                     </Box>
                 </Box>
@@ -376,12 +400,12 @@ const ChatWindow = ({ onClose }) => {
                     bgcolor: "#f9f9f9",
                 }}
             >
-                {messages.map((message, index) => (
+                {chats.map((message, index) => (
                     <Box
                         key={index}
                         sx={{
                             display: "flex",
-                            justifyContent: message.sender === "You" ? "flex-end" : "flex-start",
+                            justifyContent: message.senderId === curentUserID ? "flex-end" : "flex-start",
                             mb: 1.5,
                         }}
                     >
@@ -390,15 +414,18 @@ const ChatWindow = ({ onClose }) => {
                                 maxWidth: "75%",
                                 padding: 1,
                                 borderRadius: 1,
-                                backgroundColor: message.sender === "You" ? "#007bff" : "#e0e0e0",
-                                color: message.sender === "You" ? "white" : "black",
+                                backgroundColor: message.senderId === curentUserID ? "#007bff" : "#e0e0e0",
+                                color: message.sender === curentUserID ? "white" : "black",
                             }}
                         >
                             <Typography variant="body2" sx={{ wordBreak: "break-word" }}>
-                                {message.content}
+                                {message?.content}
                             </Typography>
-                            <Typography variant="caption" sx={{ display: "block", textAlign: "right", marginTop: 0.5 }}>
-                                {message.timestamp}
+                            <Typography
+                                variant="caption"
+                                sx={{ fontSize: 8, display: "block", textAlign: "right", marginTop: 0.5 }}
+                            >
+                                {message?.createdAt}
                             </Typography>
                         </Box>
                     </Box>

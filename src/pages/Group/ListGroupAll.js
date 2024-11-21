@@ -1,5 +1,5 @@
-import React from "react";
-import { Link, Route, Router } from "react-router-dom";
+import React, { useContext } from "react";
+import { Link, Route, Router, useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import GroupsIcon from "@mui/icons-material/Groups";
@@ -11,8 +11,25 @@ import Sidebar from "~/components/Layouts/Sidebar";
 import { Padding } from "@mui/icons-material";
 import CreateGroup from "./CreateGroup";
 import axios from "axios";
-import { listGroupAll, listGroupJoin } from "~/services/groupServices/groupService";
+import { leaveGroup, listGroupAll, listGroupJoin } from "~/services/groupServices/groupService";
+import { CurentUser } from "~/MainRoutes";
+
 const GroupCard = ({ group, onJoin }) => {
+    //dèine
+    const { curentUserID } = useContext(CurentUser);
+    const navigate = useNavigate();
+    ///leave
+    const handleLeaveGroup = async (id) => {
+        try {
+            const response = await leaveGroup(id).then((data) => {
+                if (data) {
+                    alert(data?.message);
+                } else alert("Error");
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    };
     return (
         <Card sx={{ maxWidth: 345, margin: "0 auto", boxShadow: 2 }}>
             <CardContent sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
@@ -36,24 +53,43 @@ const GroupCard = ({ group, onJoin }) => {
                 </Typography>
                 <Button
                     variant="contained"
-                    color="primary"
-                    onClick={() => onJoin(group._id)}
-                    sx={{ textTransform: "none" }}
+                    color={group?.members.includes(curentUserID) ? "secondary" : "primary"}
+                    onClick={() =>
+                        group?.members.includes(curentUserID) ? handleLeaveGroup(group._id) : onJoin(group._id)
+                    }
+                    sx={{
+                        textTransform: "none",
+                        flex: 1, // Các nút chia đều không gian
+                        minWidth: 100, // Kích thước tối thiểu của nút
+                    }}
                 >
-                    Join Group
+                    {group?.members.includes(curentUserID) ? "Leave Group" : "Join Group"}
                 </Button>
+
+                {/* Nút Visit */}
+                {(group?.privacy === "public" || group?.creator.includes(curentUserID)) && (
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() =>
+                            navigate(`/groups/${group?._id}`, {
+                                state: { groupData: group },
+                            })
+                        }
+                        sx={{
+                            textTransform: "none",
+                            flex: 1, // Các nút chia đều không gian
+                            minWidth: 100, // Kích thước tối thiểu của nút
+                        }}
+                    >
+                        Visit
+                    </Button>
+                )}
             </CardContent>
         </Card>
     );
 };
 function ListGroupAll() {
-    const cardItems = [
-        { id: 1, name: "Create Group", icon: <AddIcon />, path: "/group/create" },
-        { id: 2, name: "My Group", icon: <GroupsIcon />, path: "/group/mygroup" },
-        { id: 3, name: "Explore Group", icon: <SearchIcon />, path: "/group/explore" },
-        { id: 4, name: "Chat Group", icon: <ChatIcon />, path: "/group/chat" },
-    ];
-
     const navigate = useNavigate();
 
     const handleCardClick = (path) => {
@@ -87,11 +123,12 @@ function ListGroupAll() {
 
     const handleJoinGroup = async (groupId) => {
         try {
-            if (true) {
-                alert("Joined group successfully!");
-            }
+            const response = await joinToGroup(groupId).then((data) => {
+                {
+                    alert(data?.message);
+                }
+            });
         } catch (error) {
-            console.error("Error joining group:", error);
             alert("Failed to join group.");
         }
     };

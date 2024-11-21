@@ -1,8 +1,12 @@
-///call  api get chat lis
+// Route lấy danh sách các cuộc trò chuyện của người dùng router.get('/chats', authenticate, getUserChats);
 
-export const getChatList = () => async () => {
-    const tokens = sessionStorage.getItem("jwt");
-    const token = tokens.token;
+const getChatList = async () => {
+    // Lấy dữ liệu từ sessionStorage
+    const storedToken = sessionStorage.getItem("jwt");
+    // Parse JSON thành object
+    const tokenData = storedToken ? JSON.parse(storedToken) : null;
+    // Kiểm tra và sử dụng token
+    const token = tokenData.token;
     try {
         const response = await fetch("http://localhost:4000/api/chat/chats", {
             method: "GET",
@@ -13,8 +17,7 @@ export const getChatList = () => async () => {
             },
         });
         if (response.ok) {
-            const data = await response.json();
-            return data;
+            return await response.json();
         } else {
             throw new Error("Failed to get chat list");
         }
@@ -23,22 +26,52 @@ export const getChatList = () => async () => {
     }
 };
 
-///call api chat with user
-export const getChatWithUser = () => async () => {
-    const tokens = sessionStorage.getItem("jwt");
-    const token = tokens.token;
+// Route lấy tin nhắn giữa hai người dùng router.get('/messages/:userId', authenticate, getMessages);
+const getChatWithUser = async (userId) => {
+    // Lấy dữ liệu từ sessionStorage
+    const storedToken = sessionStorage.getItem("jwt");
+    // Parse JSON thành object
+    const tokenData = storedToken ? JSON.parse(storedToken) : null;
+    // Kiểm tra và sử dụng token
+    const token = tokenData.token;
     try {
-        const response = await fetch("http://localhost:4000/api/chat/messages", {
+        const response = await fetch(`http://localhost:4000/api/chat/messages/${userId}`, {
             method: "GET",
+            headers: {
+                accept: "application/json",
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + token,
+            },
+        });
+
+        return await response.json();
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+// Route gửi tin nhắn router.post('/send',
+const sendMessage = async (receiverId, content) => {
+    // const tokens = sessionStorage.getItem("jwt");
+    // const token = tokens.token;
+    // Lấy dữ liệu từ sessionStorage
+    const storedToken = sessionStorage.getItem("jwt");
+    // Parse JSON thành object
+    const tokenData = storedToken ? JSON.parse(storedToken) : null;
+    // Kiểm tra và sử dụng token
+    const token = tokenData.token;
+    try {
+        const response = await fetch(`http://localhost:4000/api/chat/send`, {
+            method: "POST",
             headers: {
                 accept: "application/json",
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`,
             },
+            body: JSON.stringify({ receiverId: receiverId, content: content }),
         });
         if (response.ok) {
-            const data = await response.json();
-            return data;
+            return await response.json();
         } else {
             throw new Error("Failed to get chat list");
         }
@@ -46,3 +79,4 @@ export const getChatWithUser = () => async () => {
         console.error(error);
     }
 };
+export { getChatList, getChatWithUser, sendMessage };

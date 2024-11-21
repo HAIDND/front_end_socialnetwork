@@ -19,7 +19,7 @@ import {
     ListItemText,
     Box,
 } from "@mui/material";
-import { Settings, Favorite, Comment } from "@mui/icons-material";
+import { Settings, Favorite, Comment, Group } from "@mui/icons-material";
 
 import { CurentUser } from "~/MainRoutes";
 import {
@@ -30,12 +30,14 @@ import {
     likePost,
     unLikePost,
 } from "~/services/postServices/postService";
-import EditCommentDrawer from "./updateComment";
-import EditPostDialog from "./updatePost";
 
-export default function Post() {
+import { getPostInGroup } from "~/services/groupServices/groupService";
+import EditPostDialog from "~/pages/NewFeed/updatePost";
+import EditCommentDrawer from "~/pages/NewFeed/updateComment";
+export const PostInGroup = ({ groupID }) => {
     const [showComments, setShowComments] = useState({});
     const [postList, setPostList] = useState([]);
+
     const [anchorEl, setAnchorEl] = useState(null);
     const [selectedPostId, setSelectedPostId] = useState(null);
 
@@ -44,18 +46,25 @@ export default function Post() {
     useEffect(() => {
         (async () => {
             try {
-                const data = await getPost(curentUserID);
-                setPostList(data);
+                console.log("id group" + groupID);
+                const data = await getPostInGroup(groupID);
+                console.log("posst group" + data);
+                if (Array.isArray(data)) setPostList(data);
+                else {
+                    setPostList([]);
+                    alert("no posst");
+                }
             } catch (error) {
                 console.error("Lỗi khi lấy danh sách bài post:", error);
             }
         })();
     }, []);
 
+    //show comment
     const handleShowComments = (postId) => {
         setShowComments((prev) => ({ ...prev, [postId]: !prev[postId] }));
     };
-
+    //likes post
     const likePosts = async (postId) => {
         try {
             const data = await likePost({ postId }, curentUserToken);
@@ -69,7 +78,7 @@ export default function Post() {
             console.error("Lỗi khi like bài post:", error);
         }
     };
-
+    //comment
     const handleComment = async (postId, newComment) => {
         try {
             const data = await createComment({ postId, comment: newComment }, curentUserToken);
@@ -88,7 +97,7 @@ export default function Post() {
         setSelectedPostContent(postContent); // Lưu content
         setSelectedPostImage(postImage); // Lưu image
     };
-
+    ///open menu
     const handleMenuClose = () => {
         setAnchorEl(null);
         setSelectedPostId(null);
@@ -104,13 +113,6 @@ export default function Post() {
             // Assuming deleteComment is a function in your service that handles comment deletion.
             const data = await deleteComment(postId, commentId);
             if (!data.error) {
-                // setPostList((prevList) =>
-                //     prevList.map((post) =>
-                //         post._id === postId
-                //             ? { ...post, comments: post.comments.filter((comment) => comment._id !== commentId) }
-                //             : post,
-                //     ),
-                // );
                 console.log(data.message);
             } else {
                 console.error("Error deleting comment:", data.message);
@@ -146,7 +148,7 @@ export default function Post() {
     };
     console.log(postList);
 
-    //updatye
+    //update
     const [open, setOpen] = useState(false);
     const handleOpen = () => {
         setOpen(true);
@@ -228,59 +230,7 @@ export default function Post() {
             ))}
         </>
     );
-}
-// const CommentList = ({ comments, onAddComment }) => {
-//     const [newComment, setNewComment] = useState("");
-
-//     const handleSendComment = () => {
-//         if (newComment.trim()) {
-//             onAddComment(newComment);
-//             setNewComment("");
-//         }
-//     };
-
-//     return (
-//         <Paper elevation={3} sx={{ padding: 2 }}>
-//             <Typography variant="h6" sx={{ mb: 1 }}>
-//                 Comments
-//             </Typography>
-
-//             <Box sx={{ maxHeight: 150, overflowY: "auto", borderRadius: 1, padding: 1 }}>
-//                 <List>
-//                     {comments.length > 0 ? (
-//                         comments.map((comment, index) => (
-//                             <React.Fragment key={index}>
-//                                 <ListItem alignItems="flex-start">
-//                                     <Avatar src={comment?.userId?.avatar} sx={{ mr: 1 }} />
-//                                     <ListItemText primary={comment?.userId?.username} secondary={comment?.comment} />
-//                                 </ListItem>
-//                                 <Divider />
-//                             </React.Fragment>
-//                         ))
-//                     ) : (
-//                         <Typography variant="body2" color="text.secondary" sx={{ textAlign: "center" }}>
-//                             No comments yet.
-//                         </Typography>
-//                     )}
-//                 </List>
-//             </Box>
-
-//             <Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
-//                 <TextField
-//                     fullWidth
-//                     size="small"
-//                     placeholder="Write a comment..."
-//                     value={newComment}
-//                     onChange={(e) => setNewComment(e.target.value)}
-//                     sx={{ mr: 1 }}
-//                 />
-//                 <Button variant="contained" onClick={handleSendComment}>
-//                     Send
-//                 </Button>
-//             </Box>
-//         </Paper>
-//     );
-// };
+};
 
 const CommentList = ({ comments, postID, curentUserID, onAddComment, onEditComment, onDeleteComment }) => {
     const [newComment, setNewComment] = useState("");

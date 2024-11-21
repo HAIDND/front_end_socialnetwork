@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Box, List, ListItem, ListItemAvatar, Avatar, ListItemText, Badge, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import ChatWindow from "./ChatWindow";
-import { getChatList } from "~/services/chatServices/chatService";
+import { getChatList, getChatWithUser } from "~/services/chatServices/chatService";
+import { getListFriend } from "~/services/friendServices/friendService";
 
 const ChatListContainer = styled(Box)(({ theme }) => ({
     position: "fixed",
@@ -18,30 +19,35 @@ const ChatListContainer = styled(Box)(({ theme }) => ({
 }));
 
 const ChatList = () => {
-    const [chats, setChats] = useState([]); // Khởi tạo là mảng rỗng
+    const [chats, setChats] = useState([]); // Khởi tạo mảng rỗng
+    const [listFriend, setListFriend] = useState([]); // Khởi tạo mảng rỗng
+    const userId = "672ebaf8c63b15d5410fe80d"; // ID người dùng mẫu
 
     useEffect(() => {
         const fetchChatList = async () => {
             try {
                 const data = await getChatList();
-                if (Array.isArray(data)) {
-                    setChats(data);
-                } else {
-                    console.error("Dữ liệu không phải là mảng:", data);
-                    setChats([{ name: "duy" }]); // Đặt lại là mảng rỗng nếu dữ liệu không hợp lệ
-                }
+                const friend = await getListFriend();
+                console.log(data);
+                setChats(data); // Cập nhật mảng chats với dữ liệu từ API
+                setListFriend(friend);
             } catch (error) {
-                console.error("Lỗi khi lấy danh sách chat:", error);
+                console.error("Failed to fetch chats:", error);
             }
         };
 
         fetchChatList();
-    }, []);
+    }, [userId]); // Chỉ chạy lại khi userId thay đổi
 
     //click to open chat windows
-    const [openChat, setOpenChat] = useState(null);
+    const [openChat, setOpenChat] = useState(false);
+    const [chatFriend, setChatFriend] = useState([]);
+    function handleOpenChat(x) {
+        setOpenChat(!openChat);
+        setChatFriend(x);
+    }
 
-    const handleOpenChat = () => {
+    const handleCloseChat = () => {
         setOpenChat(!openChat);
     };
     return (
@@ -57,15 +63,65 @@ const ChatList = () => {
             </Typography>
             <List>
                 {chats.map((chat, index) => (
-                    <ListItem key={index} alignItems="flex-start" onClick={handleOpenChat} onclose={handleOpenChat}>
+                    <ListItem
+                        key={index}
+                        sx={{
+                            border: "ActiveCaption",
+                            "&:hover": {
+                                backgroundColor: "blue", // Thay đổi màu khi hover
+                            },
+                        }}
+                        alignItems="flex-start"
+                        onClick={() => {
+                            handleOpenChat(chat);
+                        }}
+                        onclose={handleOpenChat}
+                    >
                         <ListItemAvatar>
                             <Avatar alt={chat.name} src={chat.avatar} />
                         </ListItemAvatar>
                         <ListItemText
-                            primary={chat.name}
+                            primary={chat?.username}
                             secondary={
                                 <Typography component="span" variant="body2" color="text.secondary" noWrap>
-                                    {chat.message}
+                                    {chat?.email}
+                                </Typography>
+                            }
+                        />
+                        {chat.hasNewMessage && (
+                            <Badge
+                                color="error"
+                                variant="dot"
+                                sx={{
+                                    marginLeft: "auto",
+                                }}
+                            />
+                        )}
+                    </ListItem>
+                ))}
+                {listFriend.map((chat, index) => (
+                    <ListItem
+                        key={index}
+                        sx={{
+                            border: "ActiveCaption",
+                            "&:hover": {
+                                backgroundColor: "blue", // Thay đổi màu khi hover
+                            },
+                        }}
+                        alignItems="flex-start"
+                        onClick={() => {
+                            handleOpenChat(chat);
+                        }}
+                        onclose={handleOpenChat}
+                    >
+                        <ListItemAvatar>
+                            <Avatar alt={chat.name} src={chat.avatar} />
+                        </ListItemAvatar>
+                        <ListItemText
+                            primary={chat?.username}
+                            secondary={
+                                <Typography component="span" variant="body2" color="text.secondary" noWrap>
+                                    {chat?.email}
                                 </Typography>
                             }
                         />
@@ -81,7 +137,7 @@ const ChatList = () => {
                     </ListItem>
                 ))}
             </List>
-            {openChat && <ChatWindow />}
+            {openChat && <ChatWindow friend={chatFriend} onClose={handleCloseChat} />}
         </ChatListContainer>
     );
 };

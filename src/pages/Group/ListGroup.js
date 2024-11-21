@@ -13,12 +13,29 @@ import CreateGroup from "./CreateGroup";
 import axios from "axios";
 import { listGroupJoin } from "~/services/groupServices/groupService";
 import DetailGroup from "./DetailGroup";
+import FormEditGroup from "./FormEditGroup";
+import AddMember from "./AddMember";
+import RemoveMember from "./RemoveMember";
 const GroupCard = ({ group, onJoin }) => {
     const [dataGroup, setDataGroup] = useState(group);
-    const [isopen, setOpen] = useState(null);
-    const open = () => {
-        setOpen(true);
+    const navigate = useNavigate();
+    //open add member
+    const [isOpenAddMember, setOpenAddMember] = useState(null);
+    const openAddMember = () => {
+        setOpenAddMember(true);
     };
+    const closeAddMember = () => {
+        setOpenAddMember(false);
+    };
+    //remove member
+    const [isOpenRemoveMember, setOpenRemoveMember] = useState(null);
+    const openRemoveMember = () => {
+        setOpenRemoveMember(true);
+    };
+    const closeRemoveMember = () => {
+        setOpenRemoveMember(false);
+    };
+
     return (
         <Card sx={{ maxWidth: 345, margin: "0 auto", boxShadow: 2 }}>
             <CardContent sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
@@ -40,11 +57,54 @@ const GroupCard = ({ group, onJoin }) => {
                 >
                     {group.privacy === "public" ? "Public Group" : "Private Group"}
                 </Typography>
-                <Button variant="contained" color="secondary" onClick={() => open()} sx={{ textTransform: "none" }}>
+                <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={() =>
+                        navigate(`/groups/${group?._id}`, {
+                            state: { groupData: group },
+                        })
+                    }
+                    sx={{ textTransform: "none" }}
+                >
                     Visit Group
                 </Button>
+                <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={() =>
+                        navigate(`/groups/update`, {
+                            state: { groupData: group },
+                        })
+                    }
+                    sx={{ textTransform: "none" }}
+                >
+                    Update Group
+                </Button>
+                <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => openAddMember()}
+                    sx={{ textTransform: "none" }}
+                >
+                    Add member
+                </Button>
+                <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => openRemoveMember()}
+                    sx={{ textTransform: "none" }}
+                >
+                    Remove member
+                </Button>
             </CardContent>
-            {isopen && <DetailGroup data={dataGroup} />}
+            <RemoveMember
+                open={isOpenRemoveMember}
+                members={group?.members}
+                groupId={group?._id}
+                close={closeRemoveMember}
+            />
+            <AddMember open={isOpenAddMember} users={group?.members} groupId={group?._id} close={closeAddMember} />
         </Card>
     );
 };
@@ -71,9 +131,11 @@ function ListGroup() {
         try {
             listGroupJoin().then((groups) => {
                 if (groups) {
-                    setGroups(groups);
-                    console.log("listGroupJoin");
-                    console.log(groups);
+                    if (Array.isArray(groups)) setGroups(groups);
+                    else {
+                        setGroups([]);
+                        alert("You have 0 group!");
+                    }
                 }
             });
         } catch (error) {
@@ -129,6 +191,7 @@ function ListGroup() {
                             ))}
                         </Grid>
                     </Box>
+                    {/* <FormEditGroup /> */}
                 </Grid>
             </Grid>
         </>
