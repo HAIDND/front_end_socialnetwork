@@ -1,6 +1,6 @@
 import { API_BASE_URL } from "~/config/apiConfig";
 
-const getPost = async (userID) => {
+const getPost = async () => {
     const storedToken = sessionStorage.getItem("jwt");
     const tokenData = storedToken ? JSON.parse(storedToken) : null;
     const token = tokenData?.token;
@@ -54,15 +54,13 @@ const updatePost = async (postId, content, image) => {
     const storedToken = sessionStorage.getItem("jwt");
     const tokenData = storedToken ? JSON.parse(storedToken) : null;
     const token = tokenData?.token;
+
     const formData = new FormData();
     formData.append("postId", postId);
     formData.append("content", content);
     // console.log(formData);
     if (image) formData.append("image", image);
-    // if (video) formData.append("video", video);
-    // formData.append("visibility", visibility);
-    console.log("form lasttest");
-    console.log(formData);
+
     try {
         let response = await fetch(`http://localhost:4000/api/posts/edit-post`, {
             method: "PUT",
@@ -112,7 +110,10 @@ const unLikePost = async (postId, token) => {
     }
 };
 //call api comment post
-const createComment = async (data, token) => {
+const createComment = async (data) => {
+    const storedToken = sessionStorage.getItem("jwt");
+    const tokenData = storedToken ? JSON.parse(storedToken) : null;
+    const token = tokenData?.token;
     try {
         let response = await fetch(`http://localhost:4000/api/posts/comment`, {
             method: "POST",

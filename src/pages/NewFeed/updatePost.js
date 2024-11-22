@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { Dialog, DialogActions, DialogContent, DialogTitle, TextField, Button, Typography, Input } from "@mui/material";
-import { createPost, updatePost } from "~/services/postServices/postService"; // Giả sử bạn có một hàm updatePost
+import { updatePost } from "~/services/postServices/postService"; // Make sure updatePost is defined
 
 const EditPostDialog = ({ open, onClose, postContent, postImage, postId }) => {
     const [content, setContent] = useState(postContent);
     const [image, setImage] = useState(postImage);
+    const [selectedImage, setSelectedImage] = useState(null);
 
-    // Cập nhật lại content và image khi postContent hoặc postImage thay đổi
-    // useEffect(() => {
-    //     setContent(postContent);
-    //     setImage(postImage);
-    // }, [postContent, postImage]);
+    useEffect(() => {
+        // Reset selected image and content when dialog opens
+        setContent(postContent);
+        setImage(postImage);
+        setSelectedImage(null);
+    }, [open, postContent, postImage]);
 
     const handleContentChange = (event) => {
         setContent(event.target.value);
@@ -19,75 +21,20 @@ const EditPostDialog = ({ open, onClose, postContent, postImage, postId }) => {
     const handleImageChange = (event) => {
         const file = event.target.files[0];
         if (file) {
-            setImage(file); // Nếu bạn muốn xem trước hình ảnh
+            const isImage = file.type.startsWith("image/");
+            setSelectedImage(URL.createObjectURL(file)); // Preview the selected image
+            if (isImage) {
+                setImage(file); // Set the image file to the state
+            }
         }
     };
 
-    const handleCompleteClick = () => {
-        if (image !== postImage) {
-            updatePost(postId, content, image);
-        } else {
-            updatePost(postId, content, postImage);
-        }
-        onClose();
-        // updatePost(postId, content, image);
-        // onClose(); // Đóng dialog sau khi cập nhật
+    const handleCompleteClick = async () => {
+        // Only update the post if the image is changed
+        await updatePost(postId, content, image || selectedImage); // Send either the selected image or existing image if no new one
+        onClose(); // Close dialog after update
     };
-    // ///new
-    // const { curentUserID, curentUserInfo } = useContext(CurentUser);
 
-    // const [postContent, setPostContent] = useState("");
-    // const [selectedImage, setSelectedImage] = useState(null);
-    // const [selectedVideo, setSelectedVideo] = useState(null);
-    // const [isPublic, setIsPublic] = useState(true);
-    // const [isToggleOpen, setIsToggleOpen] = useState(false);
-
-    // // Hàm xử lý file ảnh
-    // const handleFileChange = (event) => {
-    //     const file = event.target.files[0];
-    //     if (file) {
-    //         const isImage = file.type.startsWith("image/");
-    //         const isVideo = file.type.startsWith("video/");
-    //         if (isImage) {
-    //             setSelectedImage(file);
-    //             console.log(file);
-    //         }
-    //         if (isVideo) setSelectedVideo(file);
-    //     }
-    // };
-
-    // const handlePostChange = (event) => {
-    //     setPostContent(event.target.value);
-    // };
-
-    // const handleToggleChange = () => {
-    //     setIsToggleOpen(!isToggleOpen);
-    // };
-
-    // const handleVisibilityChange = (event) => {
-    //     setIsPublic(event.target.checked);
-    // };
-
-    // // Hàm submit bài viết
-    // const handleSubmit = async () => {
-    //     if (postContent.trim() || selectedImage || selectedVideo) {
-    //         const visibility = isPublic ? "public" : "private";
-    //         const response = await createPost(postContent, selectedImage, selectedVideo, visibility);
-
-    //         if (response?.success) {
-    //             addUpdate(response.data);
-    //             setPostContent("");
-    //             setSelectedImage(null);
-    //             setSelectedVideo(null);
-    //         } else {
-    //             console.error("Failed to create post:", response?.error);
-    //         }
-    //     }
-    // };
-
-    // const handleClose = () => {
-    //     setIsToggleOpen(false);
-    // };
     return (
         <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
             <DialogTitle>Edit Post</DialogTitle>
@@ -116,18 +63,22 @@ const EditPostDialog = ({ open, onClose, postContent, postImage, postId }) => {
                     onChange={handleImageChange}
                     style={{ marginBottom: "20px" }}
                 />
-                {/* <input
-                        accept="image/*,video/*"
-                        id="file-input"
-                        type="file"
-                        style={{ display: "none" }}
-                        onChange={handleFileChange}
-                    /> */}
-                {image && (
+
+                {selectedImage && (
+                    <div style={{ marginTop: "10px", marginBottom: "20px" }}>
+                        <img
+                            src={selectedImage}
+                            alt="Preview"
+                            style={{ width: "100%", maxHeight: "500px", objectFit: "cover" }}
+                        />
+                    </div>
+                )}
+                {/* Show the current image if no new image is selected */}
+                {!selectedImage && image && (
                     <div style={{ marginTop: "10px", marginBottom: "20px" }}>
                         <img
                             src={image}
-                            alt="Preview"
+                            alt="Post Image"
                             style={{ width: "100%", maxHeight: "500px", objectFit: "cover" }}
                         />
                     </div>

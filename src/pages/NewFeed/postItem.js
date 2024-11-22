@@ -162,7 +162,7 @@ export default function Post() {
                     <CardHeader
                         avatar={<Avatar src={item?.userId?.avatar} />}
                         title={item?.userId?.username}
-                        subheader={`${item?.createdAt} with role ${item?.visibility}`}
+                        subheader={`${item?.createdAt}`}
                         action={
                             item?.userId?._id === curentUserID && (
                                 <IconButton
@@ -174,6 +174,7 @@ export default function Post() {
                             )
                         }
                     />
+                    {item?.visibility}
                     {open && selectedPostId === item._id && (
                         <EditPostDialog
                             open={open}
@@ -229,58 +230,6 @@ export default function Post() {
         </>
     );
 }
-// const CommentList = ({ comments, onAddComment }) => {
-//     const [newComment, setNewComment] = useState("");
-
-//     const handleSendComment = () => {
-//         if (newComment.trim()) {
-//             onAddComment(newComment);
-//             setNewComment("");
-//         }
-//     };
-
-//     return (
-//         <Paper elevation={3} sx={{ padding: 2 }}>
-//             <Typography variant="h6" sx={{ mb: 1 }}>
-//                 Comments
-//             </Typography>
-
-//             <Box sx={{ maxHeight: 150, overflowY: "auto", borderRadius: 1, padding: 1 }}>
-//                 <List>
-//                     {comments.length > 0 ? (
-//                         comments.map((comment, index) => (
-//                             <React.Fragment key={index}>
-//                                 <ListItem alignItems="flex-start">
-//                                     <Avatar src={comment?.userId?.avatar} sx={{ mr: 1 }} />
-//                                     <ListItemText primary={comment?.userId?.username} secondary={comment?.comment} />
-//                                 </ListItem>
-//                                 <Divider />
-//                             </React.Fragment>
-//                         ))
-//                     ) : (
-//                         <Typography variant="body2" color="text.secondary" sx={{ textAlign: "center" }}>
-//                             No comments yet.
-//                         </Typography>
-//                     )}
-//                 </List>
-//             </Box>
-
-//             <Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
-//                 <TextField
-//                     fullWidth
-//                     size="small"
-//                     placeholder="Write a comment..."
-//                     value={newComment}
-//                     onChange={(e) => setNewComment(e.target.value)}
-//                     sx={{ mr: 1 }}
-//                 />
-//                 <Button variant="contained" onClick={handleSendComment}>
-//                     Send
-//                 </Button>
-//             </Box>
-//         </Paper>
-//     );
-// };
 
 const CommentList = ({ comments, postID, curentUserID, onAddComment, onEditComment, onDeleteComment }) => {
     const [newComment, setNewComment] = useState("");
