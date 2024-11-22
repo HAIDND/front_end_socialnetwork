@@ -11,7 +11,7 @@ import Sidebar from "~/components/Layouts/Sidebar";
 import { Padding } from "@mui/icons-material";
 import CreateGroup from "./CreateGroup";
 import axios from "axios";
-import { leaveGroup, listGroupAll, listGroupJoin } from "~/services/groupServices/groupService";
+import { joinToGroup, leaveGroup, listGroupAll, listGroupJoin } from "~/services/groupServices/groupService";
 import { CurentUser } from "~/MainRoutes";
 
 const GroupCard = ({ group, onJoin }) => {

@@ -8,7 +8,7 @@ import { useLocation, useParams } from "react-router-dom";
 import { PostInGroup } from "./CRUDPostGroup";
 import CreatePostInGroup from "./createPost";
 import { CurentUser } from "~/MainRoutes";
-import { addMemberToGroup, leaveGroup } from "~/services/groupServices/groupService";
+import { addMemberToGroup, joinToGroup, leaveGroup } from "~/services/groupServices/groupService";
 
 const DetailGroup = ({}) => {
     //lấy id

@@ -13,18 +13,17 @@ const searchHeader = async (query) => {
     };
     console.log("data send " + form);
     try {
-        const response = await fetch("http://localhost:4000/api/users/search/" + keyword, {
-            method: "POST",
+        const response = await fetch("http://localhost:4000/api/users/search/" + query, {
+            method: "GET",
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
                 authorization: "Bearer " + token,
             },
-            body: JSON.stringify(form),
         });
         return await response.json();
     } catch (error) {
-        alert(error.message);
+        alert(error?.message);
     }
 };
 

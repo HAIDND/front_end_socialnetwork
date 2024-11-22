@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import Tippy from "@tippyjs/react/headless";
-import styles from "./Header.module.scss";
-import clsx from "clsx";
+
 import { Link, Route, Routes, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -15,15 +14,11 @@ import {
     faSignOut,
 } from "@fortawesome/free-solid-svg-icons";
 import { faBell, faMessage } from "@fortawesome/free-regular-svg-icons";
-import { PostNoneImage } from "~/components/Elements/Post";
-import Sidebar from "../Sidebar";
+
 import Wrapper from "../Popper";
-import { Button } from "@mui/material";
+
 import auth from "~/services/authService/authHelper";
-const cx = clsx;
-const name = (x) => {
-    cx(styles.x);
-};
+
 export function Logo() {
     return (
         <div className={cx(styles.Logo)}>

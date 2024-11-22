@@ -15,9 +15,11 @@ const createUser = async (user) => {
         console.log(error);
     }
 };
+
+///read user api `http://localhost:4000/api/users/` + userID,   `${API_BASE_URL}/users/`
 const readUser = async (params) => {
     try {
-        let response = await fetch(`${API_BASE_URL}` + params, {
+        let response = await fetch(`http://localhost:4000/api/users/` + params, {
             method: "GET",
             // signal: signal,
             headers: {

@@ -32,12 +32,10 @@ import {
     Settings as SettingsIcon,
 } from "@mui/icons-material";
 
-import styles from "./Header.module.scss";
-import ChatWindow from "./ChatWindow";
-import ChatList from "./ChatList";
 import { logout } from "~/services/authService/authService";
 import auth from "~/services/authService/authHelper";
 import { CurentUser } from "~/MainRoutes";
+import ChatList from "~/pages/Chatting/ChatList";
 const NavHeader = () => {
     const { curentUser, setCurrentUser, curentUserProfile, setCurrentUserProfile, curentUserID, curentUserToken } =
         useContext(CurentUser);
@@ -87,20 +85,27 @@ const NavHeader = () => {
         console.log(keyword);
     };
     // const handleLogout = (isLogout) => {isLogout :}
+    //set open close chat
+    const [openChat, setOpenChat] = useState(false);
+    const handleOpenChat = () => {
+        setOpenChat(!openChat);
+    };
     return (
         <AppBar position="fixed" color="inherit" elevation={1} sx={{ padding: 1 }}>
             <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-                {/* Logo */}
-                <Typography
-                    variant="h5"
-                    color="primary"
-                    sx={{ display: "flex", alignItems: "center", fontWeight: "bold" }}
-                >
-                    <IconButton edge="start" color="success" sx={{ fontSize: 30 }}>
-                        <HomeIcon fontSize="large" />
-                    </IconButton>
-                    Sociala
-                </Typography>
+                {/* Logo */}{" "}
+                <Link to={"/home"}>
+                    <Typography
+                        variant="h5"
+                        color="primary"
+                        sx={{ display: "flex", alignItems: "center", fontWeight: "bold" }}
+                    >
+                        <IconButton edge="start" color="success" sx={{ fontSize: 30 }}>
+                            <HomeIcon fontSize="large" />
+                        </IconButton>
+                        Sociala
+                    </Typography>
+                </Link>
                 {/* Search Bar */}
                 <Box
                     sx={{
@@ -136,14 +141,12 @@ const NavHeader = () => {
                         <ShoppingBagIcon fontSize="large" />
                     </IconButton> */}
                 </Box>
-
                 {/* Right Icons */}
                 <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                    <Link to={"/chat"}>
-                        <IconButton color="inherit" sx={{ fontSize: 30 }} onClick={enableChatList}>
-                            <MessageIcon fontSize="large" />
-                        </IconButton>
-                    </Link>
+                    <IconButton color="inherit" sx={{ fontSize: 30 }} onClick={handleOpenChat}>
+                        <MessageIcon fontSize="large" />
+                    </IconButton>
+
                     <IconButton color="inherit" onClick={handleMenuOpen} sx={{ fontSize: 30 }}>
                         <NotificationsIcon fontSize="large" />
                     </IconButton>
@@ -217,6 +220,7 @@ const NavHeader = () => {
                     </IconButton>
                 </Box>
             </Toolbar>
+            {openChat && <ChatList />}
         </AppBar>
     );
 };

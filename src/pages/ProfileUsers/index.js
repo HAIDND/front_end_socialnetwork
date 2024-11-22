@@ -2,31 +2,20 @@ import React, { useContext, useEffect, useState } from "react";
 import { Box, Typography, Avatar, Grid, Paper } from "@mui/material";
 
 import Sidebar from "~/components/Layouts/Sidebar";
-import Post from "~/components/Elements/Post_MUI/post";
 import { getInfo, readUser, saveInfo } from "~/services/userServices/userService";
-import auth from "~/services/authService/authHelper";
 import { CurentUser } from "~/MainRoutes";
 const Profile = ({ profileData }) => {
     const { curentUserID } = useContext(CurentUser);
-    console.log("user prodile id is");
-    console.log(curentUserID);
-    //colect id userid in jwt
-    //sate to load profile
+
     const [profile, setProfile] = useState([]);
-
     // Fetch user profile data from API
-    const setData = (data) => {
-        saveInfo(data);
-    };
-
     useEffect(() => {
         readUser(curentUserID).then((data) => {
-            if (data.message) {
+            if (data) {
                 // Chỉ đặt error khi có lỗi từ server, không hiển thị mật khẩu
-                setData({ error: data.message });
+                setProfile(data);
             } else {
-                setData(data);
-                setProfile(() => getInfo());
+                alert("No profile");
             }
         });
     }, []);
