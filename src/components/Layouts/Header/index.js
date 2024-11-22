@@ -1,226 +1,139 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, redirect, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import {
-    AppBar,
-    Toolbar,
-    IconButton,
-    Typography,
-    InputBase,
-    Menu,
-    MenuItem,
-    Avatar,
-    Grid,
-    Box,
-    Switch,
-    List,
-    ListItem,
-    ListItemText,
-    Radio,
-    RadioGroup,
-    FormControlLabel,
-} from "@mui/material";
-import LogoutIcon from "@mui/icons-material/Logout";
+import { AppBar, Toolbar, IconButton, Typography, Box, Menu, Avatar, useTheme } from "@mui/material";
 import {
     Search as SearchIcon,
     Home as HomeIcon,
-    Videocam as VideoIcon,
-    Group as GroupIcon,
-    ShoppingBag as ShoppingBagIcon,
     Notifications as NotificationsIcon,
     Message as MessageIcon,
     Settings as SettingsIcon,
+    Logout as LogoutIcon,
 } from "@mui/icons-material";
 
 import { logout } from "~/services/authService/authService";
 import auth from "~/services/authService/authHelper";
 import { CurentUser } from "~/MainRoutes";
+import SearchComponent from "./SearchComponent";
+import NotificationPanel from "./Notifi";
 import ChatList from "~/pages/Chatting/ChatList";
+import ThemeSettings from "~/Theme";
+
 const NavHeader = () => {
-    const { curentUser, setCurrentUser, curentUserProfile, setCurrentUserProfile, curentUserID, curentUserToken } =
+    const { curentUserProfile, setThemeColor, darkMode, setDarkMode, themeSecondary, setThemeSecondary } =
         useContext(CurentUser);
 
-    const [anchorEl, setAnchorEl] = React.useState(null);
-    const [settingsAnchorEl, setSettingsAnchorEl] = React.useState(null);
-    const navigate = useNavigate();
-    const handleMenuOpen = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleSettingsMenuOpen = (event) => {
-        setSettingsAnchorEl(event.currentTarget);
-    };
-
-    const handleClose = () => {
-        setAnchorEl(null);
-        setSettingsAnchorEl(null);
-    };
-
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [settingsAnchorEl, setSettingsAnchorEl] = useState(null);
     const [chatList, setChatList] = useState(false);
-    const enableChatList = () => setChatList(!chatList);
-    console.log(chatList);
-
-    ///handle logout
+    const [notifi, setNotifi] = useState(false);
     const [isLogout, setIsLogout] = useState(false);
-    const handleToggleLogout = () => {
-        setIsLogout(!isLogout);
-    };
+
+    const navigate = useNavigate();
+    const theme = useTheme(); // Lấy theme hiện tại
+
+    // Xử lý sự kiện logout
     useEffect(() => {
         if (isLogout) {
             logout();
             navigate("/login");
         }
-    }, [isLogout]);
-    const handleLogout = () => {
-        auth.clearJWT(() => {
-            console.log("logged out");
-        });
-        redirect("/");
+    }, [isLogout, navigate]);
+
+    // Mở/đóng menu
+    const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
+    const handleSettingsMenuOpen = (event) => setSettingsAnchorEl(event.currentTarget);
+    const handleClose = () => {
+        setAnchorEl(null);
+        setSettingsAnchorEl(null);
     };
 
-    //hanlde change data
-    const [keyword, setKeyWord] = useState([]);
-    const handleChange = (e) => {
-        setKeyWord(e.target.value);
-        console.log(keyword);
-    };
-    // const handleLogout = (isLogout) => {isLogout :}
-    //set open close chat
-    const [openChat, setOpenChat] = useState(false);
-    const handleOpenChat = () => {
-        setOpenChat(!openChat);
-    };
+    // Xử lý toggle thông báo và chat
+    const handleNotifi = () => setNotifi(!notifi);
+    const enableChatList = () => setChatList(!chatList);
+
     return (
-        <AppBar position="fixed" color="inherit" elevation={1} sx={{ padding: 1 }}>
+        <AppBar
+            position="fixed"
+            color="inherit"
+            elevation={1}
+            sx={{
+                padding: 1,
+                backgroundColor: theme.palette.background.paper,
+                borderBottom: `1px solid ${theme.palette.divider}`,
+            }}
+        >
             <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-                {/* Logo */}{" "}
-                <Link to={"/home"}>
+                {/* Logo */}
+                <Link to="/home" style={{ textDecoration: "none" }}>
                     <Typography
                         variant="h5"
-                        color="primary"
+                        color={theme.palette.primary.main}
                         sx={{ display: "flex", alignItems: "center", fontWeight: "bold" }}
                     >
-                        <IconButton edge="start" color="success" sx={{ fontSize: 30 }}>
+                        <IconButton edge="start" color="primary" sx={{ fontSize: 30 }}>
                             <HomeIcon fontSize="large" />
                         </IconButton>
                         Sociala
                     </Typography>
                 </Link>
-                {/* Search Bar */}
-                <Box
-                    sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "left",
 
-                        borderRadius: 50,
-                        border: 1,
-                    }}
-                >
-                    <SearchIcon sx={{ mr: 1, color: "grey.500", fontSize: 30 }} />
-                    <InputBase
-                        placeholder="Start typing to search.."
-                        sx={{ width: "70%" }}
-                        value={() => handleChange()}
-                    />
+                {/* Search Component */}
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <SearchComponent />
                 </Box>
-                {/* Center Icons */}
+
+                {/* Icon Section */}
                 <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                    <Link to={"/home"}>
-                        <IconButton color="inherit" sx={{ fontSize: 30 }}>
-                            <HomeIcon fontSize="large" />
-                        </IconButton>
-                    </Link>
-                    {/* <IconButton color="inherit" sx={{ fontSize: 30 }}>
-                        <VideoIcon fontSize="large" />
-                    </IconButton>
-                    <IconButton color="inherit" sx={{ fontSize: 30 }}>
-                        <GroupIcon fontSize="large" />
-                    </IconButton>
-                    <IconButton color="inherit" sx={{ fontSize: 30 }}>
-                        <ShoppingBagIcon fontSize="large" />
-                    </IconButton> */}
-                </Box>
-                {/* Right Icons */}
-                <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                    <IconButton color="inherit" sx={{ fontSize: 30 }} onClick={handleOpenChat}>
+                    <IconButton color="inherit" sx={{ fontSize: 30 }} onClick={enableChatList}>
                         <MessageIcon fontSize="large" />
                     </IconButton>
 
-                    <IconButton color="inherit" onClick={handleMenuOpen} sx={{ fontSize: 30 }}>
+                    <IconButton color="inherit" onClick={handleNotifi} sx={{ fontSize: 30 }}>
                         <NotificationsIcon fontSize="large" />
                     </IconButton>
 
-                    {/* Notification Menu */}
-                    <Menu
-                        sx={{ marginTop: 10 }}
-                        anchorEl={anchorEl}
-                        open={Boolean(anchorEl)}
-                        onClose={handleClose}
-                        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-                        transformOrigin={{ vertical: "top", horizontal: "right" }}
-                    >
-                        <MenuItem>
-                            <Avatar src={curentUserProfile?.avatar} />
-                            <ListItemText primary="Hendrix Stamp" secondary="There are many variations of pass.." />
-                        </MenuItem>
-                        <MenuItem>
-                            <Avatar src="images/user-4.png" />
-                            <ListItemText primary="Goria Coast" secondary="Mobile Apps UI Designer is require.." />
-                        </MenuItem>
-                    </Menu>
-                    {/* {chatList && <ChatList />} */}
-                    {/* Settings Icon */}
+                    <NotificationPanel open={notifi} close={handleNotifi} />
+
                     <IconButton color="inherit" onClick={handleSettingsMenuOpen} sx={{ fontSize: 30 }}>
                         <SettingsIcon fontSize="large" />
                     </IconButton>
 
                     {/* Settings Menu */}
                     <Menu
-                        sx={{ marginTop: 10 }}
                         anchorEl={settingsAnchorEl}
                         open={Boolean(settingsAnchorEl)}
                         onClose={handleClose}
                         anchorOrigin={{ vertical: "top", horizontal: "right" }}
                         transformOrigin={{ vertical: "top", horizontal: "right" }}
+                        sx={{
+                            mt: 6,
+                            "& .MuiMenu-paper": {
+                                backgroundColor: theme.palette.background.paper,
+                                boxShadow: 6,
+                            },
+                        }}
                     >
-                        <Typography variant="h6">Settings</Typography>
-                        <Box sx={{ p: 2 }}>
-                            <Typography variant="body2">Choose Color Theme</Typography>
-                            <RadioGroup>
-                                <FormControlLabel value="red" control={<Radio />} label="Red" />
-                                <FormControlLabel value="green" control={<Radio />} label="Green" />
-                                <FormControlLabel value="blue" control={<Radio />} label="Blue" />
-                                <FormControlLabel value="yellow" control={<Radio />} label="Yellow" />
-                            </RadioGroup>
-
-                            <List>
-                                <ListItem>
-                                    <Typography variant="body2">Header Background</Typography>
-                                    <Switch />
-                                </ListItem>
-                                <ListItem>
-                                    <Typography variant="body2">Menu Position</Typography>
-                                    <Switch />
-                                </ListItem>
-                                <ListItem>
-                                    <Typography variant="body2">Dark Mode</Typography>
-                                    <Switch />
-                                </ListItem>
-                            </List>
-                        </Box>
+                        <ThemeSettings
+                            themeColor={theme.palette.primary.main}
+                            setThemeColor={setThemeColor}
+                            darkMode={darkMode}
+                            setDarkMode={setDarkMode}
+                            themeSecondary={themeSecondary}
+                            setThemeSecondary={setThemeSecondary}
+                        />
                     </Menu>
 
                     {/* Profile Avatar */}
                     <IconButton color="inherit" sx={{ fontSize: 30 }}>
                         <Avatar src={curentUserProfile?.avatar} />
                     </IconButton>
-                    <IconButton color="inherit" sx={{ fontSize: 30 }} onClick={handleToggleLogout}>
+                    <IconButton color="inherit" sx={{ fontSize: 30 }} onClick={() => setIsLogout(true)}>
                         <LogoutIcon fontSize="small" />
                     </IconButton>
                 </Box>
             </Toolbar>
-            {openChat && <ChatList />}
+
+            {chatList && <ChatList />}
         </AppBar>
     );
 };

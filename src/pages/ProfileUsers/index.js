@@ -1,40 +1,50 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Box, Typography, Avatar, Grid, Paper } from "@mui/material";
+import { Box, Typography, Avatar, Grid, Paper, Button, useTheme } from "@mui/material";
 
 import Sidebar from "~/components/Layouts/Sidebar";
 import { getInfo, readUser, saveInfo } from "~/services/userServices/userService";
 import { CurentUser } from "~/MainRoutes";
-const Profile = ({ profileData }) => {
-    const { curentUserID } = useContext(CurentUser);
+import { useParams } from "react-router-dom";
 
-    const [profile, setProfile] = useState([]);
+const Profile = () => {
+    const { curentUserID } = useContext(CurentUser);
+    const { userId } = useParams();
+    const [profile, setProfile] = useState({});
+
+    // Lấy theme hiện tại
+    const theme = useTheme();
+
     // Fetch user profile data from API
     useEffect(() => {
-        readUser(curentUserID).then((data) => {
+        readUser(userId).then((data) => {
             if (data) {
-                // Chỉ đặt error khi có lỗi từ server, không hiển thị mật khẩu
                 setProfile(data);
             } else {
                 alert("No profile");
             }
         });
-    }, []);
+    }, [userId]);
+
     return (
         <Grid container>
             <Grid item flex={2} sx={{ overflow: "auto" }} display={{ xs: "none", md: "block" }}>
                 <Sidebar />
             </Grid>
-            <Grid item flex={5} sx={{ mt: 12, height: "100%", overflow: "auto", borderLeft: "1px solid lightgrey" }}>
+            <Grid
+                item
+                flex={5}
+                sx={{ mt: 12, height: "100%", overflow: "auto", borderLeft: `1px solid ${theme.palette.divider}` }}
+            >
                 <Box
                     component={Paper}
-                    className="mt-4"
                     sx={{
                         maxWidth: 800,
                         margin: "0 auto",
                         padding: 4,
                         borderRadius: 2,
-                        boxShadow: "0px 4px 15px rgba(0, 0, 0, 0.2)",
-                        backgroundColor: "#ffffff",
+                        boxShadow: theme.shadows[5],
+                        backgroundColor: theme.palette.background.paper,
+                        color: theme.palette.text.primary,
                     }}
                 >
                     <Grid container spacing={2} alignItems="center">
@@ -49,17 +59,24 @@ const Profile = ({ profileData }) => {
 
                         {/* Name */}
                         <Grid item xs={12} sx={{ textAlign: "center" }}>
-                            <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                            <Typography variant="h5" sx={{ fontWeight: "bold", color: theme.palette.primary.main }}>
                                 {profile?.username}
                             </Typography>
                         </Grid>
 
+                        {/* Buttons */}
+                        {curentUserID !== userId && (
+                            <>
+                                <Button variant="contained" color="secondary" sx={{ mr: 1 }}>
+                                    Add Friend
+                                </Button>
+                                <Button variant="outlined" color="primary">
+                                    Chat
+                                </Button>
+                            </>
+                        )}
+
                         {/* Other Details */}
-                        <Grid item xs={12}>
-                            <Typography variant="body1">
-                                <strong>Ngày Sinh:</strong> {profile?.dateOfBirth || ""}
-                            </Typography>
-                        </Grid>
                         <Grid item xs={12}>
                             <Typography variant="body1">
                                 <strong>Email:</strong> {profile?.email}
@@ -72,12 +89,12 @@ const Profile = ({ profileData }) => {
                         </Grid>
                         <Grid item xs={12}>
                             <Typography variant="body1">
-                                <strong>Giới Tính:</strong> {profile?.gender}
+                                <strong>Ngày Sinh:</strong> {profile?.dateOfBirth || ""}
                             </Typography>
                         </Grid>
                         <Grid item xs={12}>
                             <Typography variant="body1">
-                                <strong>Địa Chỉ:</strong> {profile?.address}
+                                <strong>Giới Tính:</strong> {profile?.gender}
                             </Typography>
                         </Grid>
                     </Grid>

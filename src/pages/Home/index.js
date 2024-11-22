@@ -63,7 +63,7 @@ const HomePage = () => {
                         <Route path="/home" element={<Newsfeed />} />
                         <Route path="/" element={<Newsfeed />} />
                         <Route path="/newsfeed" element={<Newsfeed />} />
-                        <Route path="/profile" element={<Profile />} />
+                        <Route path="/profile/:userId" element={<Profile />} />
                         <Route path="/friends" element={<FriendPage />} />
                         <Route path="/settings/editprofile" element={<EditProfile />} />
                         <Route path="/settings/deleteaccount" element={<DeleteAccountDialog />} />

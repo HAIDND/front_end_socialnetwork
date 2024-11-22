@@ -56,6 +56,7 @@ const ChatList = () => {
                 mt: 12,
                 mr: 2,
                 boxShadow: true,
+                zIndex: 10,
             }}
         >
             <Typography variant="h6" gutterBottom>
