@@ -9,6 +9,7 @@ import Register from "./pages/Register/Register";
 
 import PageNotFound from "./pages/Pagenotfound";
 import { getInfo, readUser, saveInfo } from "./services/userServices/userService";
+import SearchComponent from "./components/Layouts/Header/SearchComponent";
 const useAuthLogger = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(auth.isAuthenticated());
     useEffect(() => {
@@ -60,11 +61,12 @@ function MainRoutes() {
             >
                 <HomePage />
                 {/* <DefaultLayout /> */}
-                {/* <Routes>
+                <Routes>
                     {!auth.isAuthenticated() && <Route path="/" element={<Login />} />}
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
-                </Routes> */}
+                    <Route path="/search" exact element={<SearchComponent />} />
+                </Routes>
             </CurentUser.Provider>
         </>
     );
