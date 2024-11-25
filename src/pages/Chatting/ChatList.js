@@ -9,13 +9,16 @@ const ChatListContainer = styled(Box)(({ theme }) => ({
     position: "fixed",
     right: 0,
     top: 0,
-    width: 300,
-    height: "100vh",
-    backgroundColor: theme.palette.background.paper,
-    boxShadow: "0 0 10px rgba(0,0,0,0.2)",
+    width: 320, // Tăng chiều rộng một chút để nội dung thoải mái hơn
+    height: "90vh", // Chiều cao chiếm 90% màn hình để không bị chật
+    background: `linear-gradient(145deg, ${theme.palette.background.default}, ${theme.palette.grey[300]})`, // Hiệu ứng gradient
+    boxShadow: "0 8px 16px rgba(0,0,0,0.2)", // Shadow mềm mại
+    borderRadius: "16px 0 0 16px", // Bo góc tròn ở bên trái
     overflowY: "auto",
     zIndex: 1300,
     padding: theme.spacing(2),
+    marginTop: theme.spacing(10), // Để tránh bị che bởi header
+    marginRight: theme.spacing(2), // Khoảng cách với viền màn hình
 }));
 
 const ChatList = () => {
@@ -51,69 +54,39 @@ const ChatList = () => {
         setOpenChat(!openChat);
     };
     return (
-        <ChatListContainer
-            sx={{
-                mt: 12,
-                mr: 2,
-                boxShadow: true,
-                zIndex: 10,
-            }}
-        >
-            <Typography variant="h6" gutterBottom>
-                Chat list
+        <ChatListContainer>
+            <Typography
+                variant="h6"
+                gutterBottom
+                sx={{
+                    textAlign: "center", // Căn giữa tiêu đề
+                    fontWeight: "bold", // Tăng độ đậm
+                    color: theme => theme.palette.text.primary, // Lấy màu chữ theo theme
+                }}
+            >
+                Chat List
             </Typography>
-            <List>
+            <List
+                sx={{
+                    paddingTop: 2,
+                    "& > *:not(:last-child)": {
+                        marginBottom: 1, // Khoảng cách giữa các ListItem
+                    },
+                }}
+            >
                 {chats.map((chat, index) => (
                     <ListItem
                         key={index}
                         sx={{
-                            border: "ActiveCaption",
+                            border: "1px solid rgba(0,0,0,0.1)", // Đường viền nhẹ
+                            borderRadius: 2, // Bo góc của từng item
                             "&:hover": {
-                                backgroundColor: "blue", // Thay đổi màu khi hover
+                                backgroundColor: "#f0f2f5", // Màu nâu nhẹ giống Facebook
+                                cursor: "pointer", // Thêm hiệu ứng con trỏ
                             },
                         }}
                         alignItems="flex-start"
-                        onClick={() => {
-                            handleOpenChat(chat);
-                        }}
-                        onclose={handleOpenChat}
-                    >
-                        <ListItemAvatar>
-                            <Avatar alt={chat.name} src={chat.avatar} />
-                        </ListItemAvatar>
-                        <ListItemText
-                            primary={chat?.username}
-                            secondary={
-                                <Typography component="span" variant="body2" color="text.secondary" noWrap>
-                                    {chat?.email}
-                                </Typography>
-                            }
-                        />
-                        {chat.hasNewMessage && (
-                            <Badge
-                                color="error"
-                                variant="dot"
-                                sx={{
-                                    marginLeft: "auto",
-                                }}
-                            />
-                        )}
-                    </ListItem>
-                ))}
-                {listFriend.map((chat, index) => (
-                    <ListItem
-                        key={index}
-                        sx={{
-                            border: "ActiveCaption",
-                            "&:hover": {
-                                backgroundColor: "blue", // Thay đổi màu khi hover
-                            },
-                        }}
-                        alignItems="flex-start"
-                        onClick={() => {
-                            handleOpenChat(chat);
-                        }}
-                        onclose={handleOpenChat}
+                        onClick={() => handleOpenChat(chat)}
                     >
                         <ListItemAvatar>
                             <Avatar alt={chat.name} src={chat.avatar} />
@@ -140,6 +113,7 @@ const ChatList = () => {
             </List>
             {openChat && <ChatWindow friend={chatFriend} onClose={handleCloseChat} />}
         </ChatListContainer>
+
     );
 };
 
