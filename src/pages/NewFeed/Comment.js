@@ -16,69 +16,116 @@ import {
 } from "@mui/material";
 import { Settings } from "@mui/icons-material";
 
-const CommentList = ({ comments, postID, curentUserID, onAddComment, onEditComment, onDeleteComment }) => {
+import EditCommentPopup from "./updateComment";
+import { createComment, deleteComment, editComment, getPost } from "~/services/postServices/postService";
+
+export default function CommentList({ comments, postID, curentUserID, setPostList }) {
     const [newComment, setNewComment] = useState("");
     const [anchorEl, setAnchorEl] = useState(null);
     const [selectedCommentId, setSelectedCommentId] = useState(null);
+    const [open, setOpen] = useState(false);
 
-    // Handle sending a new comment
-    const handleSendComment = async () => {
-        if (newComment.trim()) {
-            await onAddComment(newComment); // Add comment
-            setNewComment("");
-        }
-    };
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
 
-    // Open settings menu for a comment
     const handleMenuOpen = (event, commentId) => {
         setAnchorEl(event.currentTarget);
         setSelectedCommentId(commentId);
     };
 
-    // Close settings menu
     const handleMenuClose = () => {
         setAnchorEl(null);
         setSelectedCommentId(null);
     };
 
-    // Handle comment edit action
-    const handleEditComment = async () => {
-        await onEditComment(postID, selectedCommentId); // Edit comment
-        handleMenuClose();
+    const handleSendComment = () => {
+        if (newComment.trim()) {
+            handleAddComment(postID, newComment);
+            setNewComment("");
+        }
+    };
+    const handleAddComment = async (postID, newComment) => {
+        try {
+            const data = await createComment({ postID, comment: newComment });
+            setPostList((prevList) =>
+                prevList.map((post) => (post._id === postID ? { ...post, comments: data.comments } : post)),
+            );
+            const updatedData = await getPost(curentUserID);
+            setPostList(updatedData);
+        } catch (error) {
+            console.error("Lỗi khi thêm comment:", error);
+        }
+    };
+    ///handle dele update
+    const handleDeleteComment = async (postID, commentId) => {
+        try {
+            // Assuming deleteComment is a function in your service that handles comment deletion.
+            const data = await deleteComment(postID, commentId);
+            if (!data.error) {
+                // setPostList((prevList) =>
+                //     prevList.map((post) =>
+                //         post._id === postID
+                //             ? { ...post, comments: post.comments.filter((comment) => comment._id !== commentId) }
+                //             : post,
+                //     ),
+                // );
+                const updatedData = await getPost(curentUserID);
+                setPostList(updatedData);
+            } else {
+                console.error("Error deleting comment:", data.message);
+            }
+        } catch (error) {
+            console.error("Error deleting comment:", error);
+        }
     };
 
-    // Handle comment delete action
-    const handleDeleteComment = async () => {
-        await onDeleteComment(postID, selectedCommentId); // Delete comment
-        handleMenuClose();
+    const handleEditComment = async (commentId, postID, updatedComment) => {
+        try {
+            // Assuming editComment is a function in your service that handles comment update.
+            const data = await editComment({ commentId: commentId, postId: postID, comment: updatedComment });
+            if (!data.error) {
+                const updatedData = await getPost(curentUserID);
+                setPostList(updatedData);
+            } else {
+                console.error("Error editing comment:", data.message);
+            }
+        } catch (error) {
+            console.error("Error editing comment:", error);
+        }
     };
-
     return (
-        <Paper elevation={3} sx={{ padding: 2, bgcolor: "background.default" }}>
-            <Typography variant="h6" sx={{ mb: 2 }}>
+        <Paper elevation={3} sx={{ padding: 2, bgcolor: "background.paper" }}>
+            <Typography variant="h6" sx={{ mb: 1 }}>
                 Comments
             </Typography>
-
-            <Box sx={{ maxHeight: 150, overflowY: "auto", borderRadius: 1, bgcolor: "background.paper" }}>
+            <Box sx={{ maxHeight: 150, overflowY: "auto", borderRadius: 1, padding: 1, bgcolor: "#33333" }}>
                 <List>
                     {comments.length > 0 ? (
                         comments.map((comment) => (
                             <React.Fragment key={comment._id}>
                                 <ListItem alignItems="flex-start">
-                                    <Avatar src={comment?.userId?.avatar} sx={{ mr: 2 }} />
+                                    <Avatar src={comment?.userId?.avatar} sx={{ mr: 1 }} />
                                     <ListItemText
-                                        primary={<Typography variant="body1">{comment?.userId?.username}</Typography>}
+                                        primary={
+                                            <Typography component="span" variant="body1" fontWeight="bold">
+                                                {comment?.userId?.username}
+                                            </Typography>
+                                        }
                                         secondary={
                                             <>
-                                                <Typography variant="caption" color="text.secondary">
-                                                    {comment?.createdAt}
+                                                <Typography
+                                                    variant="caption"
+                                                    color="text.secondary"
+                                                    sx={{ display: "block", fontSize: "0.65rem" }}
+                                                >
+                                                    comment {comment?.createdAt}
                                                 </Typography>
                                                 <Typography variant="body2">{comment?.comment}</Typography>
                                             </>
                                         }
                                     />
                                     {comment?.userId?._id === curentUserID && (
-                                        <Box sx={{ ml: "auto" }}>
+                                        <Box sx={{ marginLeft: "auto" }}>
                                             <IconButton
                                                 size="small"
                                                 onClick={(event) => handleMenuOpen(event, comment._id)}
@@ -93,12 +140,33 @@ const CommentList = ({ comments, postID, curentUserID, onAddComment, onEditComme
                                     anchorEl={anchorEl}
                                     open={Boolean(anchorEl) && selectedCommentId === comment._id}
                                     onClose={handleMenuClose}
-                                    anchorOrigin={{ vertical: "top", horizontal: "right" }}
-                                    transformOrigin={{ vertical: "top", horizontal: "right" }}
                                 >
-                                    <MenuItem onClick={handleEditComment}>Update</MenuItem>
-                                    <MenuItem onClick={handleDeleteComment}>Delete</MenuItem>
+                                    <MenuItem
+                                        onClick={() => {
+                                            handleMenuClose();
+                                            handleOpen();
+                                        }}
+                                    >
+                                        Update
+                                    </MenuItem>
+                                    <MenuItem
+                                        onClick={() => {
+                                            handleDeleteComment(postID, selectedCommentId);
+                                            handleMenuClose();
+                                        }}
+                                    >
+                                        Delete
+                                    </MenuItem>
                                 </Menu>
+                                {open && (
+                                    <EditCommentPopup
+                                        open={open}
+                                        onClose={handleClose}
+                                        commentold={comment?.comment}
+                                        postID={postID}
+                                        commentId={comment._id}
+                                    />
+                                )}
                             </React.Fragment>
                         ))
                     ) : (
@@ -108,8 +176,7 @@ const CommentList = ({ comments, postID, curentUserID, onAddComment, onEditComme
                     )}
                 </List>
             </Box>
-
-            <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
+            <Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
                 <TextField
                     fullWidth
                     size="small"
@@ -124,6 +191,4 @@ const CommentList = ({ comments, postID, curentUserID, onAddComment, onEditComme
             </Box>
         </Paper>
     );
-};
-
-export default CommentList;
+}

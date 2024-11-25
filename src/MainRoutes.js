@@ -1,4 +1,3 @@
-import GlobalStyles from "~/components/GlobalStyles";
 import { Route, Routes } from "react-router-dom";
 import { useState, useEffect, createContext } from "react";
 
@@ -54,7 +53,7 @@ function MainRoutes() {
 
     ///theme
     const [themeColor, setThemeColor] = useState(localStorage.getItem("themeColor") || "#2196f3");
-    const [themeSecondary, setThemeSecondary] = useState(localStorage.getItem("themeSecondary"));
+    const [themeSecondary, setThemeSecondary] = useState(localStorage.getItem("themeSecondary") || "#FFB347");
     const [darkMode, setDarkMode] = useState(localStorage.getItem("darkMode") === "true");
     const theme = createTheme({
         palette: {

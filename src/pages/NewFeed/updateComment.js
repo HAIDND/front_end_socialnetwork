@@ -95,18 +95,20 @@
 
 import React, { useState } from "react";
 import { Dialog, DialogActions, DialogContent, DialogTitle, TextField, Button, Typography } from "@mui/material";
-import { editComment } from "~/services/postServices/postService";
+import { editComment, getPost } from "~/services/postServices/postService";
 import NewPost from "../post/NewPost";
 
-const EditCommentPopup = ({ open, onClose, commentold, postID, commentId }) => {
-    const [newComment, setNewComment] = useState(commentold.comment);
+const EditCommentPopup = ({ open, onClose, commentold, postID, commentId, setPostList }) => {
+    const [newComment, setNewComment] = useState(commentold);
 
     const handleCommentChange = (event) => {
         setNewComment(event.target.value);
     };
 
-    const handleSendClick = () => {
-        editComment({ postId: postID, comment: newComment, commentId: commentId });
+    const handleSendClick = async () => {
+        await editComment({ postId: postID, comment: newComment, commentId: commentId });
+        const updatedData = await getPost();
+        setPostList(updatedData);
         onClose(); // Đóng popup sau khi gửi bình luận
     };
 

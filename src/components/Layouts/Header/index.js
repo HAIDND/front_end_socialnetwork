@@ -35,6 +35,9 @@ const NavHeader = () => {
     useEffect(() => {
         if (isLogout) {
             logout();
+            localStorage.removeItem("darkMode");
+            localStorage.removeItem("themeColor");
+            localStorage.removeItem("themeSecondary");
             navigate("/login");
         }
     }, [isLogout, navigate]);

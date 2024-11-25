@@ -5,12 +5,14 @@ import Sidebar from "~/components/Layouts/Sidebar";
 import { getInfo, readUser, saveInfo } from "~/services/userServices/userService";
 import { CurentUser } from "~/MainRoutes";
 import { useParams } from "react-router-dom";
+import { addFriendAPI, getListFriend, removeFriend } from "~/services/friendServices/friendService";
+import ChatWindow from "../Chatting/ChatWindow";
 
 const Profile = () => {
     const { curentUserID } = useContext(CurentUser);
     const { userId } = useParams();
     const [profile, setProfile] = useState({});
-
+    const [listFriend, setListFriend] = useState([]);
     // Lấy theme hiện tại
     const theme = useTheme();
 
@@ -23,18 +25,51 @@ const Profile = () => {
                 alert("No profile");
             }
         });
+        getListFriend().then((data) => {
+            if (data) {
+                setListFriend(data);
+                console.log(data);
+            } else {
+                alert("No list friend");
+            }
+        });
     }, [userId]);
+    //add un friend
+    const handleAddFriend = async () => {
+        try {
+            addFriendAPI(userId).then((response) => {
+                if (response) {
+                    alert(response.message);
+                }
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    const handleDeleteFriend = async () => {
+        try {
+            const response = await removeFriend(userId).then((data) => {
+                alert(data?.message);
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    //chat windows
+    const [openChat, setOpenChat] = useState(false);
+    const handleOpenChat = () => {
+        setOpenChat(true);
+    };
+    const handleCloseChat = () => {
+        setOpenChat(false);
+    };
 
     return (
         <Grid container>
             <Grid item flex={2} sx={{ overflow: "auto" }} display={{ xs: "none", md: "block" }}>
                 <Sidebar />
             </Grid>
-            <Grid
-                item
-                flex={5}
-                sx={{ mt: 12, height: "100%", overflow: "auto", borderLeft: `1px solid ${theme.palette.divider}` }}
-            >
+            <Grid item flex={8} sx={{ mt: 12, height: "100%", overflow: "auto" }}>
                 <Box
                     component={Paper}
                     sx={{
@@ -67,12 +102,30 @@ const Profile = () => {
                         {/* Buttons */}
                         {curentUserID !== userId && (
                             <>
-                                <Button variant="contained" color="secondary" sx={{ mr: 1 }}>
-                                    Add Friend
-                                </Button>
-                                <Button variant="outlined" color="primary">
+                                {listFriend.some((friend) => friend?._id === userId) ? (
+                                    <Button
+                                        variant="contained"
+                                        color="secondary"
+                                        sx={{ mr: 1 }}
+                                        onClick={handleDeleteFriend}
+                                    >
+                                        Unfriend
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        sx={{ mr: 1 }}
+                                        onClick={handleAddFriend}
+                                    >
+                                        Addfriend
+                                    </Button>
+                                )}
+
+                                <Button variant="outlined" color="primary" onClick={handleOpenChat}>
                                     Chat
                                 </Button>
+                                {openChat && <ChatWindow onClose={handleCloseChat} friend={profile} />}
                             </>
                         )}
 

@@ -20,7 +20,7 @@ const ThemeSettings = ({ themeColor, setThemeColor, darkMode, setDarkMode, theme
         setThemeColor(event.target.value);
         switch (event.target.value) {
             case "#f44336": //red
-                setThemeSecondary("#ffffff");
+                setThemeSecondary("#f3f3f3");
                 break;
             case "#4caf50": // green
                 setThemeSecondary("#FFCC00");

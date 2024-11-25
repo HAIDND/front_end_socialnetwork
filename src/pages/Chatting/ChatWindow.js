@@ -300,24 +300,6 @@ const ChatWindow = ({ onClose, friend }) => {
 
     const [chats, setChats] = useState([]); // Khởi tạo là mảng rỗng
 
-    // useEffect(() => {
-    //     const fetchChatList = async () => {
-    //         try {
-    //             const data = await getChatWithUser();
-    //             if (Array.isArray(data)) {
-    //                 setChats(data);
-    //             } else {
-    //                 console.error("Dữ liệu không phải là mảng:", data);
-    //                 setChats([{ name: "duy" }]); // Đặt lại là mảng rỗng nếu dữ liệu không hợp lệ
-    //             }
-    //         } catch (error) {
-    //             console.error("Lỗi khi lấy danh sách chat:", error);
-    //         }
-    //     };
-
-    //     fetchChatList();
-    // }, []);
-
     const handleSendMessage = async () => {
         if (newMessage.trim() === "") return;
 
@@ -327,6 +309,7 @@ const ChatWindow = ({ onClose, friend }) => {
         };
         try {
             const response = await sendMessage(friend?._id, newMessage);
+
             setMessages(...message, response.content);
         } catch {
             alert("error");
@@ -356,6 +339,7 @@ const ChatWindow = ({ onClose, friend }) => {
             component={Paper}
             elevation={5}
             sx={{
+                bgcolor: "background.paper",
                 position: "fixed",
                 right: 350,
                 bottom: 50,
@@ -397,7 +381,6 @@ const ChatWindow = ({ onClose, friend }) => {
                     flex: 1,
                     overflowY: "auto",
                     padding: 2,
-                    bgcolor: "#f9f9f9",
                 }}
             >
                 {chats.map((message, index) => (
@@ -439,7 +422,6 @@ const ChatWindow = ({ onClose, friend }) => {
                     alignItems: "center",
                     padding: 1,
                     borderTop: "1px solid #ddd",
-                    bgcolor: "#fff",
                 }}
             >
                 <TextField
@@ -450,6 +432,7 @@ const ChatWindow = ({ onClose, friend }) => {
                     onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
                     size="small"
                     variant="outlined"
+                    content="secondary"
                     sx={{ marginRight: 1 }}
                 />
                 <Button

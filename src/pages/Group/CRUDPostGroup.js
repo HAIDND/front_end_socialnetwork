@@ -280,10 +280,7 @@ const CommentList = ({ comments, postID, curentUserID, onAddComment, onEditComme
                             <React.Fragment key={comment._id}>
                                 <ListItem alignItems="flex-start">
                                     <Avatar src={comment?.userId?.avatar} sx={{ mr: 1 }} />
-                                    {/* <ListItemText
-                                        primary={`${comment?.userId?.username}: ${comment?.createdAt}`}
-                                        secondary={comment?.comment}
-                                    /> */}
+
                                     <ListItemText
                                         primary={
                                             <Typography component="span" variant="body1" fontWeight="bold">

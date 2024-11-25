@@ -19,8 +19,6 @@ import {
 } from "@mui/material";
 import { Favorite, Comment } from "@mui/icons-material";
 
-import styles from "./Post.module.scss";
-import clsx from "clsx";
 import { CurentUser } from "~/MainRoutes";
 import { getPost, likePost } from "~/services/postServices/postService";
 

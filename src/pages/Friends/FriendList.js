@@ -3,9 +3,18 @@ import { Box, Typography, Button, Avatar, Grid } from "@mui/material";
 
 import Sidebar from "~/components/Layouts/Sidebar";
 import { CurentUser } from "~/MainRoutes";
-import { getListFriend } from "~/services/friendServices/friendService";
+import { getListFriend, removeFriend } from "~/services/friendServices/friendService";
 
 const FriendRequestCard = ({ request, onDelete }) => {
+    const handleDeleteFriend = async (userId) => {
+        try {
+            const response = await removeFriend(userId).then((data) => {
+                alert(data?.message);
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    };
     return (
         <Box
             sx={{
@@ -38,7 +47,7 @@ const FriendRequestCard = ({ request, onDelete }) => {
                 <Button
                     variant="outlined"
                     color="secondary"
-                    onClick={() => onDelete(request.id)}
+                    onClick={() => handleDeleteFriend(request?._id)}
                     sx={{ textTransform: "none" }}
                 >
                     Delete
@@ -93,6 +102,7 @@ const FriendList = () => {
             console.log(error);
         }
     }, []);
+
     return (
         <Grid container>
             {/* {data.lenght ? (
