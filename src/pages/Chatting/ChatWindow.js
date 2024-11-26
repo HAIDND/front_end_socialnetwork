@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useContext } from "react";
 import { Box, Avatar, Typography, IconButton, TextField, Button, Paper } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
@@ -76,7 +75,11 @@ const ChatWindow = ({ onClose, friend }) => {
                         <Typography variant="h6" sx={{ fontWeight: "bold", color: "#333" }}>
                             {friend?.username}
                         </Typography>
-                        <Typography variant="body2" color="textSecondary" sx={{ display: "flex", alignItems: "center", fontSize: "0.875rem" }}>
+                        <Typography
+                            variant="body2"
+                            color="textSecondary"
+                            sx={{ display: "flex", alignItems: "center", fontSize: "0.875rem" }}
+                        >
                             <Box
                                 sx={{
                                     width: 8,
@@ -87,9 +90,10 @@ const ChatWindow = ({ onClose, friend }) => {
                                 }}
                             />
                             Active now
-                        <Typography variant="h6">{friend?.username}</Typography>
-                        <Typography variant="body2" color="textSecondary">
-                            <span className="status-dot" /> {messages?.content}
+                            <Typography variant="h6">{friend?.username}</Typography>
+                            <Typography variant="body2" color="textSecondary">
+                                <span className="status-dot" /> {messages?.content}
+                            </Typography>
                         </Typography>
                     </Box>
                 </Box>
@@ -145,7 +149,6 @@ const ChatWindow = ({ onClose, friend }) => {
                                 {message?.createdAt}
                             </Typography>
                         </Box>
-
                     </Box>
                 ))}
             </Box>
