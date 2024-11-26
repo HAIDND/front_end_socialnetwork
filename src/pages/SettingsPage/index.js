@@ -99,6 +99,7 @@
 import { Link } from "react-router-dom";
 import { Grid, Box, Typography, Card, CardContent, CardActionArea } from "@mui/material";
 import Sidebar from "~/components/Layouts/Sidebar";
+import CustomDialog from "../CustomDialog";
 
 function SettingsPage() {
     // Danh sách các tùy chọn cài đặt

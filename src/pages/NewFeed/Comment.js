@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import { Settings } from "@mui/icons-material";
 
-import EditCommentPopup from "./updateComment";
+import EditCommentPopup from "~/pages/NewFeed/EditCommentPopup";
 import { createComment, deleteComment, editComment, getPost } from "~/services/postServices/postService";
 
 export default function CommentList({ comments, postID, curentUserID, setPostList }) {
@@ -25,7 +25,10 @@ export default function CommentList({ comments, postID, curentUserID, setPostLis
     const [selectedCommentId, setSelectedCommentId] = useState(null);
     const [open, setOpen] = useState(false);
 
-    const handleOpen = () => setOpen(true);
+    const handleOpen = async (id) => {
+        await setSelectedCommentId(id);
+        setOpen(true);
+    };
     const handleClose = () => setOpen(false);
 
     const handleMenuOpen = (event, commentId) => {
@@ -46,7 +49,7 @@ export default function CommentList({ comments, postID, curentUserID, setPostLis
     };
     const handleAddComment = async (postID, newComment) => {
         try {
-            const data = await createComment({ postID, comment: newComment });
+            const data = await createComment({ postId: postID, comment: newComment });
             setPostList((prevList) =>
                 prevList.map((post) => (post._id === postID ? { ...post, comments: data.comments } : post)),
             );
@@ -143,12 +146,23 @@ export default function CommentList({ comments, postID, curentUserID, setPostLis
                                 >
                                     <MenuItem
                                         onClick={() => {
-                                            handleMenuClose();
-                                            handleOpen();
+                                            // handleMenuClose();
+                                            handleOpen(selectedCommentId);
+                                            // handleMenuClose();
                                         }}
                                     >
                                         Update
-                                    </MenuItem>
+                                    </MenuItem>{" "}
+                                    {open && (
+                                        <EditCommentPopup
+                                            open={open}
+                                            onClose={handleClose}
+                                            commentold={comment?.comment}
+                                            postID={postID}
+                                            commentId={selectedCommentId}
+                                            setPostList={setPostList}
+                                        />
+                                    )}
                                     <MenuItem
                                         onClick={() => {
                                             handleDeleteComment(postID, selectedCommentId);
@@ -158,15 +172,6 @@ export default function CommentList({ comments, postID, curentUserID, setPostLis
                                         Delete
                                     </MenuItem>
                                 </Menu>
-                                {open && (
-                                    <EditCommentPopup
-                                        open={open}
-                                        onClose={handleClose}
-                                        commentold={comment?.comment}
-                                        postID={postID}
-                                        commentId={comment._id}
-                                    />
-                                )}
                             </React.Fragment>
                         ))
                     ) : (

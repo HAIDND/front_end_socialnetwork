@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Dialog, DialogActions, DialogContent, DialogTitle, TextField, Button, Typography, Input } from "@mui/material";
-import { updatePost } from "~/services/postServices/postService"; // Make sure updatePost is defined
+import { getPost, updatePost } from "~/services/postServices/postService"; // Make sure updatePost is defined
 
-const EditPostDialog = ({ open, onClose, postContent, postImage, postId }) => {
+const EditPostDialog = ({ open, onClose, postContent, postImage, postId, setPostList }) => {
     const [content, setContent] = useState(postContent);
     const [image, setImage] = useState(postImage);
     const [selectedImage, setSelectedImage] = useState(null);
@@ -31,7 +31,9 @@ const EditPostDialog = ({ open, onClose, postContent, postImage, postId }) => {
 
     const handleCompleteClick = async () => {
         // Only update the post if the image is changed
-        await updatePost(postId, content, image || selectedImage); // Send either the selected image or existing image if no new one
+        await updatePost(postId, content, image || selectedImage);
+        const update = await getPost();
+        setPostList(update); // Send either the selected image or existing image if no new one
         onClose(); // Close dialog after update
     };
 

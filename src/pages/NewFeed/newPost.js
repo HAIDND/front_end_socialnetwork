@@ -18,16 +18,29 @@ import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { CurentUser } from "~/MainRoutes";
 import { createPost } from "~/services/postServices/postService"; // Import the createPost function
+import CustomDialog from "../CustomDialog";
 
-const NewPost = ({ addUpdate }) => {
+import ClearIcon from "@mui/icons-material/Clear";
+
+const NewPost = () => {
     const { curentUserProfile } = useContext(CurentUser);
     const theme = useTheme(); // Using MUI theme
     const [postContent, setPostContent] = useState("");
+    const [image, setImage] = useState(null);
     const [selectedImage, setSelectedImage] = useState(null);
     const [selectedVideo, setSelectedVideo] = useState(null);
-    const [isvisibility, setisvisibility] = useState();
+    const [isvisibility, setisvisibility] = useState("public");
     const [isToggleOpen, setIsToggleOpen] = useState(false);
 
+    //open dialog
+    const [openDialog, setOpenDialog] = useState(false);
+    const dataDialog = {
+        link: "/home",
+        content: "Create post success",
+    };
+    const handleCloseDialog = () => {
+        setOpenDialog(false);
+    };
     // Handle file change for images or videos
     const handleFileChange = (event) => {
         const file = event.target.files[0];
@@ -36,6 +49,7 @@ const NewPost = ({ addUpdate }) => {
             const isVideo = file.type.startsWith("video/");
             if (isImage) {
                 setSelectedImage(URL.createObjectURL(file)); // Create a preview for the image
+                setImage(file);
             }
             if (isVideo) {
                 setSelectedVideo(URL.createObjectURL(file)); // Create a preview for the video
@@ -57,25 +71,31 @@ const NewPost = ({ addUpdate }) => {
 
     // Handle post submission
     const handleSubmit = async () => {
-        if (postContent.trim() || selectedImage || selectedVideo) {
+        if (postContent.trim() || image || selectedVideo) {
             const visibility = isvisibility;
-            const response = await createPost(postContent, selectedImage, selectedVideo, visibility);
+            const response = await createPost(postContent, image, selectedVideo, visibility).then((data) => {
+                dataDialog.content = "Create post success!";
+                if (data) {
+                    setPostContent("");
+                    setSelectedImage(null);
+                    setSelectedVideo(null);
 
-            if (response?.success) {
-                addUpdate(response.data);
-                setPostContent("");
-                setSelectedImage(null);
-                setSelectedVideo(null);
-            } else {
-                console.error("Failed to create post:", response?.error);
-            }
+                    setOpenDialog(true);
+                } else {
+                    console.error("Failed to create post:", data);
+                }
+            });
         }
     };
 
     const handleClose = () => {
         setIsToggleOpen(false);
     };
-
+    const handleRemoveMedia = () => {
+        setSelectedImage(null);
+        setSelectedVideo(null);
+        setImage(null);
+    };
     return (
         <Box
             sx={{
@@ -140,10 +160,25 @@ const NewPost = ({ addUpdate }) => {
                     </Box>
                 </Drawer>
             </Box>
-
+            {openDialog && <CustomDialog open={openDialog} onClose={handleCloseDialog} data={dataDialog} />}
+            {/* Display preview for selected image */}
             {/* Display preview for selected image */}
             {selectedImage && (
-                <Box sx={{ mt: 2 }}>
+                <Box sx={{ mt: 2, position: "relative" }}>
+                    <IconButton
+                        onClick={handleRemoveMedia}
+                        sx={{
+                            position: "absolute",
+                            right: 8,
+                            top: 8,
+                            backgroundColor: "rgba(0, 0, 0, 0.5)",
+                            "&:hover": {
+                                backgroundColor: "rgba(0, 0, 0, 0.7)",
+                            },
+                        }}
+                    >
+                        <ClearIcon sx={{ color: "white" }} />
+                    </IconButton>
                     <img
                         src={selectedImage}
                         alt="Selected"
@@ -154,7 +189,21 @@ const NewPost = ({ addUpdate }) => {
 
             {/* Display preview for selected video */}
             {selectedVideo && (
-                <Box sx={{ mt: 2 }}>
+                <Box sx={{ mt: 2, position: "relative" }}>
+                    <IconButton
+                        onClick={handleRemoveMedia}
+                        sx={{
+                            position: "absolute",
+                            right: 8,
+                            top: 8,
+                            backgroundColor: "rgba(0, 0, 0, 0.5)",
+                            "&:hover": {
+                                backgroundColor: "rgba(0, 0, 0, 0.7)",
+                            },
+                        }}
+                    >
+                        <ClearIcon sx={{ color: "white" }} />
+                    </IconButton>
                     <video
                         src={selectedVideo}
                         controls

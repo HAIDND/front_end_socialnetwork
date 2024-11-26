@@ -43,7 +43,7 @@ export default function Post() {
     useEffect(() => {
         (async () => {
             try {
-                const data = await getPost(curentUserID);
+                const data = await getPost();
                 setPostList(data);
             } catch (error) {
                 console.error("Lỗi khi lấy danh sách bài post:", error);
@@ -123,6 +123,7 @@ export default function Post() {
                             postId={selectedPostId}
                             postContent={selectedPostContent}
                             postImage={selectedPostImage}
+                            setPostList={setPostList}
                         />
                     )}
                     <Divider />
@@ -153,172 +154,18 @@ export default function Post() {
                             setPostList={setPostList}
                         />
                     )}
-
-                    <Menu
-                        anchorEl={anchorEl}
-                        open={Boolean(anchorEl)}
-                        onClose={handleMenuClose}
-                        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-                        transformOrigin={{ vertical: "top", horizontal: "right" }}
-                    >
-                        <MenuItem onClick={() => setOpen(true)}>Update</MenuItem>
-                        <MenuItem onClick={() => console.log("Delete Post")}>Delete</MenuItem>
-                    </Menu>
                 </Card>
-            ))}
+            ))}{" "}
+            <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleMenuClose}
+                anchorOrigin={{ vertical: "top", horizontal: "right" }}
+                transformOrigin={{ vertical: "top", horizontal: "right" }}
+            >
+                <MenuItem onClick={() => setOpen(true)}>Update</MenuItem>
+                {/* <MenuItem onClick={() => console.log("Delete Post")}>Delete</MenuItem> */}
+            </Menu>
         </>
     );
 }
-
-// const CommentList = ({ comments, postID, curentUserID, onAddComment, onEditComment, onDeleteComment }) => {
-//     const [newComment, setNewComment] = useState("");
-//     const [anchorEl, setAnchorEl] = useState(null);
-//     const [selectedCommentId, setSelectedCommentId] = useState(null);
-//     const [open, setOpen] = useState(false);
-//     const handleOpen = () => {
-//         setOpen(true);
-//     };
-
-//     const handleClose = () => {
-//         setOpen(false);
-//     };
-
-//     // Xử lý mở Menu chỉnh sửa/xóa
-//     const handleMenuOpen = (event, commentId) => {
-//         setAnchorEl(event.currentTarget);
-//         setSelectedCommentId(commentId);
-//     };
-
-//     // Đóng Menu
-//     const handleMenuClose = () => {
-//         setAnchorEl(null);
-//         setSelectedCommentId(null);
-//     };
-
-//     // Xử lý gửi comment mới
-//     const handleSendComment = () => {
-//         if (newComment.trim()) {
-//             onAddComment(newComment);
-//             setNewComment("");
-//         }
-//     };
-//     console.log(comments);
-
-//     return (
-//         <Paper elevation={3} sx={{ padding: 2, bgcolor: "#d7e1e2" }}>
-//             <Typography variant="h6" sx={{ mb: 1 }}>
-//                 Comments
-//             </Typography>
-
-//             {/* Hiển thị danh sách comment */}
-//             <Box sx={{ maxHeight: 150, overflowY: "auto", borderRadius: 1, padding: 1, bgcolor: "#d7d7ee" }}>
-//                 <List>
-//                     {comments.length > 0 ? (
-//                         comments.map((comment) => (
-//                             <React.Fragment key={comment._id}>
-//                                 <ListItem alignItems="flex-start">
-//                                     <Avatar src={comment?.userId?.avatar} sx={{ mr: 1 }} />
-//                                     {/* <ListItemText
-//                                         primary={`${comment?.userId?.username}: ${comment?.createdAt}`}
-//                                         secondary={comment?.comment}
-//                                     /> */}
-//                                     <ListItemText
-//                                         primary={
-//                                             <Typography component="span" variant="body1" fontWeight="bold">
-//                                                 {comment?.userId?.username}
-//                                             </Typography>
-//                                         }
-//                                         secondary={
-//                                             <>
-//                                                 <Typography
-//                                                     component="span"
-//                                                     variant="caption"
-//                                                     color="text.secondary"
-//                                                     sx={{ display: "block", fontSize: "0.65rem" }}
-//                                                 >
-//                                                     comment {comment?.createdAt}
-//                                                 </Typography>
-//                                                 <Typography variant="body2">{comment?.comment}</Typography>
-//                                             </>
-//                                         }
-//                                     />
-
-//                                     {/* Kiểm tra nếu user đang đăng nhập là người tạo comment thì hiển thị nút chỉnh sửa */}
-//                                     {comment?.userId?._id === curentUserID && (
-//                                         <Box sx={{ marginLeft: "auto" }}>
-//                                             <IconButton
-//                                                 size="small"
-//                                                 onClick={(event) => handleMenuOpen(event, comment._id)}
-//                                             >
-//                                                 <Settings />
-//                                             </IconButton>
-//                                         </Box>
-//                                     )}
-//                                 </ListItem>
-//                                 <Divider />
-
-//                                 {/* Menu chỉnh sửa hoặc xóa comment */}
-//                                 <Menu
-//                                     anchorEl={anchorEl}
-//                                     open={Boolean(anchorEl) && selectedCommentId === comment._id}
-//                                     onClose={handleMenuClose}
-//                                     anchorOrigin={{ vertical: "top", horizontal: "right" }}
-//                                     transformOrigin={{ vertical: "top", horizontal: "right" }}
-//                                 >
-//                                     <MenuItem
-//                                         onClick={() => {
-//                                             onEditComment(postID, selectedCommentId);
-//                                             handleMenuClose();
-//                                             handleOpen();
-//                                         }}
-//                                     >
-//                                         Update
-//                                     </MenuItem>
-//                                     <MenuItem
-//                                         onClick={() => {
-//                                             onDeleteComment(postID, selectedCommentId);
-//                                             handleMenuClose();
-//                                         }}
-//                                     >
-//                                         Delete
-//                                     </MenuItem>
-//                                 </Menu>
-//                                 {open && (
-//                                     <>
-//                                         <EditCommentDrawer
-//                                             open={open}
-//                                             onClose={handleClose}
-//                                             commentold={comment?.comment}
-//                                             postID={postID}
-//                                             commentId={comment._id}
-//                                         />
-//                                         {/* <EditPostDialog open={open} postId /> */}
-//                                     </>
-//                                 )}
-//                             </React.Fragment>
-//                         ))
-//                     ) : (
-//                         <Typography variant="body2" color="text.secondary" sx={{ textAlign: "center" }}>
-//                             No comments yet.
-//                         </Typography>
-//                     )}
-//                 </List>
-//             </Box>
-
-//             {/* Form thêm comment mới */}
-//             <Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
-//                 <TextField
-//                     fullWidth
-//                     size="small"
-//                     placeholder="Write a comment..."
-//                     value={newComment}
-//                     onChange={(e) => setNewComment(e.target.value)}
-//                     sx={{ mr: 1 }}
-//                 />
-//                 <Button variant="contained" onClick={handleSendComment}>
-//                     Send
-//                 </Button>
-//             </Box>
-//         </Paper>
-//     );
-// };

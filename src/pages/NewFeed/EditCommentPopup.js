@@ -96,7 +96,6 @@
 import React, { useState } from "react";
 import { Dialog, DialogActions, DialogContent, DialogTitle, TextField, Button, Typography } from "@mui/material";
 import { editComment, getPost } from "~/services/postServices/postService";
-import NewPost from "../post/NewPost";
 
 const EditCommentPopup = ({ open, onClose, commentold, postID, commentId, setPostList }) => {
     const [newComment, setNewComment] = useState(commentold);

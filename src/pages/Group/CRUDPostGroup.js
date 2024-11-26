@@ -33,7 +33,7 @@ import {
 
 import { getPostInGroup } from "~/services/groupServices/groupService";
 import EditPostDialog from "~/pages/NewFeed/updatePost";
-import EditCommentDrawer from "~/pages/NewFeed/updateComment";
+import EditCommentDrawer from "~/pages/NewFeed/EditCommentPopup";
 export const PostInGroup = ({ groupID }) => {
     const [showComments, setShowComments] = useState({});
     const [postList, setPostList] = useState([]);

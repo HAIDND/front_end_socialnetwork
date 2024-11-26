@@ -290,50 +290,31 @@ import { CurentUser } from "~/MainRoutes";
 const ChatWindow = ({ onClose, friend }) => {
     //id user
     const { curentUserID } = useContext(CurentUser);
-    const [messages, setMessages] = useState([]);
-    const [newMessage, setNewMessage] = useState("");
-
-    useEffect(() => {
-        setNewMessage();
-        return () => setMessages([]); // Cleanup on unmount
-    }, []);
-
-    const [chats, setChats] = useState([]); // Khởi tạo là mảng rỗng
-
-    const handleSendMessage = async () => {
-        if (newMessage.trim() === "") return;
-
-        const message = {
-            receiverId: friend?._id,
-            content: newMessage,
-        };
-        try {
-            const response = await sendMessage(friend?._id, newMessage);
-
-            setMessages(...message, response.content);
-        } catch {
-            alert("error");
-        }
-        setMessages([...messages, message]);
-        setNewMessage("");
-    };
+    const [messages, setMessages] = useState([]); // old mess
+    const [newMessage, setNewMessage] = useState(""); //new mess
     ///call lít chat
     // const [chats, setChats] = useState([]); // Khởi tạo mảng rỗng
-    const userId = "672ebaf8c63b15d5410fe80d"; // ID người dùng mẫu
 
     useEffect(() => {
         const fetchChatList = async () => {
             try {
                 const data = await getChatWithUser(friend?._id);
-                console.log("window chat " + data);
-                setChats(data); // Cập nhật mảng chats với dữ liệu từ API
+                setMessages(data); // Cập nhật mảng chats với dữ liệu từ API
             } catch (error) {
                 console.error("Failed to fetch chats:", error);
             }
+            return () => setMessages([]);
         };
 
         fetchChatList();
-    }, [userId]);
+    }, [messages]);
+
+    const handleSendMessage = async () => {
+        if (newMessage.trim() === "") return;
+        const response = await sendMessage(friend?._id, newMessage);
+        setNewMessage("");
+    };
+
     return (
         <Box
             component={Paper}
@@ -366,7 +347,7 @@ const ChatWindow = ({ onClose, friend }) => {
                     <Box>
                         <Typography variant="h6">{friend?.username}</Typography>
                         <Typography variant="body2" color="textSecondary">
-                            <span className="status-dot" /> {chats?.content}
+                            <span className="status-dot" /> {messages?.content}
                         </Typography>
                     </Box>
                 </Box>
@@ -383,7 +364,7 @@ const ChatWindow = ({ onClose, friend }) => {
                     padding: 2,
                 }}
             >
-                {chats.map((message, index) => (
+                {messages.map((message, index) => (
                     <Box
                         key={index}
                         sx={{
