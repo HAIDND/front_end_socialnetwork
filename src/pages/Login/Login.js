@@ -69,37 +69,60 @@ export default function Login(props) {
     if (redirectToReferrer) {
         return <Navigate to={from} />;
     }
+    
 
     return (
-        <>
+        <Box
+            sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                minHeight: "0vh",
+                backgroundColor: "#f0f2f5",
+                padding: 2,
+            }}
+        >
+            <Box
+                sx={{
+                    textAlign: "center",
+                    mb: 4,
+                }}
+            >
+                <Typography
+                    variant="h3"
+                    sx={{
+                        color: "#1877f2",
+                        fontWeight: "bold",
+                        fontFamily: "Roboto, Helvetica, Arial, sans-serif",
+                        mb: 1,
+                    }}
+                >
+                    Social
+                </Typography>
+                <Typography variant="body1" sx={{ color: "#606770", fontSize: 18 }}>
+               giúp bạn kết nối và chia sẻ với mọi người trong cuộc sống của bạn.
+                </Typography>
+            </Box>
             <Box
                 component="form"
                 sx={{
-                    display: "flex",
-                    backgroundColor: "#ffffff",
-                    flexDirection: "column",
-                    gap: 2,
-                    width: 300,
+                    width: 400,
                     padding: 4,
                     borderRadius: 2,
-                    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-                    margin: "0 auto",
-                    mt: 10,
+                    boxShadow: "0 8px 16px rgba(0, 0, 0, 0.2)",
+                    backgroundColor: "#ffffff",
                 }}
             >
-                <Typography variant="h5" textAlign="center" fontWeight="bold" color="primary" mb={2}>
-                    Đăng nhập
-                </Typography>
                 <TextField
-                    label="Email"
+                    label="Email hoặc số điện thoại"
                     name="email"
                     type="email"
                     value={values.email}
                     onChange={handleChange("email")}
-                    // error={Boolean(values.error && values.email)}
-                    // helperText={values.error && values.email ? values.error : ''}
                     required
                     fullWidth
+                    sx={{ mb: 2 }}
                 />
                 <TextField
                     label="Mật khẩu"
@@ -107,29 +130,32 @@ export default function Login(props) {
                     type="password"
                     value={values.password}
                     onChange={handleChange("password")}
-                    // error={Boolean(values.error && !values.email)}
-                    // helperText={values.error && !values.email ? values.error : ''}
                     required
                     fullWidth
-                />{" "}
-                <br />{" "}
+                    sx={{ mb: 2 }}
+                />
                 {values.error && (
-                    <Typography component="p" color="error">
-                        {/* <Icon color="error" className={values.error}>
-                        error
-                    </Icon> */}
-                        {values.error}
-                    </Typography>
-                )}
-                <Button variant="contained" color="primary" onClick={clickSubmit} fullWidth sx={{ mt: 1.5 }}>
-                    Đăng nhập
-                </Button>
-                {values.error && (
-                    <FormHelperText error sx={{ textAlign: "center", mt: 1 }}>
+                    <FormHelperText error sx={{ textAlign: "center", mb: 2 }}>
                         {values.error}
                     </FormHelperText>
                 )}
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={clickSubmit}
+                    fullWidth
+                    sx={{
+                        backgroundColor: "#1877f2",
+                        textTransform: "none",
+                        fontSize: 18,
+                        fontWeight: "bold",
+                        ":hover": { backgroundColor: "#166fe5" },
+                    }}
+                >
+                    Đăng nhập
+                </Button>
+                
             </Box>
-        </>
+        </Box>
     );
 }
