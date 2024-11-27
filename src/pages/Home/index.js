@@ -90,24 +90,26 @@ const HomePage = () => {
                     </Routes>
                 </>
             ) : (
-                <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-end", p: 4 }}>
+                <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", p: 2 }}>
                     <Typography
-                        variant="h2"
+                        variant="h4"
                         component="h1"
                         gutterBottom
-                        sx={{ display: "flex", flexDirection: "column", alignItems: "center", paddingRight: 60 }}
+                        sx={{ textAlign: "left" }}
                     >
                         Welcome to Our Site
                     </Typography>
-                    <Box>
-                        <Button variant="contained" color="primary" onClick={handleLogin} sx={{ mr: 1 }}>
+                    <Box sx={{ display: "flex", gap: 2 }}>
+                        <Button variant="contained" color="primary" onClick={handleLogin} sx={{ px: 4 }}>
                             Đăng Nhập
                         </Button>
-                        <Button variant="outlined" color="secondary" onClick={handleRegister}>
+                        <Button variant="outlined" color="secondary" onClick={handleRegister} sx={{ px: 4 }}>
                             Đăng ký
                         </Button>
                     </Box>
                 </Box>
+
+
             )}
         </>
     );
