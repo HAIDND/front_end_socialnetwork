@@ -84,7 +84,7 @@ export default function Login(props) {
                     borderRadius: 2,
                     boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
                     margin: "0 auto",
-                    mt: 10,
+                    mt: 5,
                 }}
             >
                 <Typography variant="h5" textAlign="center" fontWeight="bold" color="primary" mb={2}>

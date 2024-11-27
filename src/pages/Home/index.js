@@ -23,13 +23,14 @@ import ListGroupAll from "../Group/ListGroupAll";
 import EditProfile from "../ProfileUsers/EditProfile";
 import DetailGroup from "../Group/DetailGroup";
 import FormEditGroup from "../Group/FormEditGroup";
+import FriendList from "../Friends/FriendList";
+import FriendRequest from "../Friends/FriendRequest";
+import FriendSend from "../Friends/ExploreFriend";
 ///context user
 
 const HomePage = () => {
     ///useContexrt tp save info user
     const { curentUser } = useContext(CurentUser);
-    console.log("curent user");
-    console.log(curentUser);
 
     const [defaultPage, setDefaultPage] = useState(false);
     const location = useLocation();
@@ -64,6 +65,10 @@ const HomePage = () => {
                         <Route path="/" element={<Newsfeed />} />
                         <Route path="/newsfeed" element={<Newsfeed />} />
                         <Route path="/profile/:userId" element={<Profile />} />
+                        {/* friends Routes          */}
+                        {/* <Route path="/friends/myfriend" element={<FriendList />} />
+                        <Route path="/friends/request" element={<FriendRequest />} />
+                        <Route path="/friends/exploreFriend" element={<FriendSend />} /> */}
                         <Route path="/friends" element={<FriendPage />} />
                         <Route path="/settings/editprofile" element={<EditProfile />} />
                         <Route path="/settings/deleteaccount" element={<DeleteAccountDialog />} />
@@ -76,8 +81,10 @@ const HomePage = () => {
                         <Route path="/groups" element={<GroupPage />} />
                         <Route path="/settings" element={<SettingsPage />} />
                         <Route path="/test" element={<Newsfeed />} />
-                        <Route path="/login" element={<Login />} />
-                        <Route path="/register" element={<Register />} />
+                        <Route path="/test" element={<Newsfeed />} />
+
+                        {/* <Route path="/login" element={<Login />} />
+                        <Route path="/register" element={<Register />} /> */}
                         {/* <Route exact path="*" element={<PageNotFound />} /> */}
                         {/* <Route
                     path="/chat"

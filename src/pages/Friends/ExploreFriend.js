@@ -53,23 +53,26 @@ const FriendRequestCard = ({ request, onAdd }) => {
 };
 
 const FriendRequestList = ({ list, handleAdd }) => {
+    const { curentUserID } = useContext(CurentUser);
     return (
         <Box sx={{ p: 3 }}>
             <Typography variant="h6" fontWeight="600" mb={2}>
                 List User
             </Typography>
             <Grid container spacing={2}>
-                {list.map((request) => (
-                    <Grid item key={request._id}>
-                        <FriendRequestCard request={request} onAdd={handleAdd} />
-                    </Grid>
-                ))}
+                {list
+                    .filter((request) => request?._id !== curentUserID)
+                    .map((request) => (
+                        <Grid item key={request._id}>
+                            <FriendRequestCard request={request} onAdd={handleAdd} />
+                        </Grid>
+                    ))}
             </Grid>
             <Typography
                 variant="body2"
                 color="primary"
                 sx={{ cursor: "pointer", mt: 2 }}
-                onClick={() => console.log("View all clicked")}
+                onClick={() => alert("This is all user!")}
             >
                 See all user
             </Typography>
@@ -77,16 +80,16 @@ const FriendRequestList = ({ list, handleAdd }) => {
     );
 };
 // Component chính
-const FriendSend = () => {
+const ExploreFriend = () => {
     //value
+    const [reload, setReload] = useState(false);
     const { curentUserID } = useContext(CurentUser);
 
     const addFriend = (recipientID) => {
         try {
             addFriendAPI(recipientID).then((response) => {
                 if (response) {
-                    console.log("addFriendAPI");
-                    console.log(response);
+                    setReload(!reload);
                     alert(response.message);
                 }
             });
@@ -96,24 +99,33 @@ const FriendSend = () => {
     };
 
     //caall api getList
-    const [data, setData] = useState([]);
-
+    const [user, setUser] = useState([]);
+    const [friend, setFriend] = useState([]);
     useEffect(() => {
         try {
+            getListFriend(curentUserID).then((result) => {
+                setFriend(result);
+            });
             listUser().then((result) => {
-                console.log(result);
-                console.log("result api list");
-                setData(result);
+                setUser(result);
             });
         } catch (error) {
             console.log(error);
         }
-    }, []);
+    }, [reload]);
+    console.log(user);
+    console.log(friend);
     return (
         <Grid container>
-            <FriendRequestList list={data} handleAdd={addFriend} />
+            <FriendRequestList
+                list={[
+                    ...user.filter((item) => !friend.some((item1) => item1?._id === item?._id)),
+                    ...friend.filter((item) => !user.some((item2) => item2?._id === item?._id)),
+                ]}
+                handleAdd={addFriend}
+            />
         </Grid>
     );
 };
 
-export default FriendSend;
+export default ExploreFriend;

@@ -140,7 +140,7 @@ const joinToGroup = async (groupId) => {
     };
     console.log("data send " + form);
     try {
-        const response = await fetch("http://localhost:4000/api/groups/joins", {
+        const response = await fetch("http://localhost:4000/api/groups/join", {
             method: "POST",
             headers: {
                 Accept: "application/json",

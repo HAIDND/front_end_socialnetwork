@@ -31,9 +31,9 @@ import {
     unLikePost,
 } from "~/services/postServices/postService";
 
-import EditPostDialog from "./EditPostDialog";
+import EditPostDialog from "~/pages/NewFeed/EditPostDialog";
 import CommentList from "~/pages/NewFeed/Comment";
-export default function Post({ visibility }) {
+export default function PostPrivate({ visibility }) {
     const [showComments, setShowComments] = useState({});
     const [postList, setPostList] = useState([]);
     const [anchorEl, setAnchorEl] = useState(null);
@@ -88,6 +88,8 @@ export default function Post({ visibility }) {
         setSelectedPostId(null); // Đặt lại giá trị sau khi đóng
     };
 
+    console.log(postList);
+
     //updatye
     const [open, setOpen] = useState(false);
 
@@ -96,64 +98,66 @@ export default function Post({ visibility }) {
     };
     return (
         <>
-            {postList.map((item) => (
-                <Card key={item._id} sx={{ maxWidth: 800, margin: "auto", mt: 3, bgcolor: "background.paper" }}>
-                    <CardHeader
-                        avatar={<Avatar src={item?.userId?.avatar} />}
-                        title={item?.userId?.username}
-                        subheader={`${item?.createdAt} role  ${item?.visibility}`}
-                        action={
-                            item?.userId?._id === curentUserID && (
-                                <IconButton
-                                    size="small"
-                                    onClick={(event) => handleMenuOpen(event, item._id, item.content, item.image)}
-                                >
-                                    <Settings />
-                                </IconButton>
-                            )
-                        }
-                    />
-
-                    {open && selectedPostId === item._id && (
-                        <EditPostDialog
-                            open={open}
-                            onClose={handleCloseDialog}
-                            postId={selectedPostId}
-                            postContent={selectedPostContent}
-                            postImage={selectedPostImage}
-                            setPostList={setPostList}
+            {postList
+                .filter((item) => item?.visibility == "private")
+                .map((item) => (
+                    <Card key={item._id} sx={{ maxWidth: 800, margin: "auto", mt: 3, bgcolor: "background.paper" }}>
+                        <CardHeader
+                            avatar={<Avatar src={item?.userId?.avatar} />}
+                            title={item?.userId?.username}
+                            subheader={`${item?.createdAt} role  ${item?.visibility}`}
+                            action={
+                                item?.userId?._id === curentUserID && (
+                                    <IconButton
+                                        size="small"
+                                        onClick={(event) => handleMenuOpen(event, item._id, item.content, item.image)}
+                                    >
+                                        <Settings />
+                                    </IconButton>
+                                )
+                            }
                         />
-                    )}
-                    <Divider />
 
-                    <CardContent>
-                        <Typography variant="body2">{item.content}</Typography>
-                    </CardContent>
+                        {open && selectedPostId === item._id && (
+                            <EditPostDialog
+                                open={open}
+                                onClose={handleCloseDialog}
+                                postId={selectedPostId}
+                                postContent={selectedPostContent}
+                                postImage={selectedPostImage}
+                                setPostList={setPostList}
+                            />
+                        )}
+                        <Divider />
 
-                    {item?.image && <CardMedia component="img" image={item?.image} alt="Post Image" />}
+                        <CardContent>
+                            <Typography variant="body2">{item.content}</Typography>
+                        </CardContent>
 
-                    <CardActions disableSpacing>
-                        <IconButton onClick={() => likePosts(item._id)}>
-                            <Favorite color={item?.likes?.includes(curentUserID) ? "error" : "inherit"} />
-                        </IconButton>
-                        <Typography variant="body2">{item?.likes?.length || 0} Likes</Typography>
+                        {item?.image && <CardMedia component="img" image={item?.image} alt="Post Image" />}
 
-                        <IconButton onClick={() => handleShowComments(item._id)}>
-                            <Comment />
-                        </IconButton>
-                        <Typography variant="body2">{item?.comments?.length || 0} Comments</Typography>
-                    </CardActions>
+                        <CardActions disableSpacing>
+                            <IconButton onClick={() => likePosts(item._id)}>
+                                <Favorite color={item?.likes?.includes(curentUserID) ? "error" : "inherit"} />
+                            </IconButton>
+                            <Typography variant="body2">{item?.likes?.length || 0} Likes</Typography>
 
-                    {showComments[item?._id] && (
-                        <CommentList
-                            curentUserID={curentUserID}
-                            comments={item?.comments || []}
-                            postID={item._id}
-                            setPostList={setPostList}
-                        />
-                    )}
-                </Card>
-            ))}{" "}
+                            <IconButton onClick={() => handleShowComments(item._id)}>
+                                <Comment />
+                            </IconButton>
+                            <Typography variant="body2">{item?.comments?.length || 0} Comments</Typography>
+                        </CardActions>
+
+                        {showComments[item?._id] && (
+                            <CommentList
+                                curentUserID={curentUserID}
+                                comments={item?.comments || []}
+                                postID={item._id}
+                                setPostList={setPostList}
+                            />
+                        )}
+                    </Card>
+                ))}{" "}
             <Menu
                 anchorEl={anchorEl}
                 open={Boolean(anchorEl)}

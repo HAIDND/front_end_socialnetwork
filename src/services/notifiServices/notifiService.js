@@ -16,6 +16,9 @@ const getNotifi = async () => {
                 authorization: "Bearer " + token,
             },
         });
+        if (response?.statusText === "Unauthorized") {
+            sessionStorage.removeItem("jwt");
+        }
         return await response.json();
     } catch (error) {
         console.log(error);
@@ -44,8 +47,11 @@ const readNotifi = async (notificationId) => {
             },
             body: JSON.stringify(form),
         });
+
         return await response.json();
     } catch (error) {
+        console.log("notifi log");
+
         console.log(error);
     }
 };

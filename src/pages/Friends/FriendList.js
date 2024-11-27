@@ -4,104 +4,128 @@ import { Box, Typography, Button, Avatar, Grid } from "@mui/material";
 import Sidebar from "~/components/Layouts/Sidebar";
 import { CurentUser } from "~/MainRoutes";
 import { getListFriend, removeFriend } from "~/services/friendServices/friendService";
+import { useNavigate } from "react-router-dom";
+import YesNoDialog from "../YesNoDialog";
 
-const FriendRequestCard = ({ request, onDelete }) => {
-    const handleDeleteFriend = async (userId) => {
-        try {
-            const response = await removeFriend(userId).then((data) => {
-                alert(data?.message);
-            });
-        } catch (error) {
-            console.log(error);
-        }
+const FriendRequestCard = ({ request, handleDeleteFriend }) => {
+    const navigate = useNavigate();
+    ///yesno dialog
+    const [yesno, setYesNo] = useState(false);
+    const [idFriend, setIdFriend] = useState(null);
+    const clickDelete = (id) => {
+        setIdFriend(id);
+        setYesNo(true);
     };
     return (
-        <Box
-            sx={{
-                width: 200,
-                minHeight: 225, // Đặt chiều cao tối thiểu để đồng nhất
-                border: "1px solid #ddd",
-                borderRadius: 2,
-                boxShadow: 1,
-                p: 2,
-                textAlign: "center",
-                mb: 2,
-                mt: 2,
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between", // Đẩy các nút xuống cuối thẻ
-            }}
-        >
-            <Box>
-                <Avatar src={request.avatar} alt={request.name} sx={{ width: 80, height: 80, margin: "0 auto" }} />
-                <Typography variant="body1" fontWeight="600" mt={1}>
-                    {request.username}
-                </Typography>
-                {request.mutualFriends && (
-                    <Typography variant="caption" color="textSecondary">
-                        {request.mutualFriends} bạn chung
+        <>
+            <Box
+                sx={{
+                    width: 200,
+                    minHeight: 225, // Đặt chiều cao tối thiểu để đồng nhất
+                    border: "1px solid #ddd",
+                    borderRadius: 2,
+                    boxShadow: 1,
+                    p: 2,
+                    textAlign: "center",
+                    mb: 2,
+                    mt: 2,
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between", // Đẩy các nút xuống cuối thẻ
+                }}
+                onClick={() => {
+                    navigate(`/profile/${request._id}`);
+                }}
+            >
+                <Box>
+                    <Avatar src={request.avatar} alt={request.name} sx={{ width: 80, height: 80, margin: "0 auto" }} />
+                    <Typography variant="body1" fontWeight="600" mt={1}>
+                        {request.username}
                     </Typography>
-                )}
-            </Box>
-            <Box sx={{ display: "flex", justifyContent: "space-around", mt: 2 }}>
-                <Button
-                    variant="outlined"
-                    color="secondary"
-                    onClick={() => handleDeleteFriend(request?._id)}
-                    sx={{ textTransform: "none" }}
-                >
-                    Delete
-                </Button>
-            </Box>
-        </Box>
+                    {request.mutualFriends && (
+                        <Typography variant="caption" color="textSecondary">
+                            {request.mutualFriends} bạn chung
+                        </Typography>
+                    )}
+                </Box>
+                <Box sx={{ display: "flex", justifyContent: "space-around", mt: 2 }}>
+                    <Button
+                        variant="outlined"
+                        color="secondary"
+                        onClick={(event) => {
+                            event.stopPropagation();
+                            clickDelete(request?._id);
+                        }}
+                        sx={{ textTransform: "none" }}
+                    >
+                        Delete
+                    </Button>
+                </Box>
+            </Box>{" "}
+            <YesNoDialog
+                yesno={yesno}
+                setYesNo={setYesNo}
+                onConfirm={handleDeleteFriend(request?._id)}
+                title={"Xác nhận xóa"}
+                message={"Bạn có chắc chắn muốn xóa mục này không?"}
+            />
+        </>
     );
 };
 
-const FriendRequestList = ({ requests, handldDelete }) => {
+const FriendRequestList = ({ requests, handleDeleteFriend }) => {
     return (
         <Box sx={{ p: 3 }}>
             <Typography variant="h6" fontWeight="600" mb={2}>
                 List Friends
             </Typography>
-            <Grid container spacing={2}>
-                {requests.map((request) => (
-                    <Grid item key={request.id}>
-                        <FriendRequestCard request={request} onDelete={handldDelete} />
-                    </Grid>
-                ))}
-            </Grid>
             <Typography
                 variant="body2"
                 color="primary"
                 sx={{ cursor: "pointer", mt: 2 }}
                 onClick={() => console.log("View all clicked")}
             >
-                {requests.leght ? "See all Friends" : "Have 0 friends"}
+                {`You have ${requests.length}  friends`}
             </Typography>
+            <Grid container spacing={2}>
+                {requests.map((request) => (
+                    <Grid item key={request.id}>
+                        <FriendRequestCard request={request} handleDeleteFriend={handleDeleteFriend} />
+                    </Grid>
+                ))}
+            </Grid>
         </Box>
     );
 };
 // Component chính
 const FriendList = () => {
-    const deleleFriend = (id) => {
-        console.log(`Accepted friend request with id: ${id}`);
-        // Thêm logic xử lý xác nhận lời mời ở đây
+    const [reload, setReload] = useState(false);
+    const [data, setData] = useState([]);
+    const { curentUserID } = useContext(CurentUser);
+    // Hàm xác nhận hành động được gọi từ popup
+
+    const handleDeleteFriend = async (userId) => {
+        try {
+            const response = await removeFriend(userId).then((data) => {
+                alert(data?.message);
+                setReload(!reload);
+            });
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     //caall api getList
-    const [data, setData] = useState([]);
-    const { curentUserID } = useContext(CurentUser);
+
     useEffect(() => {
         try {
             getListFriend(curentUserID).then((result) => {
-                console.log(result);
-                console.log("result friend list");
                 setData(result);
             });
         } catch (error) {
             console.log(error);
         }
-    }, []);
+    }, [reload]);
 
     return (
         <Grid container>
@@ -110,7 +134,9 @@ const FriendList = () => {
             ) : (
                 <FriendRequestList requests={data} handleDelete={deleleFriend} />
             )} */}
-            <FriendRequestList requests={data} handleDelete={deleleFriend} />
+            <FriendRequestList requests={data} handleDeleteFriend={handleDeleteFriend} />
+
+            {/* Component YesNoPopup */}
         </Grid>
     );
 };

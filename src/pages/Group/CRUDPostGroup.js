@@ -32,7 +32,7 @@ import {
 } from "~/services/postServices/postService";
 
 import { getPostInGroup } from "~/services/groupServices/groupService";
-import EditPostDialog from "~/pages/NewFeed/updatePost";
+import EditPostDialog from "~/pages/NewFeed/EditPostDialog";
 import EditCommentDrawer from "~/pages/NewFeed/EditCommentPopup";
 export const PostInGroup = ({ groupID }) => {
     const [showComments, setShowComments] = useState({});
@@ -46,13 +46,11 @@ export const PostInGroup = ({ groupID }) => {
     useEffect(() => {
         (async () => {
             try {
-                console.log("id group" + groupID);
                 const data = await getPostInGroup(groupID);
-                console.log("posst group" + data);
+
                 if (Array.isArray(data)) setPostList(data);
                 else {
                     setPostList([]);
-                    alert("no posst");
                 }
             } catch (error) {
                 console.error("Lỗi khi lấy danh sách bài post:", error);
@@ -146,7 +144,6 @@ export const PostInGroup = ({ groupID }) => {
             console.error("Error editing comment:", error);
         }
     };
-    console.log(postList);
 
     //update
     const [open, setOpen] = useState(false);

@@ -8,23 +8,39 @@ import { useLocation, useParams } from "react-router-dom";
 import { PostInGroup } from "./CRUDPostGroup";
 import CreatePostInGroup from "./createPost";
 import { CurentUser } from "~/MainRoutes";
-import { addMemberToGroup, joinToGroup, leaveGroup } from "~/services/groupServices/groupService";
+import { addMemberToGroup, joinToGroup, leaveGroup, listGroupAll } from "~/services/groupServices/groupService";
 
-const DetailGroup = ({}) => {
+const DetailGroup = () => {
     //lấy id
     const { id } = useParams();
+    // alert(id);
     const location = useLocation();
-    const groupData = location.state?.groupData;
+    const [groupData, setGroupData] = useState(location.state?.groupData || null);
+
+    // const groupData = location.state?.groupData;
     //check user curent is login
     const { curentUserID } = useContext(CurentUser);
     const [isJoin, setJoin] = useState([]);
-    useEffect(() => setJoin(groupData?.members.includes(curentUserID)), []);
+    useEffect(() => {
+        const listGroup = listGroupAll().then((data) => {
+            console.log(data.filter((item) => item._id === id));
+            setJoin(data.filter((item) => item._id === id).includes(curentUserID));
+            setGroupData(data.filter((item) => item._id === id));
+        });
+        //
+        // return .find((item) => item._id == id)
+        // setJoin(groupData?.members.includes(curentUserID));
+        console.log("render");
+        console.log(listGroup);
+        return setGroupData([]);
+    }, []);
+
     //handle join gruop
     const handleJoinGroup = async () => {
         try {
             const response = await joinToGroup(id).then((data) => {
                 if (data) {
-                    alert(data);
+                    console.log(data);
                 }
             });
         } catch (error) {
@@ -36,7 +52,7 @@ const DetailGroup = ({}) => {
         try {
             const response = await leaveGroup(id).then((data) => {
                 if (data) {
-                    alert(data?.message);
+                    console.log(data?.message);
                 } else alert("Error");
             });
         } catch (error) {
@@ -76,7 +92,7 @@ const DetailGroup = ({}) => {
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
                         <GroupIcon sx={{ fontSize: 16, verticalAlign: "middle", mr: 0.5 }} />
-                        {groupData?.members.length} members
+                        {groupData?.members?.length} members
                     </Typography>
                     <Chip
                         sx={{ mt: 1 }}

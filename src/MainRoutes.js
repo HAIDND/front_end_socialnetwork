@@ -11,6 +11,7 @@ import { getInfo, readUser, saveInfo } from "./services/userServices/userService
 import SearchComponent from "./components/Layouts/Header/SearchComponent";
 import ThemeSettings from "./Theme";
 import { createTheme, ThemeProvider } from "@mui/material";
+import AdminPage from "./pages/AdminPage";
 const useAuthLogger = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(auth.isAuthenticated());
     useEffect(() => {
@@ -99,6 +100,7 @@ function MainRoutes() {
                         {!auth.isAuthenticated() && <Route path="/" element={<Login />} />}
                         <Route path="/login" element={<Login />} />
                         <Route path="/register" element={<Register />} />{" "}
+                        <Route path="/admin" element={<AdminPage />} />
                         <Route path="theme" element={<ThemeSettings />} />
                     </Routes>
                 </CurentUser.Provider>

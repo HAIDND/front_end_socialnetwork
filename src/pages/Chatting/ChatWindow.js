@@ -7,6 +7,7 @@ import { CurentUser } from "~/MainRoutes";
 
 const ChatWindow = ({ onClose, friend }) => {
     //id user
+    const [reload, setReload] = useState(false);
     const { curentUserID } = useContext(CurentUser);
     const [messages, setMessages] = useState([]); // old mess
     const [newMessage, setNewMessage] = useState(""); //new mess
@@ -25,7 +26,8 @@ const ChatWindow = ({ onClose, friend }) => {
         };
 
         fetchChatList();
-    }, [messages]);
+        setTimeout(() => setReload(!reload), 5000);
+    }, [reload]);
 
     const handleSendMessage = async () => {
         if (newMessage.trim() === "") return;

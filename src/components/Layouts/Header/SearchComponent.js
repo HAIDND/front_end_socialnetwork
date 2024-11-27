@@ -122,7 +122,10 @@ const SearchComponent = () => {
                                 "&:hover": { backgroundColor: theme.palette.action.hover },
                             }}
                             onClick={() => {
-                                navigate(`/groups/${group._id}`);
+                                navigate(`/groups/${group?._id}`, {
+                                    state: { groupData: group },
+                                });
+
                                 handleBlur();
                             }}
                         >

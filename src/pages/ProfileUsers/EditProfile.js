@@ -180,10 +180,12 @@ const Profile = ({ Profiledata }) => {
     ///call api update profile
     const { curentUserID, curentUserInfo } = useContext(CurentUser);
     const handleUpdateProfile = async () => {
-        if (true) {
-            const response = await updateUser(formData, selectedImage, curentUserID);
+        const response = await updateUser(formData, selectedImage, curentUserID);
+        if (response?.message !== "Server error") {
+            alert("bug");
         }
     };
+
     return (
         <>
             <Grid container spacing={2} alignItems="center" sx={{ padding: 12, mt: 2 }}></Grid>

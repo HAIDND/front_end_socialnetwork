@@ -3,7 +3,12 @@ import { Box, Typography, Button, Avatar, Grid } from "@mui/material";
 
 import Sidebar from "~/components/Layouts/Sidebar";
 import { CurentUser } from "~/MainRoutes";
-import { acceptFriendRequest, getListFriend, getListFriendRequest } from "~/services/friendServices/friendService";
+import {
+    acceptFriendRequest,
+    getListFriend,
+    getListFriendRequest,
+    rejectFriendRequest,
+} from "~/services/friendServices/friendService";
 
 const FriendRequestCard = ({ request, onAccept, onDeny }) => {
     return (
@@ -26,7 +31,7 @@ const FriendRequestCard = ({ request, onAccept, onDeny }) => {
             <Box>
                 <Avatar src={request.avatar} alt={request?.username} sx={{ width: 80, height: 80, margin: "0 auto" }} />
                 <Typography variant="body1" fontWeight="600" mt={1}>
-                    {request?.requester}
+                    {request?.recipient?.username}
                 </Typography>
                 {request?.status && (
                     <Typography variant="caption" color="textSecondary">
@@ -85,11 +90,13 @@ const FriendRequestList = ({ requests, handleAccept, handleDeny }) => {
 
 // Component chính
 const FriendRequest = () => {
+    const [reload, setReload] = useState(false);
     const handleAccept = (id) => {
         try {
             acceptFriendRequest(id).then((result) => {
                 if (result) {
                     alert(result.message);
+                    setReload(!reload);
                 } else {
                     alert(result.message);
                 }
@@ -100,8 +107,7 @@ const FriendRequest = () => {
     };
 
     const handleDeny = (id) => {
-        console.log(`Denied friend request with id: ${id}`);
-        // Thêm logic xử lý từ chối lời mời ở đây
+        rejectFriendRequest(id);
     };
 
     //caall api getList
@@ -110,14 +116,12 @@ const FriendRequest = () => {
     useEffect(() => {
         try {
             getListFriendRequest().then((result) => {
-                console.log(result);
-                console.log("result request  list");
                 setData(result);
             });
         } catch (error) {
             console.log(error);
         }
-    }, []);
+    }, [reload]);
     return (
         <Grid container>
             <FriendRequestList requests={data} handleAccept={handleAccept} handleDeny={handleDeny} />

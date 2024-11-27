@@ -7,8 +7,11 @@ import { CurentUser } from "~/MainRoutes";
 import { useParams } from "react-router-dom";
 import { addFriendAPI, getListFriend, removeFriend } from "~/services/friendServices/friendService";
 import ChatWindow from "../Chatting/ChatWindow";
+import Post from "../NewFeed/postItem";
+import PostPrivate from "./PostPrivate";
 
 const Profile = () => {
+    const [reload, setReload] = useState(false);
     const { curentUserID } = useContext(CurentUser);
     const { userId } = useParams();
     const [profile, setProfile] = useState({});
@@ -28,18 +31,18 @@ const Profile = () => {
         getListFriend().then((data) => {
             if (data) {
                 setListFriend(data);
-                console.log(data);
             } else {
-                alert("No list friend");
+                console.log("No list friend");
             }
         });
-    }, [userId]);
+    }, [userId, reload]);
     //add un friend
     const handleAddFriend = async () => {
         try {
             addFriendAPI(userId).then((response) => {
                 if (response) {
                     alert(response.message);
+                    setReload(!reload);
                 }
             });
         } catch (error) {
@@ -50,6 +53,7 @@ const Profile = () => {
         try {
             const response = await removeFriend(userId).then((data) => {
                 alert(data?.message);
+                setReload(!reload);
             });
         } catch (error) {
             console.log(error);
@@ -152,6 +156,7 @@ const Profile = () => {
                         </Grid>
                     </Grid>
                 </Box>
+                {curentUserID == userId && <PostPrivate visibility={"private"} />}
             </Grid>
         </Grid>
     );
