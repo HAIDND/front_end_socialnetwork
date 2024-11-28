@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Box, Button, Link, Typography } from "@mui/material";
 import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
-
+import { CurentUser } from "~/MainRoutes";
 import auth from "~/services/authService/authHelper"; // giả sử đây là file chứa hàm auth.isAuthenticated()
 import DefaultLayout from "~/components/Layouts/DefaultLayout/index";
 
@@ -11,8 +11,6 @@ import Register from "~/pages/Register/Register";
 import Profile from "~/pages/ProfileUsers";
 import SettingsPage from "~/pages/SettingsPage";
 import FriendPage from "~/pages/Friends/FriendPage";
-
-import { CurentUser } from "~/MainRoutes";
 import PageNotFound from "~/pages/Pagenotfound";
 import GroupPage from "../Group/GroupPage";
 import CreateGroup from "../Group/CreateGroup";
@@ -30,16 +28,11 @@ import FriendSend from "../Friends/ExploreFriend";
 
 const HomePage = () => {
     ///useContexrt tp save info user
-    const { curentUser } = useContext(CurentUser);
+    const { curentUser, curentUserProfile } = useContext(CurentUser);
 
     const [defaultPage, setDefaultPage] = useState(false);
     const location = useLocation();
     const navigate = useNavigate();
-
-    useEffect(() => {
-        // Kiểm tra trạng thái xác thực và cập nhật defaultPage
-        setDefaultPage(auth.isAuthenticated());
-    }, [location]);
 
     useEffect(() => {
         // Kiểm tra trạng thái xác thực và cập nhật defaultPage
@@ -53,69 +46,28 @@ const HomePage = () => {
     const handleRegister = () => {
         navigate("/register");
     };
-
+    console.log(curentUserProfile);
     return (
         <>
-            {defaultPage ? (
-                <>
-                    <DefaultLayout />
-                    <Routes>
-                        {/* <Route path="/" element={<Test />} /> */}
-                        <Route path="/home" element={<Newsfeed />} />
-                        <Route path="/" element={<Newsfeed />} />
-                        <Route path="/newsfeed" element={<Newsfeed />} />
-                        <Route path="/profile/:userId" element={<Profile />} />
-                        {/* friends Routes          */}
-                        {/* <Route path="/friends/myfriend" element={<FriendList />} />
-                        <Route path="/friends/request" element={<FriendRequest />} />
-                        <Route path="/friends/exploreFriend" element={<FriendSend />} /> */}
-                        <Route path="/friends" element={<FriendPage />} />
-                        <Route path="/settings/editprofile" element={<EditProfile />} />
-                        <Route path="/settings/deleteaccount" element={<DeleteAccountDialog />} />
-                        <Route path="/groups/create" element={<CreateGroup />} />
-                        <Route path="/groups/mygroup" element={<ListGroup />} />
-                        <Route path="/groups/explore" element={<ListGroupAll />} />
-                        <Route path="/groups/update" element={<FormEditGroup />} />
-                        <Route path="/groups/:id" element={<DetailGroup />} />
-                        <Route path="/chat" element={<ChatList />} />
-                        <Route path="/groups" element={<GroupPage />} />
-                        <Route path="/settings" element={<SettingsPage />} />
-                        <Route path="/test" element={<Newsfeed />} />
-                        <Route path="/test" element={<Newsfeed />} />
-
-                        {/* <Route path="/login" element={<Login />} />
-                        <Route path="/register" element={<Register />} /> */}
-                        {/* <Route exact path="*" element={<PageNotFound />} /> */}
-                        {/* <Route
-                    path="/chat"
-                    element={
-                        <PrivateRoute>
-                            <Chat />
-                        </PrivateRoute>
-                    }
-                /> */}
-                    </Routes>
-                </>
-            ) : (
-                <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-end", p: 4 }}>
-                    <Typography
-                        variant="h2"
-                        component="h1"
-                        gutterBottom
-                        sx={{ display: "flex", flexDirection: "column", alignItems: "center", paddingRight: 60 }}
-                    >
+            <>
+                <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", p: 2 }}>
+                    <Typography variant="h4" component="h1" gutterBottom sx={{ textAlign: "left" }}>
                         Welcome to Our Site
                     </Typography>
-                    <Box>
-                        <Button variant="contained" color="primary" onClick={handleLogin} sx={{ mr: 1 }}>
-                            Đăng Nhập
+                    <Box sx={{ display: "flex", gap: 2 }}>
+                        <Button variant="contained" color="primary" onClick={handleLogin} sx={{ px: 4 }}>
+                            Login
                         </Button>
-                        <Button variant="outlined" color="secondary" onClick={handleRegister}>
-                            Đăng ký
+                        <Button variant="outlined" color="secondary" onClick={handleRegister} sx={{ px: 4 }}>
+                            Register
                         </Button>
                     </Box>
                 </Box>
-            )}
+                <Routes>
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
+                </Routes>
+            </>
         </>
     );
 };

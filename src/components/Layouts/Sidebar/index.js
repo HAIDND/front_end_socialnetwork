@@ -20,11 +20,7 @@ const Sidebar = () => {
             path: "/profile/" + curentUserID,
             icon: faUser,
         },
-        {
-            title: "Chat",
-            path: "/chat",
-            icon: faMessage,
-        },
+
         {
             title: "Friends",
             path: "/friends",

@@ -1,17 +1,37 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { useState, useEffect, createContext } from "react";
-
+import { createTheme, ThemeProvider } from "@mui/material";
+import { getInfo, readUser, saveInfo } from "./services/userServices/userService";
+import ThemeSettings from "./Theme";
 import auth from "./services/authService/authHelper";
 import HomePage from "./pages/Home";
 import Login from "./pages/Login/Login";
 import Register from "./pages/Register/Register";
-
-import PageNotFound from "./pages/Pagenotfound";
-import { getInfo, readUser, saveInfo } from "./services/userServices/userService";
 import SearchComponent from "./components/Layouts/Header/SearchComponent";
-import ThemeSettings from "./Theme";
-import { createTheme, ThemeProvider } from "@mui/material";
+
 import AdminPage from "./pages/AdminPage";
+import ProtectedRoute from "./ProtectedRoute";
+
+import Newsfeed from "~/pages/NewFeed";
+
+import Profile from "~/pages/ProfileUsers";
+import SettingsPage from "~/pages/SettingsPage";
+import FriendPage from "~/pages/Friends/FriendPage";
+import PageNotFound from "~/pages/Pagenotfound";
+import GroupPage from "~/pages/Group/GroupPage";
+import CreateGroup from "~/pages/Group/CreateGroup";
+import ListGroup from "~/pages/Group/ListGroup";
+import DeleteAccountDialog from "~/pages/SettingsPage/DeleteAccount";
+import ChatList from "~/pages/Chatting/ChatList";
+import ListGroupAll from "~/pages/Group/ListGroupAll";
+import EditProfile from "~/pages/ProfileUsers/EditProfile";
+import DetailGroup from "~/pages/Group/DetailGroup";
+import FormEditGroup from "~/pages/Group/FormEditGroup";
+import FriendList from "~/pages/Friends/FriendList";
+import FriendRequest from "~/pages/Friends/FriendRequest";
+import FriendSend from "~/pages/Friends/ExploreFriend";
+import { Home } from "@mui/icons-material";
+import DefaultLayout from "./components/Layouts/DefaultLayout";
 const useAuthLogger = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(auth.isAuthenticated());
     useEffect(() => {
@@ -94,14 +114,39 @@ function MainRoutes() {
                         setThemeSecondary,
                     }}
                 >
-                    <HomePage />
+                    {/* <HomePage /> */}
                     {/* <DefaultLayout /> */}
+                    {!auth.isAuthenticated() && <HomePage />}
+                    {auth.isAuthenticated() && <DefaultLayout />}
                     <Routes>
-                        {!auth.isAuthenticated() && <Route path="/" element={<Login />} />}
-                        <Route path="/login" element={<Login />} />
-                        <Route path="/register" element={<Register />} />{" "}
                         <Route path="/admin" element={<AdminPage />} />
-                        <Route path="theme" element={<ThemeSettings />} />
+                        {/* {!auth.isAuthenticated() && <Route path="*" element={<HomePage />} />} */}
+                        {/* <Route path="/register" element={<Login />} />
+                        <Route path="/login" element={<Login />} /> */}
+                        {/* admin route */}
+                        <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
+                            <Route path="/admin" element={<AdminPage />} />
+                        </Route>
+                        {/* Route dành cho user bình thường */}
+                        <Route element={<ProtectedRoute allowedRoles={["user", "admin"]} />}>
+                            <Route path="/home" element={<Newsfeed />} />
+
+                            {/* <Route path="/" element={<Test />} /> */}
+                            <Route path="/home" element={<Newsfeed />} />
+                            <Route path="/" element={<Newsfeed />} />
+                            <Route path="/newsfeed" element={<Newsfeed />} />
+                            <Route path="/profile/:userId" element={<Profile />} />
+                            <Route path="/friends" element={<FriendPage />} />
+                            <Route path="/settings/editprofile" element={<EditProfile />} />
+                            <Route path="/settings/deleteaccount" element={<DeleteAccountDialog />} />
+                            <Route path="/groups/create" element={<CreateGroup />} />
+                            <Route path="/groups/mygroup" element={<ListGroup />} />
+                            <Route path="/groups/explore" element={<ListGroupAll />} />
+                            <Route path="/groups/update" element={<FormEditGroup />} />
+                            <Route path="/groups/:id" element={<DetailGroup />} />
+                            <Route path="/groups" element={<GroupPage />} />
+                            <Route path="/settings" element={<SettingsPage />} />
+                        </Route>
                     </Routes>
                 </CurentUser.Provider>
             </ThemeProvider>

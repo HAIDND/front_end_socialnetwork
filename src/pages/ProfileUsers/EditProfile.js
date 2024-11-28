@@ -1,115 +1,32 @@
-// import React, { useContext, useState } from "react";
-// import { Box, TextField, Button, Avatar, Typography } from "@mui/material";
-// import axios from "axios";
-// import { CurentUser } from "~/MainRoutes";
-// import { updateUser } from "~/services/userServices/userService";
+import React, { useContext, useEffect, useState } from "react";
 
-// const EditUserForm = ({ userId, userData }) => {
-//     const { curentUserID, curentUserToken } = useContext(CurentUser);
-//     console.log(curentUserToken);
-
-//     const [formData, setFormData] = useState({
-//         name: userData?.name || "",
-//         email: userData?.email || "",
-//     });
-//     const [avatar, setAvatar] = useState(null);
-//     const [avatarPreview, setAvatarPreview] = useState(userData?.avatar?.url || "");
-//     const [loading, setLoading] = useState(false);
-
-//     // Xử lý khi người dùng chọn avatar mới
-//     const handleAvatarChange = (e) => {
-//         const file = e.target.files[0];
-//         if (file) {
-//             setAvatar(file);
-//             setAvatarPreview(URL.createObjectURL(file));
-//         }
-//     };
-
-//     // Xử lý khi thay đổi các trường thông tin
-//     const handleInputChange = (e) => {
-//         const { name, value } = e.target;
-//         setFormData({
-//             ...formData,
-//             [name]: value,
-//         });
-//     };
-
-//     // Xử lý gửi dữ liệu lên server
-//     const handleSubmit = async (e) => {
-//         e.preventDefault();
-//         setLoading(true);
-
-//         try {
-//             const token = curentUserToken; // Lấy token từ localStorage
-//             const config = {
-//                 headers: {
-//                     "Content-Type": "multipart/form-data",
-//                     Authorization: `Bearer ${token}`,
-//                 },
-//             };
-
-//             const formDataToSend = new FormData();
-//             formDataToSend.append("username", formData.name);
-//             formDataToSend.append("email", formData.email);
-//             if (avatar) {
-//                 formDataToSend.append("avatar", avatar);
-//             }
-
-//             // Gửi yêu cầu PUT tới server
-//             // const response = await axios.put(`http://localhost:4000/api/users/${userId}`, formDataToSend, config);
-//             updateUser(curentUserID, token, formDataToSend).then((data) => {
-//                 console.log(data);
-//             });
-
-//             alert("Cập nhật thông tin thành công!");
-//         } catch (error) {
-//             console.error("Error updating user:", error);
-//             alert("Có lỗi xảy ra khi cập nhật thông tin.");
-//         } finally {
-//             setLoading(false);
-//         }
-//     };
-
-//     return (
-//         <Box
-//             component="form"
-//             onSubmit={handleSubmit}
-//             sx={{ display: "flex", flexDirection: "column", gap: 2, width: 400 }}
-//         >
-//             <Typography variant="h5" align="center">
-//                 Chỉnh sửa thông tin người dùng
-//             </Typography>
-//             <Avatar src={avatarPreview} alt="Avatar" sx={{ width: 80, height: 80, alignSelf: "center" }} />
-//             <Button variant="contained" component="label">
-//                 Thay đổi Avatar
-//                 <input hidden accept="image/*" type="file" onChange={handleAvatarChange} />
-//             </Button>
-
-//             <TextField label="Tên" name="name" value={formData.name} onChange={handleInputChange} required />
-//             <TextField
-//                 label="Email"
-//                 name="email"
-//                 type="email"
-//                 value={formData.email}
-//                 onChange={handleInputChange}
-//                 required
-//             />
-
-//             <Button type="submit" variant="contained" color="primary" disabled={loading}>
-//                 {loading ? "Đang cập nhật..." : "Cập nhật thông tin"}
-//             </Button>
-//         </Box>
-//     );
-// };
-
-// export default EditUserForm;
-import React, { useContext, useState } from "react";
-
-import { Box, Paper, Grid, Avatar, Typography, TextField, Button } from "@mui/material";
-import { updateUser } from "~/services/userServices/userService";
+import {
+    Box,
+    Paper,
+    Grid,
+    Avatar,
+    Typography,
+    TextField,
+    Button,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem,
+} from "@mui/material";
+import { readUser, updateUser } from "~/services/userServices/userService";
 import { CurentUser } from "~/MainRoutes";
+import YesNoDialog from "../YesNoDialog";
+import { useNavigate } from "react-router-dom";
+
 const Profile = ({ Profiledata }) => {
-    const { curentUserProfile } = useContext(CurentUser);
+    const { curentUserProfile, setCurrentUserProfile } = useContext(CurentUser);
+    const [avatar, setAvatar] = useState([]);
+    const [postContent, setPostContent] = useState("");
+    const [avatarPreview, setAvatarPreview] = useState();
+    const [selectedImage, setSelectedImage] = useState("");
+    const [yesno, setYesNo] = useState(false);
+    const { curentUserID, curentUserInfo } = useContext(CurentUser);
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         username: "",
         email: "",
@@ -118,6 +35,7 @@ const Profile = ({ Profiledata }) => {
         gender: "",
         avatar: "",
     });
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prevData) => ({
@@ -126,21 +44,19 @@ const Profile = ({ Profiledata }) => {
         }));
     };
 
-    // Hàm xử lý thay đổi ảnh đại diện
-    const handleFileChange = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            // const isImage = file.type.startsWith("image/");
-            // const isVideo = file.type.startsWith("video/");
-            // if (isImage) setSelectedImage(file);
-            // if (isVideo) setSelectedVideo(file);
-        }
-    };
-    const [avatar, setAvatar] = useState([]);
-    const [postContent, setPostContent] = useState("");
-    const [selectedImage, setSelectedImage] = useState(null);
-    const [avatarPreview, setAvatarPreview] = useState(formData.avatar || "");
+    //confirm
 
+    //efect
+    // Fetch user profile data from API
+    useEffect(() => {
+        readUser(curentUserProfile?._id).then((data) => {
+            if (data) {
+                setCurrentUserProfile(data);
+            } else {
+                alert("No profile");
+            }
+        });
+    }, []);
     // Hàm xử lý file ảnh
     const handleAvatarChange = (event) => {
         const file = event.target.files[0];
@@ -151,38 +67,16 @@ const Profile = ({ Profiledata }) => {
             if (isImage) {
                 setSelectedImage(file);
                 console.log(file);
-            }
+            } else setSelectedImage(avatarPreview);
         }
     };
-    const handleAvatarChanges = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const isImage = file.type.startsWith("image/");
-            if (isImage) {
-                setFormData((prevData) => ({
-                    ...prevData,
-                    avatar: file,
-                }));
-                setAvatar(file);
-                // formData.avatar = file;
-                console.log(file);
-            }
-            // const reader = new FileReader();
-            // reader.onloadend = () => {
-            //     setFormData((prevData) => ({
-            //         ...prevData,
-            //         avatar: reader.result,
-            //     }));
-            // };
-            // reader.readAsDataURL(file);
-        }
-    };
-    ///call api update profile
-    const { curentUserID, curentUserInfo } = useContext(CurentUser);
+
     const handleUpdateProfile = async () => {
+        // if (avatarPreview !== selectedImage) setSelectedImage(avatarPreview);
         const response = await updateUser(formData, selectedImage, curentUserID);
         if (response?.message !== "Server error") {
-            alert("bug");
+            alert("Success update profile");
+            navigate("/settings");
         }
     };
 
@@ -232,31 +126,24 @@ const Profile = ({ Profiledata }) => {
                             label="User name"
                             name="username"
                             variant="outlined"
-                            value={formData.username}
+                            value={formData.username || (formData.username = curentUserProfile?.username)}
                             onChange={handleChange}
                             required
                         />
                     </Grid>
-                    {/* <Grid item xs={12} sm={6}>
-                    <TextField
-                        fullWidth
-                        label="Họ"
-                        name="lastName"
-                        variant="outlined"
-                        value={formData.lastName}
-                        onChange={handleChange}
-                        required
-                    />
-                </Grid> */}
 
                     <Grid item xs={12}>
                         <TextField
+                            disabled
+                            InputProps={{
+                                readOnly: true, // Không cho phép chỉnh sửa, giữ nguyên giao diện
+                            }}
                             fullWidth
                             label="Email"
                             name="email"
                             type="email"
                             variant="outlined"
-                            value={formData.email}
+                            value={(formData.email = curentUserProfile?.email)}
                             onChange={handleChange}
                             required
                         />
@@ -268,7 +155,7 @@ const Profile = ({ Profiledata }) => {
                             name="phone"
                             type="tel"
                             variant="outlined"
-                            value={formData.phone}
+                            value={formData.phone || (formData.phone = curentUserProfile?.phone)}
                             onChange={handleChange}
                         />
                     </Grid>
@@ -280,45 +167,44 @@ const Profile = ({ Profiledata }) => {
                             type="date"
                             InputLabelProps={{ shrink: true }}
                             variant="outlined"
-                            value={formData.dateOfBirth}
+                            value={formData.dateOfBirth || (formData.dateOfBirth = curentUserProfile?.dateOfBirth)}
                             onChange={handleChange}
                             required
                         />
                     </Grid>
                     <Grid item xs={12}>
-                        <TextField
-                            fullWidth
-                            label="Gender"
-                            name="gender"
-                            variant="outlined"
-                            value={formData.gender}
-                            onChange={handleChange}
-                            required
-                        />
+                        <FormControl fullWidth variant="outlined">
+                            <InputLabel>Gender</InputLabel>
+                            <Select
+                                name="gender"
+                                value={formData.gender || (formData.gender = curentUserProfile?.gender)}
+                                onChange={handleChange}
+                                label="Gender"
+                            >
+                                <MenuItem value="male">Male</MenuItem>
+                                <MenuItem value="female">Female</MenuItem>
+                                <MenuItem value="other">Other</MenuItem>
+                            </Select>
+                        </FormControl>
                     </Grid>
-                    {/* <Grid item xs={12}>
-                    <TextField
-                        fullWidth
-                        label="Địa Chỉ"
-                        name="address"
-                        variant="outlined"
-                        value={formData.address}
-                        onChange={handleChange}
-                    />
-                </Grid> */}
-
-                    {/* Submit Button */}
                     <Grid item xs={12}>
                         <Button
                             fullWidth
                             variant="contained"
                             color="primary"
                             sx={{ mt: 2 }}
-                            onClick={handleUpdateProfile}
+                            onClick={() => setYesNo(true)}
                         >
                             Cập Nhật Thông Tin
                         </Button>
                     </Grid>
+                    <YesNoDialog
+                        yesno={yesno}
+                        setYesNo={setYesNo}
+                        onConfirm={handleUpdateProfile}
+                        title={"Xác nhận thay đổi"}
+                        message={"Bạn có chắc chắn muốn cập nhật profile  không?"}
+                    />
                 </Grid>
             </Box>
         </>

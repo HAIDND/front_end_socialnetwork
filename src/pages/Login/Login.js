@@ -26,6 +26,7 @@ import { Navigate, useLocation } from "react-router-dom";
 import auth from "~/services/authService/authHelper";
 import { CurentUser } from "~/MainRoutes";
 import { getInfo, readUser, saveInfo } from "~/services/userServices/userService";
+import Newsfeed from "../NewFeed";
 export default function Login(props) {
     const { curentUser, setCurrentUser, curentUserProfile, setCurrentUserProfile, curentUserID, curentUserToken } =
         useContext(CurentUser);
@@ -41,10 +42,14 @@ export default function Login(props) {
         const user = { email: values.email || undefined, password: values.password || undefined };
 
         login(user).then((data) => {
-            console.log(data);
-
-            setCurrentUserProfile(() => {
-                readUser(data.userId);
+            readUser(data._id).then((data1) => {
+                if (data1) {
+                    // Chỉ đặt error khi có lỗi từ server, không hiển thị mật khẩu
+                    setCurrentUserProfile(JSON.stringify(data1));
+                    console.log(data1);
+                } else {
+                    alert("No profile !");
+                }
             });
             if (data.message) {
                 // Chỉ đặt error khi có lỗi từ server, không hiển thị mật khẩu
@@ -66,40 +71,76 @@ export default function Login(props) {
     const { from } = location.state || { from: { pathname: "/home" } };
     const { redirectToReferrer } = values;
 
-    if (redirectToReferrer) {
-        return <Navigate to={from} />;
-    }
-
+    // if (redirectToReferrer) {
+    //     return (
+    //         <>
+    //             {" "}
+    //             <Navigate to={"/home"} />
+    //             <Newsfeed />
+    //         </>
+    //     );
+    // }
+    // const navigate = useNavigate()
+    // if (redirectToReferrer) {
+    //     return {navigate('/home');
+    //         window.reaload()
+    //     };
+    // }
     return (
-        <>
+        <Box
+            sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                minHeight: "0vh",
+                backgroundColor: "#f0f2f5",
+                padding: 2,
+            }}
+        >
+            <Box
+                sx={{
+                    textAlign: "center",
+                    mb: 4,
+                }}
+            >
+                <Typography
+                    variant="h3"
+                    sx={{
+                        color: "#1877f2",
+                        fontWeight: "bold",
+                        fontFamily: "Roboto, Helvetica, Arial, sans-serif",
+                        mb: 1,
+                    }}
+                >
+                    Social
+                </Typography>
+                <Typography variant="body1" sx={{ color: "#606770", fontSize: 18 }}>
+                    giúp bạn kết nối và chia sẻ với mọi người trong cuộc sống của bạn.
+                </Typography>
+            </Box>
             <Box
                 component="form"
                 sx={{
-                    display: "flex",
-                    backgroundColor: "#ffffff",
-                    flexDirection: "column",
-                    gap: 2,
-                    width: 300,
+                    width: 400,
                     padding: 4,
                     borderRadius: 2,
                     boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
                     margin: "0 auto",
                     mt: 5,
+                    boxShadow: "0 8px 16px rgba(0, 0, 0, 0.2)",
+                    backgroundColor: "#ffffff",
                 }}
             >
-                <Typography variant="h5" textAlign="center" fontWeight="bold" color="primary" mb={2}>
-                    Đăng nhập
-                </Typography>
                 <TextField
-                    label="Email"
+                    label="Email hoặc số điện thoại"
                     name="email"
                     type="email"
                     value={values.email}
                     onChange={handleChange("email")}
-                    // error={Boolean(values.error && values.email)}
-                    // helperText={values.error && values.email ? values.error : ''}
                     required
                     fullWidth
+                    sx={{ mb: 2 }}
                 />
                 <TextField
                     label="Mật khẩu"
@@ -107,29 +148,31 @@ export default function Login(props) {
                     type="password"
                     value={values.password}
                     onChange={handleChange("password")}
-                    // error={Boolean(values.error && !values.email)}
-                    // helperText={values.error && !values.email ? values.error : ''}
                     required
                     fullWidth
-                />{" "}
-                <br />{" "}
+                    sx={{ mb: 2 }}
+                />
                 {values.error && (
-                    <Typography component="p" color="error">
-                        {/* <Icon color="error" className={values.error}>
-                        error
-                    </Icon> */}
-                        {values.error}
-                    </Typography>
-                )}
-                <Button variant="contained" color="primary" onClick={clickSubmit} fullWidth sx={{ mt: 1.5 }}>
-                    Đăng nhập
-                </Button>
-                {values.error && (
-                    <FormHelperText error sx={{ textAlign: "center", mt: 1 }}>
+                    <FormHelperText error sx={{ textAlign: "center", mb: 2 }}>
                         {values.error}
                     </FormHelperText>
                 )}
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={clickSubmit}
+                    fullWidth
+                    sx={{
+                        backgroundColor: "#1877f2",
+                        textTransform: "none",
+                        fontSize: 18,
+                        fontWeight: "bold",
+                        ":hover": { backgroundColor: "#166fe5" },
+                    }}
+                >
+                    Đăng nhập
+                </Button>
             </Box>
-        </>
+        </Box>
     );
 }

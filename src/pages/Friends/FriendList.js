@@ -119,7 +119,7 @@ const FriendList = () => {
 
     useEffect(() => {
         try {
-            getListFriend(curentUserID).then((result) => {
+            getListFriend().then((result) => {
                 setData(result);
             });
         } catch (error) {

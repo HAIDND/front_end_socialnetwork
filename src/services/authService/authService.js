@@ -1,7 +1,6 @@
 // src/services/authService.js
 import { API_BASE_URL } from "~/config/apiConfig";
 const login = async (user) => {
-    console.log(user + "call api");
     try {
         let response = await fetch("http://localhost:4000/api/users/login", {
             method: "POST",
@@ -12,7 +11,6 @@ const login = async (user) => {
             credentials: "include", // Nếu backend yêu cầu cookie
             body: JSON.stringify(user),
         });
-        console.log(user + "call ai");
 
         // Kiểm tra nếu response không OK
         if (!response.ok) {
@@ -23,7 +21,6 @@ const login = async (user) => {
 
         // Parse dữ liệu JSON
         const data = await response.json();
-        console.log("Response data:", data);
         return data;
     } catch (err) {
         console.log("Fetch error:", err);
