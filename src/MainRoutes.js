@@ -264,50 +264,58 @@ const MainRoutes = () => {
             path: "/admin",
             element: (
                 <AdminRoute>
-                    <AdminPage type="user" />
+                    <AdminPage />
                 </AdminRoute>
             ),
         },
-        {
-            path: "/admin/group",
-            element: (
-                <AdminRoute>
-                    <AdminPage type="group" />
-                </AdminRoute>
-            ),
-        },
-        {
-            path: "/admin/deleteaccount",
-            element: (
-                <AdminRoute>
-                    <DeleteAccountDialog />
-                </AdminRoute>
-            ),
-        },
-        {
-            path: "/admin/deleteaccount",
-            element: (
-                <AdminRoute>
-                    <DeleteAccountDialog />
-                </AdminRoute>
-            ),
-        },
-        {
-            path: "/admin/deleteaccount",
-            element: (
-                <AdminRoute>
-                    <DeleteAccountDialog />
-                </AdminRoute>
-            ),
-        },
-        {
-            path: "/admin/deleteaccount",
-            element: (
-                <AdminRoute>
-                    <DeleteAccountDialog />
-                </AdminRoute>
-            ),
-        },
+        // {
+        //     path: "/admin/user",
+        //     element: (
+        //         <AdminRoute>
+        //             <AdminPage type="user" />
+        //         </AdminRoute>
+        //     ),
+        // },
+        // {
+        //     path: "/admin/group",
+        //     element: (
+        //         <AdminRoute>
+        //             <AdminPage type="group" />
+        //         </AdminRoute>
+        //     ),
+        // },
+        // {
+        //     path: "/admin/friend",
+        //     element: (
+        //         <AdminRoute>
+        //             <AdminPage type="friend" />
+        //         </AdminRoute>
+        //     ),
+        // },
+        // {
+        //     path: "/admin/message",
+        //     element: (
+        //         <AdminRoute>
+        //             <AdminPage type="message" />
+        //         </AdminRoute>
+        //     ),
+        // },
+        // {
+        //     path: "/admin/notifi",
+        //     element: (
+        //         <AdminRoute>
+        //             <AdminPage type="notifi" />
+        //         </AdminRoute>
+        //     ),
+        // },
+        // {
+        //     path: "/admin/post",
+        //     element: (
+        //         <AdminRoute>
+        //             <AdminPage type="post" />
+        //         </AdminRoute>
+        //     ),
+        // },
     ];
     const routesElement = useRoutes(routesArray);
     return (

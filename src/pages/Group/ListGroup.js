@@ -135,7 +135,8 @@ function ListGroup() {
     const fetchGroups = async () => {
         try {
             listGroupJoin().then((groups) => {
-                setGroups(groups);
+                if (groups.message === "No groups found for this user") setGroups([]);
+                else setGroups(groups);
             });
         } catch (error) {
             console.log("Error fetching groups:", error);

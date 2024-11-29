@@ -10,7 +10,6 @@ import {
     IconButton,
     TableSortLabel,
     Typography,
-    TextField,
 } from "@mui/material";
 import { Edit, Delete } from "@mui/icons-material";
 import EditUserDialog from "~/pages/ProfileUsers/EditProfile"; // Dialog chỉnh sửa
@@ -76,49 +75,38 @@ const AdminTable = ({ api, columns, reload, hanldeReload }) => {
     // Thêm state để theo dõi cột nào đang được sắp xếp và theo thứ tự nào
     const [order, setOrder] = useState("asc"); // asc: tăng dần, desc: giảm dần
     const [orderBy, setOrderBy] = useState(""); // Cột hiện tại được sắp xếp
-    const [searchTerm, setSearchTerm] = useState(""); // State lưu từ khóa tìm kiếm
+
     // Hàm xử lý khi nhấn vào tiêu đề cột
-    // Hàm xử lý sắp xếp
     const handleSortRequest = (columnField) => {
         const isAsc = orderBy === columnField && order === "asc";
         setOrder(isAsc ? "desc" : "asc");
         setOrderBy(columnField);
     };
-    // Lọc dữ liệu theo từ khóa tìm kiếm
-    const filteredData = data.filter((item) =>
-        columns.some((column) => {
-            const value = getNestedValue(item, column.field)?.toString().toLowerCase() || "";
-            return value.includes(searchTerm.toLowerCase());
-        }),
-    );
+
     // Hàm sắp xếp dữ liệu dựa trên cột và thứ tự
-    // Sắp xếp dữ liệu đã lọc
-    const sortedData = [...filteredData].sort((a, b) => {
+    const sortedData = data.sort((a, b) => {
         if (!orderBy) return 0; // Không sắp xếp nếu chưa chọn cột
 
-        const aValue = getNestedValue(a, orderBy)?.toString().toLowerCase() || "";
-        const bValue = getNestedValue(b, orderBy)?.toString().toLowerCase() || "";
+        const aValue = a[orderBy]?.toString().toLowerCase() || "";
+        const bValue = b[orderBy]?.toString().toLowerCase() || "";
 
-        return order === "asc" ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+        if (aValue < bValue) return order === "asc" ? -1 : 1;
+        if (aValue > bValue) return order === "asc" ? 1 : -1;
+        return 0;
     });
     return (
         <Paper elevation={3} sx={{ padding: 3, marginTop: 2 }}>
             <Typography variant="h5" gutterBottom>
                 Manager
-            </Typography>{" "}
-            <TextField
-                label="Search"
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-            />
+            </Typography>
             <TableContainer component={Paper}>
                 <Table>
                     <TableHead>
                         <TableRow>
                             <TableCell>STT</TableCell>
+                            {/* {columns.map((column) => (
+                                <TableCell key={column?.field}>{column?.label}</TableCell>
+                            ))} */}
                             {columns.map((column) => (
                                 <TableCell key={column.field}>
                                     <TableSortLabel
@@ -135,12 +123,17 @@ const AdminTable = ({ api, columns, reload, hanldeReload }) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {sortedData.map((item, index) => (
+                        {data.map((item, index) => (
                             <TableRow key={item._id}>
                                 <TableCell>{index + 1}</TableCell>
                                 {columns.map((column) => (
-                                    <TableCell key={column.field}>{getNestedValue(item, column.field)}</TableCell>
+                                    <TableCell key={column.field}>
+                                        {getNestedValue(item, column.field)}
+                                        {column.field === "isRead" && item.isRead === true && "readed"}
+                                        {column.field === "isRead" && item.isRead === false && "non-readed"}
+                                    </TableCell>
                                 ))}
+
                                 {api.put && (
                                     <TableCell>
                                         <IconButton color="primary" onClick={() => handleEdit(item._id, item?.role)}>

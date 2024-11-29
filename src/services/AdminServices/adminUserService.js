@@ -45,7 +45,7 @@ const adminDeleteUser = async (userId) => {
     }
 };
 // router.put("/users/:userId/role", authenticateToken, adminMiddleware, AdminController.updateUserRole);
-const adminUpdateUser = async (userId, formData) => {
+const adminUpdateUserRole = async (userId, role) => {
     // Lấy dữ liệu từ sessionStorage
     const storedToken = sessionStorage.getItem("jwt");
     // Parse JSON thành object
@@ -53,13 +53,14 @@ const adminUpdateUser = async (userId, formData) => {
     // Kiểm tra và sử dụng token
     const token = tokenData.token;
     try {
-        const response = await fetch(`http://localhost:4000/api/admin/${userId}/role`, {
+        const response = await fetch(`http://localhost:4000/api/admin/users/${userId}/role`, {
             method: "PUT",
             headers: {
                 accept: "application/json",
                 "Content-Type": "application/json",
                 Authorization: "Bearer " + token,
             },
+            body: JSON.stringify({ role: role }),
         });
         return await response.json();
     } catch (error) {
@@ -67,4 +68,4 @@ const adminUpdateUser = async (userId, formData) => {
     }
 };
 
-export { adminGetUser, adminDeleteUser, adminUpdateUser };
+export { adminGetUser, adminDeleteUser, adminUpdateUserRole };

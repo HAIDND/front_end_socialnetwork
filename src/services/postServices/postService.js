@@ -59,7 +59,7 @@ const updatePost = async (postId, content, image) => {
     formData.append("postId", postId);
     formData.append("content", content);
     // console.log(formData);
-    if (image) formData.append("image", image);
+    formData.append("image", image);
 
     try {
         let response = await fetch(`http://localhost:4000/api/posts/edit-post`, {

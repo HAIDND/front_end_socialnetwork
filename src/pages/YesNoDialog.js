@@ -22,7 +22,8 @@ import { Dialog, DialogActions, DialogContent, DialogTitle, Button } from "@mui/
 {
     /*            <Button variant="contained" color="error" onClick={() => handleOpenPopup("delete")}>
                 Delete
-            </Button> <YesNoDialog
+            </Button> 
+            <YesNoDialog
 yesno={yesno}
 setYesNo={setYesNo}
 onConfirm={handleConfirmAction}

@@ -76,32 +76,7 @@ const updateUser = async (form, avatar, userID) => {
         console.error(err);
     }
 };
-//call api create post
-const createPost = async (content, image, video, visibility) => {
-    const storedToken = sessionStorage.getItem("jwt");
-    const tokenData = storedToken ? JSON.parse(storedToken) : null;
-    const token = tokenData?.token;
-
-    const formData = new FormData();
-    formData.append("content", content);
-    if (image) formData.append("image", image);
-    if (video) formData.append("video", video);
-    formData.append("visibility", visibility);
-
-    try {
-        const response = await fetch("http://localhost:4000/api/posts/create", {
-            method: "PUT",
-            headers: {
-                authorization: "Bearer " + token,
-            },
-            body: formData,
-        });
-        return await response.json();
-    } catch (error) {
-        console.error(error);
-        return { success: false, error };
-    }
-};
+//get list user
 const listUser = async () => {
     // lấy danh sách người dùng
     try {

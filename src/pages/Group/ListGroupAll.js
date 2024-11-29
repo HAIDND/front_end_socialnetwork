@@ -62,7 +62,7 @@ const GroupCard = ({ group, onJoin, onLeave }) => {
                             minWidth: 100, // Kích thước tối thiểu của nút
                         }}
                     >
-                        {group?.members.includes(curentUserID) ? "Leave Group" : "Join Group"}
+                        {group?.members?.some((member) => member._id === curentUserID) ? "Leave Group" : "Join Group"}
                     </Button>
                 </CardContent>
             </Card>

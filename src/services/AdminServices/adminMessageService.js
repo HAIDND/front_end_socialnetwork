@@ -1,7 +1,7 @@
-// Notification routes
-//router.get("/notifications", authenticateToken, adminMiddleware, AdminController.getAllNotifications);
+// Message routes
+//router.get("/messages", authenticateToken, adminMiddleware, AdminController.getAllMessages);
 
-const adminGetNotifi = async () => {
+const adminGetMessage = async () => {
     // Lấy dữ liệu từ sessionStorage
     const storedToken = sessionStorage.getItem("jwt");
     // Parse JSON thành object
@@ -9,7 +9,7 @@ const adminGetNotifi = async () => {
     // Kiểm tra và sử dụng token
     const token = tokenData.token;
     try {
-        const response = await fetch(`http://localhost:4000/api/admin/notifications`, {
+        const response = await fetch(`http://localhost:4000/api/admin/messages`, {
             method: "GET",
             headers: {
                 accept: "application/json",
@@ -22,14 +22,17 @@ const adminGetNotifi = async () => {
         console.error(error);
     }
 };
-//router.delete("/notifications/:notificationId", adminMiddleware, AdminController.deleteNotification);
+// router.delete("/messages/:messageId", authenticateToken, adminMiddleware, AdminController.deleteMessage);
 
-const adminDeleteNotifi = async (notificationId) => {
+const adminDeleteMessage = async (messageId) => {
+    // Lấy dữ liệu từ sessionStorage
     const storedToken = sessionStorage.getItem("jwt");
+    // Parse JSON thành object
     const tokenData = storedToken ? JSON.parse(storedToken) : null;
+    // Kiểm tra và sử dụng token
     const token = tokenData.token;
     try {
-        const response = await fetch(`http://localhost:4000/api/admin/notifications/${notificationId}`, {
+        const response = await fetch(`http://localhost:4000/api/admin/messages/${messageId}`, {
             method: "DELETE",
             headers: {
                 accept: "application/json",
@@ -42,4 +45,4 @@ const adminDeleteNotifi = async (notificationId) => {
         console.error(error);
     }
 };
-export { adminGetNotifi, adminDeleteNotifi };
+export { adminGetMessage, adminDeleteMessage };

@@ -157,7 +157,7 @@ const Profile = () => {
                         </Grid>
                     </Grid>
                 </Box>
-                {curentUserID == userId && <PostPrivate visibility={"private"} />}
+                {curentUserID === userId && <PostPrivate visibility={"private"} />}
             </Grid>
         </Grid>
     );

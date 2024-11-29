@@ -7,12 +7,12 @@ const EditPostDialog = ({ open, onClose, postContent, postImage, postId, setPost
     const [image, setImage] = useState(postImage);
     const [selectedImage, setSelectedImage] = useState(null);
 
-    useEffect(() => {
-        // Reset selected image and content when dialog opens
-        setContent(postContent);
-        setImage(postImage);
-        setSelectedImage(null);
-    }, [open, postContent, postImage]);
+    // useEffect(() => {
+    //     // Reset selected image and content when dialog opens
+    //     setContent(postContent);
+    //     // setImage(postImage);
+    //     // setSelectedImage(null);
+    // }, [open, postContent, postImage]);
 
     const handleContentChange = (event) => {
         setContent(event.target.value);
@@ -22,7 +22,7 @@ const EditPostDialog = ({ open, onClose, postContent, postImage, postId, setPost
         const file = event.target.files[0];
         if (file) {
             const isImage = file.type.startsWith("image/");
-            setSelectedImage(URL.createObjectURL(file)); // Preview the selected image
+            setSelectedImage(URL.createObjectURL(file));
             if (isImage) {
                 setImage(file); // Set the image file to the state
             }
@@ -30,11 +30,18 @@ const EditPostDialog = ({ open, onClose, postContent, postImage, postId, setPost
     };
 
     const handleCompleteClick = async () => {
-        // Only update the post if the image is changed
-        await updatePost(postId, content, image || selectedImage);
-        const update = await getPost();
-        setPostList(update); // Send either the selected image or existing image if no new one
-        onClose(); // Close dialog after update
+        if (selectedImage === null) {
+            await updatePost(postId, content, image);
+            const update = await getPost();
+            setPostList(update); // Send either the selected image or existing image if no new one
+            onClose(); // Close dialog after update
+        } else {
+            // Only update the post if the image is changed
+            await updatePost(postId, content, image);
+            const update = await getPost();
+            setPostList(update); // Send either the selected image or existing image if no new one
+            onClose(); // Close dialog after update
+        }
     };
 
     return (

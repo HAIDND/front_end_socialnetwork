@@ -1,7 +1,6 @@
-// Notification routes
-//router.get("/notifications", authenticateToken, adminMiddleware, AdminController.getAllNotifications);
-
-const adminGetNotifi = async () => {
+// Group routes
+// router.get("/groups", authenticateToken, adminMiddleware, AdminController.getAllGroups);
+const adminGetGroup = async () => {
     // Lấy dữ liệu từ sessionStorage
     const storedToken = sessionStorage.getItem("jwt");
     // Parse JSON thành object
@@ -9,7 +8,7 @@ const adminGetNotifi = async () => {
     // Kiểm tra và sử dụng token
     const token = tokenData.token;
     try {
-        const response = await fetch(`http://localhost:4000/api/admin/notifications`, {
+        const response = await fetch(`http://localhost:4000/api/admin/groups`, {
             method: "GET",
             headers: {
                 accept: "application/json",
@@ -22,14 +21,16 @@ const adminGetNotifi = async () => {
         console.error(error);
     }
 };
-//router.delete("/notifications/:notificationId", adminMiddleware, AdminController.deleteNotification);
-
-const adminDeleteNotifi = async (notificationId) => {
+// router.delete("/groups/:groupId", authenticateToken, adminMiddleware, AdminController.deleteGroup);
+const adminDeleteGroup = async (groupID) => {
+    // Lấy dữ liệu từ sessionStorage
     const storedToken = sessionStorage.getItem("jwt");
+    // Parse JSON thành object
     const tokenData = storedToken ? JSON.parse(storedToken) : null;
+    // Kiểm tra và sử dụng token
     const token = tokenData.token;
     try {
-        const response = await fetch(`http://localhost:4000/api/admin/notifications/${notificationId}`, {
+        const response = await fetch(`http://localhost:4000/api/admin/groups/${groupID}`, {
             method: "DELETE",
             headers: {
                 accept: "application/json",
@@ -42,4 +43,4 @@ const adminDeleteNotifi = async (notificationId) => {
         console.error(error);
     }
 };
-export { adminGetNotifi, adminDeleteNotifi };
+export { adminGetGroup, adminDeleteGroup };
