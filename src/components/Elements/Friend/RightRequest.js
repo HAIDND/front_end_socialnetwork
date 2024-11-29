@@ -75,27 +75,33 @@ const RightRequest = () => {
                 boxShadow: theme.shadows[3],
                 maxWidth: 300,
                 ml: theme.spacing(7),
+                mb: 5,
             }}
         >
             <Typography
                 variant="h5"
-                sx={{ textAlign: "center", color: theme.palette.text.primary, marginBottom: theme.spacing(2) }}
+                sx={{ textAlign: "center", color: theme.palette.text.primary, marginBottom: theme.spacing(0) }}
             >
                 Friend Requests
             </Typography>
             {requests
                 .filter((request) => request.status !== "accepted")
                 .map((request) => (
-                    <Card key={request._id} sx={{ marginBottom: theme.spacing(2) }}>
-                        <CardContent sx={{ display: "flex", alignItems: "center", padding: theme.spacing(1) }}>
-                            <Avatar alt={request.name} src={request.avatar} sx={{ marginRight: theme.spacing(2) }} />
-                            <Box sx={{ flexGrow: 1 }}>
+                    <Card key={request._id} sx={{ marginBottom: theme.spacing(0) }}>
+                        <CardContent sx={{ display: "flex", alignItems: "center", padding: theme.spacing(2) }}>
+                            <Avatar
+                                alt={request.requester.name}
+                                src={request.requester.avatar}
+                                sx={{ marginRight: theme.spacing(2) }}
+                            />
+                            <Box sx={{ flexGrow: 1, ml: 3 }}>
                                 <Typography variant="body1" sx={{ color: theme.palette.text.primary }}>
-                                    {request.name}
+                                    {request.requester.username}
                                 </Typography>
-                                <Box
-                                    sx={{ display: "flex", gap: theme.spacing(1), marginTop: theme.spacing(1), ml: 3 }}
-                                >
+                                <Typography variant="caption" color="textSecondary">
+                                    {request.requester.email}
+                                </Typography>
+                                <Box sx={{ display: "flex", gap: theme.spacing(1), marginTop: theme.spacing(1) }}>
                                     <Button
                                         variant="contained"
                                         color="success"

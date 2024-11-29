@@ -104,35 +104,36 @@ const Profile = () => {
                         </Grid>
 
                         {/* Buttons */}
-                        {curentUserID !== userId && (
-                            <>
-                                {listFriend.some((friend) => friend?._id === userId) ? (
-                                    <Button
-                                        variant="contained"
-                                        color="secondary"
-                                        sx={{ mr: 1 }}
-                                        onClick={handleDeleteFriend}
-                                    >
-                                        Unfriend
-                                    </Button>
-                                ) : (
-                                    <Button
-                                        variant="contained"
-                                        color="primary"
-                                        sx={{ mr: 1 }}
-                                        onClick={handleAddFriend}
-                                    >
-                                        Addfriend
-                                    </Button>
-                                )}
+                        <Grid container justifyContent="center" spacing={2} mt={2}>
+                            {curentUserID !== userId && (
+                                <>
+                                    {listFriend.some((friend) => friend?._id === userId) ? (
+                                        <Button
+                                            variant="contained"
+                                            color="secondary"
+                                            sx={{ mr: 1 }}
+                                            onClick={handleDeleteFriend}
+                                        >
+                                            Unfriend
+                                        </Button>
+                                    ) : (
+                                        <Button
+                                            variant="contained"
+                                            color="primary"
+                                            sx={{ mr: 1 }}
+                                            onClick={handleAddFriend}
+                                        >
+                                            Addfriend
+                                        </Button>
+                                    )}
 
-                                <Button variant="outlined" color="primary" onClick={handleOpenChat}>
-                                    Chat
-                                </Button>
-                                {openChat && <ChatWindow onClose={handleCloseChat} friend={profile} />}
-                            </>
-                        )}
-
+                                    <Button variant="outlined" color="primary" onClick={handleOpenChat}>
+                                        Chat
+                                    </Button>
+                                    {openChat && <ChatWindow onClose={handleCloseChat} friend={profile} />}
+                                </>
+                            )}
+                        </Grid>
                         {/* Other Details */}
                         <Grid item xs={12}>
                             <Typography variant="body1">

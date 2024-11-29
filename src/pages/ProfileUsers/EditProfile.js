@@ -19,13 +19,13 @@ import YesNoDialog from "../YesNoDialog";
 import { useNavigate } from "react-router-dom";
 
 const Profile = ({ Profiledata }) => {
-    const { curentUserProfile, setCurrentUserProfile } = useContext(CurentUser);
+    const { curentUserID, contextValue } = useContext(CurentUser);
     const [avatar, setAvatar] = useState([]);
     const [postContent, setPostContent] = useState("");
-    const [avatarPreview, setAvatarPreview] = useState();
-    const [selectedImage, setSelectedImage] = useState("");
+    const [avatarPreview, setAvatarPreview] = useState(contextValue.curentUserProfile.avatar);
+    const [selectedImage, setSelectedImage] = useState();
     const [yesno, setYesNo] = useState(false);
-    const { curentUserID, curentUserInfo } = useContext(CurentUser);
+
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         username: "",
@@ -49,9 +49,9 @@ const Profile = ({ Profiledata }) => {
     //efect
     // Fetch user profile data from API
     useEffect(() => {
-        readUser(curentUserProfile?._id).then((data) => {
+        readUser(curentUserID).then((data) => {
             if (data) {
-                setCurrentUserProfile(data);
+                contextValue.setCurrentUserProfile(data);
             } else {
                 alert("No profile");
             }
@@ -100,7 +100,7 @@ const Profile = ({ Profiledata }) => {
                     {/* Avatar */}
                     <Grid item xs={12} sx={{ textAlign: "center" }}>
                         <Avatar
-                            src={avatarPreview || curentUserProfile?.avatar}
+                            src={avatarPreview || contextValue.curentUserProfile?.avatar}
                             // src={avatarPreview}
                             alt={`${formData.username}`}
                             sx={{ width: 100, height: 100, margin: "0 auto" }}
@@ -126,7 +126,7 @@ const Profile = ({ Profiledata }) => {
                             label="User name"
                             name="username"
                             variant="outlined"
-                            value={formData.username || (formData.username = curentUserProfile?.username)}
+                            value={formData.username || (formData.username = contextValue.curentUserProfile?.username)}
                             onChange={handleChange}
                             required
                         />
@@ -143,7 +143,7 @@ const Profile = ({ Profiledata }) => {
                             name="email"
                             type="email"
                             variant="outlined"
-                            value={(formData.email = curentUserProfile?.email)}
+                            value={(formData.email = contextValue.curentUserProfile?.email)}
                             onChange={handleChange}
                             required
                         />
@@ -155,7 +155,7 @@ const Profile = ({ Profiledata }) => {
                             name="phone"
                             type="tel"
                             variant="outlined"
-                            value={formData.phone || (formData.phone = curentUserProfile?.phone)}
+                            value={formData.phone || (formData.phone = contextValue.curentUserProfile?.phone)}
                             onChange={handleChange}
                         />
                     </Grid>
@@ -167,7 +167,10 @@ const Profile = ({ Profiledata }) => {
                             type="date"
                             InputLabelProps={{ shrink: true }}
                             variant="outlined"
-                            value={formData.dateOfBirth || (formData.dateOfBirth = curentUserProfile?.dateOfBirth)}
+                            value={
+                                formData.dateOfBirth ||
+                                (formData.dateOfBirth = contextValue.curentUserProfile?.dateOfBirth)
+                            }
                             onChange={handleChange}
                             required
                         />
@@ -177,7 +180,7 @@ const Profile = ({ Profiledata }) => {
                             <InputLabel>Gender</InputLabel>
                             <Select
                                 name="gender"
-                                value={formData.gender || (formData.gender = curentUserProfile?.gender)}
+                                value={formData.gender || (formData.gender = contextValue.curentUserProfile?.gender)}
                                 onChange={handleChange}
                                 label="Gender"
                             >

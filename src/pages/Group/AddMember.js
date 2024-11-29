@@ -17,7 +17,7 @@ import { getListFriend } from "~/services/friendServices/friendService";
 import { CurentUser } from "~/MainRoutes";
 import { addMemberToGroup } from "~/services/groupServices/groupService";
 
-const AddMember = ({ open, close, group, onAdd }) => {
+const AddMember = ({ open, close, group, onAdd, handleReload }) => {
     const [searchTerm, setSearchTerm] = useState("");
     const navigate = useNavigate();
     // Lọc danh sách người dùng dựa trên từ khóa tìm kiếm
@@ -66,7 +66,7 @@ const AddMember = ({ open, close, group, onAdd }) => {
                         .filter((item) => !group.members.includes(item._id))
                         .map((user) => (
                             <Card
-                                key={user.id}
+                                key={user._id}
                                 sx={{
                                     mb: 2,
                                     display: "flex",

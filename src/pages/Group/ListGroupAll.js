@@ -20,7 +20,7 @@ const GroupCard = ({ group, onJoin, onLeave }) => {
     const navigate = useNavigate();
 
     return (
-        (group?.privacy === "public" || group?.creator.includes(curentUserID)) && (
+        (group?.privacy === "public" || group?.members?.some((member) => member._id === curentUserID)) && (
             <Card
                 sx={{ maxWidth: 345, margin: "0 auto", boxShadow: 2 }}
                 onClick={() =>
@@ -50,9 +50,9 @@ const GroupCard = ({ group, onJoin, onLeave }) => {
                     </Typography>
                     <Button
                         variant="contained"
-                        color={group?.members.includes(curentUserID) ? "secondary" : "primary"}
+                        color={group?.members?.some((member) => member._id === curentUserID) ? "secondary" : "primary"}
                         onClick={(event) =>
-                            group?.members.includes(curentUserID)
+                            group?.members?.some((member) => member._id === curentUserID)
                                 ? (event.stopPropagation(), onLeave(group._id))
                                 : (event.stopPropagation(), onJoin(group._id))
                         }

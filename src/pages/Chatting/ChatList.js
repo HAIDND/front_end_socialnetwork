@@ -54,14 +54,19 @@ const ChatList = () => {
         setOpenChat(!openChat);
     };
     return (
-        <ChatListContainer>
+        <ChatListContainer
+            sx={{
+                zIndex: 10,
+            }}
+        >
             <Typography
                 variant="h6"
                 gutterBottom
                 sx={{
                     textAlign: "center", // Căn giữa tiêu đề
                     fontWeight: "bold", // Tăng độ đậm
-                    color: theme => theme.palette.text.primary, // Lấy màu chữ theo theme
+                    color: (theme) => theme.palette.text.primary, // Lấy màu chữ theo theme
+                    zIndex: 10,
                 }}
             >
                 Chat List
@@ -113,7 +118,6 @@ const ChatList = () => {
             </List>
             {openChat && <ChatWindow friend={chatFriend} onClose={handleCloseChat} />}
         </ChatListContainer>
-
     );
 };
 

@@ -12,9 +12,10 @@ import { listGroupJoin } from "~/services/groupServices/groupService";
 
 import AddMember from "./AddMember";
 import RemoveMember from "./RemoveMember";
-const GroupCard = ({ group, onJoin }) => {
+const GroupCard = ({ group, onJoin, handleReload }) => {
     const [dataGroup, setDataGroup] = useState(group);
     const navigate = useNavigate();
+
     //open add member
     const [isOpenAddMember, setOpenAddMember] = useState(null);
     const openAddMember = () => {
@@ -29,6 +30,7 @@ const GroupCard = ({ group, onJoin }) => {
         setOpenRemoveMember(true);
     };
     const closeRemoveMember = () => {
+        handleReload();
         setOpenRemoveMember(false);
     };
 
@@ -97,19 +99,28 @@ const GroupCard = ({ group, onJoin }) => {
                     Remove member
                 </Button>
             </CardContent>
-            <RemoveMember open={isOpenRemoveMember} members={group?.members} group={group} close={closeRemoveMember} />
-            <AddMember open={isOpenAddMember} users={group?.members} group={group} close={closeAddMember} />
+            <RemoveMember
+                handleReload={handleReload}
+                open={isOpenRemoveMember}
+                members={group?.members}
+                group={group}
+                close={closeRemoveMember}
+            />
+            <AddMember
+                handleReload={handleReload}
+                open={isOpenAddMember}
+                users={group?.members}
+                group={group}
+                close={closeAddMember}
+            />
         </Card>
     );
 };
 function ListGroup() {
-    const cardItems = [
-        { id: 1, name: "Create Group", icon: <AddIcon />, path: "/group/create" },
-        { id: 2, name: "My Group", icon: <GroupsIcon />, path: "/group/mygroup" },
-        { id: 3, name: "Explore Group", icon: <SearchIcon />, path: "/group/explore" },
-        { id: 4, name: "Chat Group", icon: <ChatIcon />, path: "/group/chat" },
-    ];
-
+    const [reload, setReload] = useState(true);
+    const handleReload = () => {
+        setReload(!reload);
+    };
     const navigate = useNavigate();
 
     const handleCardClick = (path) => {
@@ -125,13 +136,6 @@ function ListGroup() {
         try {
             listGroupJoin().then((groups) => {
                 setGroups(groups);
-                // if (groups) {
-                //     if (Array.isArray(groups)) setGroups(groups);
-                //     else {
-                //         setGroups([]);
-                //         alert("You have 0 group!");
-                //     }
-                // }
             });
         } catch (error) {
             console.log("Error fetching groups:", error);
@@ -142,7 +146,7 @@ function ListGroup() {
 
     useEffect(() => {
         fetchGroups();
-    }, []);
+    }, [reload]);
 
     const handleJoinGroup = async (groupId) => {
         try {
@@ -180,7 +184,7 @@ function ListGroup() {
                                     lg={3}
                                     key={group._id}
                                 >
-                                    <GroupCard group={group} onJoin={handleJoinGroup} />
+                                    <GroupCard group={group} onJoin={handleJoinGroup} handleReload={handleReload} />
                                     {/* <DetailGroup /> */}
                                 </Grid>
                             ))}

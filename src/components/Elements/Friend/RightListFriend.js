@@ -45,9 +45,11 @@ const RightListFriend = () => {
                 boxShadow: theme.shadows[3],
                 maxWidth: 300,
                 ml: theme.spacing(7),
+                mb: 3,
+                mt: 3,
             }}
         >
-            <Typography variant="h5" sx={{ textAlign: "center", marginBottom: theme.spacing(1) }} color="primary">
+            <Typography variant="h5" sx={{ textAlign: "center", marginBottom: theme.spacing(0) }} color="primary">
                 My Friends
             </Typography>
             <List>
@@ -74,7 +76,7 @@ const RightListFriend = () => {
                             </Badge>
                         </ListItemAvatar>
                         <ListItemText
-                            primary={friend.name}
+                            primary={friend.username}
                             secondary={friend.email}
                             primaryTypographyProps={{ color: theme.palette.text.primary, fontWeight: "bold" }}
                             secondaryTypographyProps={{ color: theme.palette.text.secondary }}

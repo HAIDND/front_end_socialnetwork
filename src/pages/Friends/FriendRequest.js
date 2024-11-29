@@ -29,13 +29,21 @@ const FriendRequestCard = ({ request, onAccept, onDeny }) => {
             }}
         >
             <Box>
-                <Avatar src={request.avatar} alt={request?.username} sx={{ width: 80, height: 80, margin: "0 auto" }} />
+                <Avatar
+                    src={request.requester.avatar}
+                    alt={request?.username}
+                    sx={{ width: 80, height: 80, margin: "0 auto" }}
+                />
                 <Typography variant="body1" fontWeight="600" mt={1}>
-                    {request?.recipient?.username}
+                    {request?.requester.username}
                 </Typography>
                 {request?.status && (
                     <Typography variant="caption" color="textSecondary">
                         {request?.status}
+                        <br />
+                        <Typography variant="caption" color="textSecondary">
+                            {request?.requester.email}
+                        </Typography>
                     </Typography>
                 )}
             </Box>
@@ -43,7 +51,7 @@ const FriendRequestCard = ({ request, onAccept, onDeny }) => {
                 <Button
                     variant="contained"
                     color="primary"
-                    onClick={() => onAccept(request?.requester)}
+                    onClick={() => onAccept(request?.requester._id)}
                     sx={{ textTransform: "none" }}
                 >
                     Xác nhận

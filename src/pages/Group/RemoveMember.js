@@ -11,13 +11,14 @@ import {
     Button,
     Box,
     Typography,
+    ListItemText,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { getListFriend } from "~/services/friendServices/friendService";
 import { CurentUser } from "~/MainRoutes";
 import { addMemberToGroup, removeMemberToGroup } from "~/services/groupServices/groupService";
 
-const RemoveMember = ({ open, close, group, onAdd, members }) => {
+const RemoveMember = ({ open, close, group, members, handleReload }) => {
     const [searchTerm, setSearchTerm] = useState("");
     const navigate = useNavigate();
     // Lọc danh sách người dùng dựa trên từ khóa tìm kiếm
@@ -28,12 +29,12 @@ const RemoveMember = ({ open, close, group, onAdd, members }) => {
 
     //call api list friend
     //caall api getList
-    const [users, setData] = useState([]);
+    const [users, setMember] = useState([]);
     const { curentUserID } = useContext(CurentUser);
     useEffect(() => {
         try {
             getListFriend(curentUserID).then((result) => {
-                setData(members);
+                setMember(members);
             });
         } catch (error) {
             console.log(error);
@@ -62,11 +63,11 @@ const RemoveMember = ({ open, close, group, onAdd, members }) => {
 
                 {/* Danh sách người dùng */}
                 <Box>
-                    {users
-                        .filter((item) => item !== group?.creator)
+                    {members
+                        .filter((item) => item?._id !== group?.creator?._id)
                         .map((user) => (
                             <Card
-                                key={user.id}
+                                key={user._id}
                                 sx={{
                                     mb: 2,
                                     display: "flex",
@@ -77,14 +78,22 @@ const RemoveMember = ({ open, close, group, onAdd, members }) => {
                             >
                                 <CardHeader
                                     avatar={<Avatar src={user.avatar} alt={user.username} />}
-                                    title={user}
                                     titleTypographyProps={{ variant: "subtitle1" }}
+                                />{" "}
+                                <ListItemText
+                                    primary={user?.username}
+                                    secondary={
+                                        <Typography component="span" variant="body2" color="text.secondary" noWrap>
+                                            {user?.email}
+                                        </Typography>
+                                    }
                                 />
+                                {/* <p>{user.email}</p> */}
                                 <CardActions>
                                     <Button
                                         variant="contained"
                                         color="primary"
-                                        onClick={() => removeMemberToGroup(group?._id, user)}
+                                        onClick={() => removeMemberToGroup(group?._id, user._id)}
                                     >
                                         Remove to Group
                                     </Button>
