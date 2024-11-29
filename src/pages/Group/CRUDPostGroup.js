@@ -416,6 +416,7 @@ import {
 import EditPostDialog from "~/pages/NewFeed/EditPostDialog";
 import CommentList from "~/pages/NewFeed/Comment";
 import { getPostInGroup } from "~/services/groupServices/groupService";
+import EditPostGroupDialog from "./EditPostDialog";
 export default function PostInGroup({ groupID }) {
     const [showComments, setShowComments] = useState({});
     const [postList, setPostList] = useState([]);
@@ -492,10 +493,10 @@ export default function PostInGroup({ groupID }) {
                 <Card key={item._id} sx={{ maxWidth: 635, mb: 3, bgcolor: "background.paper" }}>
                     <CardHeader
                         avatar={<Avatar src={item?.userId?.avatar} />}
-                        title={item?.userId?.username}
+                        title={item?.userId.username || "Member" || item?.userId?.username}
                         subheader={`${item?.createdAt} role  ${item?.visibility}`}
                         action={
-                            item?.userId?._id === curentUserID && (
+                            (item?.userId?._id === curentUserID || item?.userId) === curentUserID && (
                                 <IconButton
                                     size="small"
                                     onClick={(event) => handleMenuOpen(event, item._id, item.content, item.image)}
@@ -507,13 +508,14 @@ export default function PostInGroup({ groupID }) {
                     />
 
                     {open && selectedPostId === item._id && (
-                        <EditPostDialog
+                        <EditPostGroupDialog
                             open={open}
                             onClose={handleCloseDialog}
                             postId={selectedPostId}
                             postContent={selectedPostContent}
                             postImage={selectedPostImage}
                             setPostList={setPostList}
+                            groupID={groupID}
                         />
                     )}
                     <Divider />
