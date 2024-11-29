@@ -26,27 +26,9 @@ import FriendRequest from "../Friends/FriendRequest";
 import FriendSend from "../Friends/ExploreFriend";
 ///context user
 
-const HomePage = () => {
-    ///useContexrt tp save info user
-    const { curentUser, curentUserProfile } = useContext(CurentUser);
+const HomePage = ({ login }) => {
+    const [isLogin, setIsLogin] = useState(login);
 
-    const [defaultPage, setDefaultPage] = useState(false);
-    const location = useLocation();
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        // Kiểm tra trạng thái xác thực và cập nhật defaultPage
-        setDefaultPage(auth.isAuthenticated());
-    }, [location]);
-
-    const handleLogin = () => {
-        navigate("/login");
-    };
-
-    const handleRegister = () => {
-        navigate("/register");
-    };
-    console.log(curentUserProfile);
     return (
         <>
             <>
@@ -55,18 +37,15 @@ const HomePage = () => {
                         Welcome to Our Site
                     </Typography>
                     <Box sx={{ display: "flex", gap: 2 }}>
-                        <Button variant="contained" color="primary" onClick={handleLogin} sx={{ px: 4 }}>
+                        <Button variant="contained" color="primary" onClick={() => setIsLogin(true)} sx={{ px: 4 }}>
                             Login
                         </Button>
-                        <Button variant="outlined" color="secondary" onClick={handleRegister} sx={{ px: 4 }}>
+                        <Button variant="outlined" color="secondary" onClick={() => setIsLogin(false)} sx={{ px: 4 }}>
                             Register
                         </Button>
                     </Box>
                 </Box>
-                <Routes>
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/register" element={<Register />} />
-                </Routes>
+                {isLogin ? <Login /> : <Register />}
             </>
         </>
     );

@@ -10,9 +10,9 @@ const ThemeSettings = ({ themeColor, setThemeColor, darkMode, setDarkMode, theme
 
     // Cập nhật localStorage khi theme thay đổi
     useEffect(() => {
-        localStorage.setItem("themeColor", themeColor);
-        localStorage.setItem("darkMode", darkMode);
-        localStorage.setItem("themeSecondary", themeSecondary);
+        sessionStorage.setItem("themeColor", themeColor);
+        sessionStorage.setItem("darkMode", darkMode);
+        sessionStorage.setItem("themeSecondary", themeSecondary);
     }, [themeColor, themeSecondary, darkMode]);
     // Tạo theme tùy chỉnh
 

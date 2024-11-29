@@ -22,7 +22,7 @@ import {
 
 import { login, loginUser } from "~/services/authService/authService";
 import { useState, useEffect, useContext } from "react";
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import auth from "~/services/authService/authHelper";
 import { CurentUser } from "~/MainRoutes";
 import { getInfo, readUser, saveInfo } from "~/services/userServices/userService";
@@ -30,7 +30,7 @@ import Newsfeed from "../NewFeed";
 export default function Login(props) {
     const { curentUser, setCurrentUser, curentUserProfile, setCurrentUserProfile, curentUserID, curentUserToken } =
         useContext(CurentUser);
-
+    const navigate = useNavigate();
     const [values, setValues] = useState({
         email: "",
         password: "",
@@ -42,15 +42,15 @@ export default function Login(props) {
         const user = { email: values.email || undefined, password: values.password || undefined };
 
         login(user).then((data) => {
-            readUser(data._id).then((data1) => {
-                if (data1) {
-                    // Chỉ đặt error khi có lỗi từ server, không hiển thị mật khẩu
-                    setCurrentUserProfile(JSON.stringify(data1));
-                    console.log(data1);
-                } else {
-                    alert("No profile !");
-                }
-            });
+            // readUser(data._id).then((data1) => {
+            //     if (data1) {
+            //         // Chỉ đặt error khi có lỗi từ server, không hiển thị mật khẩu
+            //         setCurrentUserProfile(JSON.stringify(data1));
+            //         console.log("set curent info ");
+            //     } else {
+            //         alert("No profile !");
+            //     }
+            // });
             if (data.message) {
                 // Chỉ đặt error khi có lỗi từ server, không hiển thị mật khẩu
                 setValues({ ...values, error: data.message });
@@ -58,6 +58,7 @@ export default function Login(props) {
                 // Chuyển hướng khi đăng nhập thành công
                 auth.authenticate(data, () => {
                     setValues({ ...values, error: "", redirectToReferrer: true });
+                    navigate("/home");
                 });
             }
         });

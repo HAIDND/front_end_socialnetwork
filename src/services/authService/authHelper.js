@@ -1,9 +1,14 @@
+import { faL } from "@fortawesome/free-solid-svg-icons";
 import { logout } from "./authService";
 
 const auth = {
     authenticate(jwt, cb) {
         if (typeof window !== "undefined") sessionStorage.setItem("jwt", JSON.stringify(jwt));
         cb();
+    },
+    isAdmin(role) {
+        if (role == "admin") return true;
+        return false;
     },
     isAuthenticated() {
         if (typeof window == "undefined") return false;

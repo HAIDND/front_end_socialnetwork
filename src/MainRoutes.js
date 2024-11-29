@@ -1,157 +1,337 @@
-import { Navigate, Route, Routes } from "react-router-dom";
-import { useState, useEffect, createContext } from "react";
-import { createTheme, ThemeProvider } from "@mui/material";
-import { getInfo, readUser, saveInfo } from "./services/userServices/userService";
-import ThemeSettings from "./Theme";
+import React, { useState, useEffect, createContext, useMemo } from "react";
+import { Navigate, Route, Routes, useRoutes } from "react-router-dom";
+import { createTheme, GlobalStyles, ThemeProvider } from "@mui/material";
 import auth from "./services/authService/authHelper";
-import HomePage from "./pages/Home";
-import Login from "./pages/Login/Login";
-import Register from "./pages/Register/Register";
-import SearchComponent from "./components/Layouts/Header/SearchComponent";
 
-import AdminPage from "./pages/AdminPage";
+import { readUser } from "./services/userServices/userService";
+import DefaultLayout from "./components/Layouts/DefaultLayout";
 import ProtectedRoute from "./ProtectedRoute";
 
-import Newsfeed from "~/pages/NewFeed";
-
-import Profile from "~/pages/ProfileUsers";
-import SettingsPage from "~/pages/SettingsPage";
-import FriendPage from "~/pages/Friends/FriendPage";
-import PageNotFound from "~/pages/Pagenotfound";
-import GroupPage from "~/pages/Group/GroupPage";
-import CreateGroup from "~/pages/Group/CreateGroup";
-import ListGroup from "~/pages/Group/ListGroup";
-import DeleteAccountDialog from "~/pages/SettingsPage/DeleteAccount";
-import ChatList from "~/pages/Chatting/ChatList";
-import ListGroupAll from "~/pages/Group/ListGroupAll";
-import EditProfile from "~/pages/ProfileUsers/EditProfile";
-import DetailGroup from "~/pages/Group/DetailGroup";
-import FormEditGroup from "~/pages/Group/FormEditGroup";
-import FriendList from "~/pages/Friends/FriendList";
-import FriendRequest from "~/pages/Friends/FriendRequest";
-import FriendSend from "~/pages/Friends/ExploreFriend";
-import { Home } from "@mui/icons-material";
-import DefaultLayout from "./components/Layouts/DefaultLayout";
-const useAuthLogger = () => {
-    const [isAuthenticated, setIsAuthenticated] = useState(auth.isAuthenticated());
-    useEffect(() => {
-        // Log giá trị hiện tại của isAuthenticated
-        console.log("Authentication status changed:", isAuthenticated);
-        // Hàm kiểm tra giá trị xác thực mỗi khi có sự thay đổi
-        const checkAuth = () => {
-            const currentAuthStatus = auth.isAuthenticated();
-            if (currentAuthStatus !== isAuthenticated) {
-                setIsAuthenticated(currentAuthStatus);
-            }
-        };
-        // Thiết lập interval để kiểm tra giá trị
-        const intervalId = setInterval(checkAuth, 1000); // Kiểm tra mỗi giây
-        // Dọn dẹp interval khi component unmount
-        return () => clearInterval(intervalId);
-    }, [isAuthenticated]); // Chạy lại khi isAuthenticated thay đổi
-
-    return isAuthenticated;
-};
+// Import pages
+import HomePage from "./pages/Home";
+import AdminPage from "./pages/AdminPage";
+import Newsfeed from "./pages/NewFeed";
+import Profile from "./pages/ProfileUsers";
+import SettingsPage from "./pages/SettingsPage";
+import FriendPage from "./pages/Friends/FriendPage";
+import EditProfile from "./pages/ProfileUsers/EditProfile";
+import DeleteAccountDialog from "./pages/SettingsPage/DeleteAccount";
+import GroupPage from "./pages/Group/GroupPage";
+import CreateGroup from "./pages/Group/CreateGroup";
+import ListGroup from "./pages/Group/ListGroup";
+import ListGroupAll from "./pages/Group/ListGroupAll";
+import FormEditGroup from "./pages/Group/FormEditGroup";
+import DetailGroup from "./pages/Group/DetailGroup";
+import Register from "./pages/Register/Register";
+import Login from "./pages/Login/Login";
+import PublicRoute from "./Router/PublicRouter";
+import PrivateRoute from "./Router/PrivateRouter";
+import PageNotFound from "./pages/Pagenotfound";
+import AdminRoute from "./Router/AdminRouter";
+import AdminTable from "./pages/AdminPage/AdminTable";
 
 export const CurentUser = createContext();
-function MainRoutes() {
+
+const MainRoutes = () => {
     const [curentUser, setCurrentUser] = useState();
     const [curentUserProfile, setCurrentUserProfile] = useState();
-    const curentUserID = auth.isAuthenticated().userId;
-    const curentUserToken = auth.isAuthenticated().token;
+    const curentUserID = auth.isAuthenticated()?.userId;
+    const curentUserToken = auth.isAuthenticated()?.token;
+    const contextValue = useMemo(
+        () => ({
+            curentUser,
+            setCurrentUser,
+            curentUserProfile,
+            setCurrentUserProfile,
+        }),
+        [curentUser, curentUserProfile],
+    );
     useEffect(() => {
-        // const curentUserID = auth.isAuthenticated().userId;
-
-        readUser(curentUserID).then((data) => {
-            if (data) {
-                // Chỉ đặt error khi có lỗi từ server, không hiển thị mật khẩu
-                setCurrentUserProfile(data);
-            } else {
-                alert("No profile !");
-            }
-        });
+        if (curentUserID) {
+            readUser(curentUserID).then((data) => {
+                if (data) {
+                    setCurrentUserProfile(data);
+                } else {
+                    alert("No profile!");
+                }
+            });
+        }
     }, [curentUserID]);
+    console.log(curentUserProfile);
+    // Theme settings
+    const [themeColor, setThemeColor] = useState(sessionStorage.getItem("themeColor") || "#2196f3");
+    const [themeSecondary, setThemeSecondary] = useState(sessionStorage.getItem("themeSecondary") || "#FFB347");
+    const [darkMode, setDarkMode] = useState(sessionStorage.getItem("darkMode") === "true");
 
-    ///theme
-    const [themeColor, setThemeColor] = useState(localStorage.getItem("themeColor") || "#2196f3");
-    const [themeSecondary, setThemeSecondary] = useState(localStorage.getItem("themeSecondary") || "#FFB347");
-    const [darkMode, setDarkMode] = useState(localStorage.getItem("darkMode") === "true");
     const theme = createTheme({
         palette: {
-            mode: darkMode ? "dark" : "light", // Dark hoặc Light mode
-            primary: {
-                main: themeColor, // Áp dụng màu chính
-            },
-            secondary: {
-                main: themeSecondary, // Thay đổi mã màu này theo ý bạn
-            },
+            mode: darkMode ? "dark" : "light",
+            primary: { main: themeColor },
+            secondary: { main: themeSecondary },
         },
     });
-    //effect
+
     useEffect(() => {
-        localStorage.setItem("themeColor", themeColor);
-        localStorage.setItem("themeSecondary", themeSecondary);
-        localStorage.setItem("darkMode", darkMode);
+        sessionStorage.setItem("themeColor", themeColor);
+        sessionStorage.setItem("themeSecondary", themeSecondary);
+        sessionStorage.setItem("darkMode", darkMode);
     }, [themeColor, themeSecondary, darkMode]);
+    //router
+    const routesArray = [
+        ///public routes
+        {
+            path: "*",
+            element: (
+                <PublicRoute>
+                    <HomePage login={true} />
+                </PublicRoute>
+            ),
+        },
+        {
+            path: "/login",
+            element: (
+                <PublicRoute>
+                    <HomePage login={true} />
+                </PublicRoute>
+            ),
+        },
+        {
+            path: "/register",
+            element: (
+                <PublicRoute>
+                    <HomePage login={false} />
+                </PublicRoute>
+            ),
+        },
 
+        ///private routes
+        {
+            path: "/",
+            element: (
+                <PrivateRoute>
+                    <Newsfeed />
+                </PrivateRoute>
+            ),
+        },
+        {
+            path: "/home",
+            element: (
+                <PrivateRoute>
+                    <Newsfeed />
+                </PrivateRoute>
+            ),
+        },
+        {
+            path: "/newsfeed",
+            element: (
+                <PrivateRoute>
+                    <Newsfeed />
+                </PrivateRoute>
+            ),
+        },
+        {
+            path: "/home",
+            element: (
+                <PrivateRoute>
+                    <Newsfeed />
+                </PrivateRoute>
+            ),
+        },
+        {
+            path: "/newsfeed",
+            element: (
+                <PrivateRoute>
+                    <Newsfeed />
+                </PrivateRoute>
+            ),
+        },
+        {
+            path: "/home",
+            element: (
+                <PrivateRoute>
+                    <Newsfeed />
+                </PrivateRoute>
+            ),
+        },
+        {
+            path: "/newsfeed",
+            element: (
+                <PrivateRoute>
+                    <Newsfeed />
+                </PrivateRoute>
+            ),
+        },
+        {
+            path: "/profile/:userId",
+            element: (
+                <PrivateRoute>
+                    <Profile />
+                </PrivateRoute>
+            ),
+        },
+        {
+            path: "/friends",
+            element: (
+                <PrivateRoute>
+                    <FriendPage />
+                </PrivateRoute>
+            ),
+        },
+        //group 6x
+        {
+            path: "/groups",
+            element: (
+                <PrivateRoute>
+                    <GroupPage />
+                </PrivateRoute>
+            ),
+        },
+        {
+            path: "/groups/mygroup",
+            element: (
+                <PrivateRoute>
+                    <ListGroup />
+                </PrivateRoute>
+            ),
+        },
+        {
+            path: "/groups/explore",
+            element: (
+                <PrivateRoute>
+                    <ListGroupAll />
+                </PrivateRoute>
+            ),
+        },
+        {
+            path: "/groups/create",
+            element: (
+                <PrivateRoute>
+                    <CreateGroup />
+                </PrivateRoute>
+            ),
+        },
+        {
+            path: "/groups/update",
+            element: (
+                <PrivateRoute>
+                    <FormEditGroup />
+                </PrivateRoute>
+            ),
+        },
+        {
+            path: "/groups/:id",
+            element: (
+                <PrivateRoute>
+                    <DetailGroup />
+                </PrivateRoute>
+            ),
+        },
+        //settings
+        {
+            path: "/settings",
+            element: (
+                <PrivateRoute>
+                    <SettingsPage />
+                </PrivateRoute>
+            ),
+        },
+        {
+            path: "/settings/editprofile",
+            element: (
+                <PrivateRoute>
+                    <EditProfile />
+                </PrivateRoute>
+            ),
+        },
+        {
+            path: "/settings/deleteaccount",
+            element: (
+                <PrivateRoute>
+                    <DeleteAccountDialog />
+                </PrivateRoute>
+            ),
+        },
+        {
+            path: "*",
+            element: (
+                <PrivateRoute>
+                    <PageNotFound />
+                </PrivateRoute>
+            ),
+        },
+        //admin rotes
+        {
+            path: "/admin",
+            element: (
+                <AdminRoute>
+                    <AdminPage type="user" />
+                </AdminRoute>
+            ),
+        },
+        {
+            path: "/admin/group",
+            element: (
+                <AdminRoute>
+                    <AdminPage type="group" />
+                </AdminRoute>
+            ),
+        },
+        {
+            path: "/admin/deleteaccount",
+            element: (
+                <AdminRoute>
+                    <DeleteAccountDialog />
+                </AdminRoute>
+            ),
+        },
+        {
+            path: "/admin/deleteaccount",
+            element: (
+                <AdminRoute>
+                    <DeleteAccountDialog />
+                </AdminRoute>
+            ),
+        },
+        {
+            path: "/admin/deleteaccount",
+            element: (
+                <AdminRoute>
+                    <DeleteAccountDialog />
+                </AdminRoute>
+            ),
+        },
+        {
+            path: "/admin/deleteaccount",
+            element: (
+                <AdminRoute>
+                    <DeleteAccountDialog />
+                </AdminRoute>
+            ),
+        },
+    ];
+    const routesElement = useRoutes(routesArray);
     return (
-        <>
+        <CurentUser.Provider
+            value={{
+                contextValue,
+                curentUserID,
+                curentUserToken,
+                themeColor,
+                setThemeColor,
+                darkMode,
+                setDarkMode,
+                themeSecondary,
+                setThemeSecondary,
+            }}
+        >
             <ThemeProvider theme={theme}>
-                {" "}
-                <CurentUser.Provider
-                    value={{
-                        curentUser,
-                        setCurrentUser,
-                        curentUserProfile,
-                        setCurrentUserProfile,
-                        curentUserID,
-                        curentUserToken,
-                        themeColor,
-                        setThemeColor,
-                        darkMode,
-                        setDarkMode,
-                        themeSecondary,
-                        setThemeSecondary,
-                    }}
-                >
-                    {/* <HomePage /> */}
-                    {/* <DefaultLayout /> */}
-                    {!auth.isAuthenticated() && <HomePage />}
-                    {auth.isAuthenticated() && <DefaultLayout />}
-                    <Routes>
-                        <Route path="/admin" element={<AdminPage />} />
-                        {/* {!auth.isAuthenticated() && <Route path="*" element={<HomePage />} />} */}
-                        {/* <Route path="/register" element={<Login />} />
-                        <Route path="/login" element={<Login />} /> */}
-                        {/* admin route */}
-                        <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
-                            <Route path="/admin" element={<AdminPage />} />
-                        </Route>
-                        {/* Route dành cho user bình thường */}
-                        <Route element={<ProtectedRoute allowedRoles={["user", "admin"]} />}>
-                            <Route path="/home" element={<Newsfeed />} />
+                <GlobalStyles styles={{ body: { overflowY: "scroll" } }} />
 
-                            {/* <Route path="/" element={<Test />} /> */}
-                            <Route path="/home" element={<Newsfeed />} />
-                            <Route path="/" element={<Newsfeed />} />
-                            <Route path="/newsfeed" element={<Newsfeed />} />
-                            <Route path="/profile/:userId" element={<Profile />} />
-                            <Route path="/friends" element={<FriendPage />} />
-                            <Route path="/settings/editprofile" element={<EditProfile />} />
-                            <Route path="/settings/deleteaccount" element={<DeleteAccountDialog />} />
-                            <Route path="/groups/create" element={<CreateGroup />} />
-                            <Route path="/groups/mygroup" element={<ListGroup />} />
-                            <Route path="/groups/explore" element={<ListGroupAll />} />
-                            <Route path="/groups/update" element={<FormEditGroup />} />
-                            <Route path="/groups/:id" element={<DetailGroup />} />
-                            <Route path="/groups" element={<GroupPage />} />
-                            <Route path="/settings" element={<SettingsPage />} />
-                        </Route>
-                    </Routes>
-                </CurentUser.Provider>
+                {auth.isAuthenticated() && <DefaultLayout />}
+                <>{routesElement}</>
             </ThemeProvider>
-        </>
+        </CurentUser.Provider>
     );
-}
+};
 
 export default MainRoutes;

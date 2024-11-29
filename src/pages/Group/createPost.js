@@ -9,36 +9,52 @@ import {
     FormControlLabel,
     Switch,
     Tooltip,
+    Radio,
     Drawer,
+    useTheme,
+    RadioGroup,
 } from "@mui/material";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { CurentUser } from "~/MainRoutes";
-import { createPost } from "~/services/postServices/postService";
+import { createPost } from "~/services/postServices/postService"; // Import the createPost function
+import CustomDialog from "../CustomDialog";
+
+import ClearIcon from "@mui/icons-material/Clear";
 import { createPostInGroup } from "~/services/groupServices/groupService";
-// Import hàm createPost
 
 const CreatePostInGroup = ({ addUpdate, groupID }) => {
-    const { curentUser, setCurrentUser, curentUserProfile, setCurrentUserProfile, curentUserID, curentUserToken } =
-        useContext(CurentUser);
-
+    const { curentUserProfile } = useContext(CurentUser);
+    const theme = useTheme(); // Using MUI theme
     const [postContent, setPostContent] = useState("");
+    const [image, setImage] = useState(null);
     const [selectedImage, setSelectedImage] = useState(null);
     const [selectedVideo, setSelectedVideo] = useState(null);
-    const [isPublic, setIsPublic] = useState(true);
+    const [isvisibility, setisvisibility] = useState("public");
     const [isToggleOpen, setIsToggleOpen] = useState(false);
 
-    // Hàm xử lý file ảnh
+    //open dialog
+    const [openDialog, setOpenDialog] = useState(false);
+    const dataDialog = {
+        link: "/home",
+        content: "Create post success",
+    };
+    const handleCloseDialog = () => {
+        setOpenDialog(false);
+    };
+    // Handle file change for images or videos
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         if (file) {
             const isImage = file.type.startsWith("image/");
             const isVideo = file.type.startsWith("video/");
             if (isImage) {
-                setSelectedImage(file);
-                console.log(file);
+                setSelectedImage(URL.createObjectURL(file)); // Create a preview for the image
+                setImage(file);
             }
-            if (isVideo) setSelectedVideo(file);
+            if (isVideo) {
+                setSelectedVideo(URL.createObjectURL(file)); // Create a preview for the video
+            }
         }
     };
 
@@ -51,44 +67,52 @@ const CreatePostInGroup = ({ addUpdate, groupID }) => {
     };
 
     const handleVisibilityChange = (event) => {
-        setIsPublic(event.target.checked);
+        setisvisibility(event.target.value);
     };
 
-    // Hàm submit bài viết
+    // Handle post submission const response = await createPostInGroup(groupID, postContent, selectedImage, selectedVideo);
     const handleSubmit = async () => {
-        if (postContent.trim() || selectedImage || selectedVideo) {
-            const visibility = isPublic ? "public" : "private";
-            const response = await createPostInGroup(groupID, postContent, selectedImage, selectedVideo);
+        if (postContent.trim() || image || selectedVideo) {
+            const visibility = isvisibility;
+            const response = await createPostInGroup(groupID, postContent, selectedImage, selectedVideo).then(
+                (data) => {
+                    dataDialog.content = "Create post success!";
+                    if (data) {
+                        setPostContent("");
+                        setSelectedImage(null);
+                        setSelectedVideo(null);
 
-            if (response?.success) {
-                addUpdate(response.data);
-                setPostContent("");
-                setSelectedImage(null);
-                setSelectedVideo(null);
-            } else {
-                console.error("Failed to create post:", response?.error);
-            }
+                        setOpenDialog(true);
+                    } else {
+                        console.error("Failed to create post:", data);
+                    }
+                },
+            );
         }
     };
 
     const handleClose = () => {
         setIsToggleOpen(false);
     };
-
+    const handleRemoveMedia = () => {
+        setSelectedImage(null);
+        setSelectedVideo(null);
+        setImage(null);
+    };
     return (
         <Box
             sx={{
-                padding: 2,
-                border: "1px solid #ccc",
-                borderRadius: 2,
-                backgroundColor: "white",
                 maxWidth: 600,
-                ml: 25,
+                padding: 2,
+                mb: 4,
+                border: `1px solid ${theme.palette.divider}`,
+                borderRadius: 2,
+                backgroundColor: theme.palette.background.paper,
             }}
         >
             <Box display="flex" alignItems="center" mb={2}>
                 <Avatar alt={curentUserProfile?.username} src={curentUserProfile?.avatar} />
-                <Typography variant="h6" sx={{ marginLeft: 2, textAlign: "center" }}>
+                <Typography variant="h6" sx={{ marginLeft: 2 }} color="primary">
                     {curentUserProfile?.username}
                 </Typography>
             </Box>
@@ -100,7 +124,7 @@ const CreatePostInGroup = ({ addUpdate, groupID }) => {
                 placeholder="What's on your mind?"
                 value={postContent}
                 onChange={handlePostChange}
-                sx={{ marginBottom: 0 }}
+                sx={{ marginBottom: 2 }}
             />
             <Box display="flex" justifyContent="space-between" alignItems="center">
                 <Box>
@@ -123,19 +147,75 @@ const CreatePostInGroup = ({ addUpdate, groupID }) => {
                             <MoreHorizIcon />
                         </IconButton>
                     </Tooltip>
+                    <Button variant="contained" color="primary" sx={{ marginTop: 2 }} onClick={handleSubmit}>
+                        Post
+                    </Button>
                 </Box>
                 <Drawer anchor="right" open={isToggleOpen} onClose={handleClose}>
                     <Box sx={{ width: 250, padding: 2 }}>
-                        <FormControlLabel
-                            control={<Switch checked={isPublic} onChange={handleVisibilityChange} />}
-                            label="Chia sẻ công khai"
-                        />
+                        <Typography variant="h6" gutterBottom>
+                            Post Visibility
+                        </Typography>
+
+                        <RadioGroup value={isvisibility} onChange={handleVisibilityChange}>
+                            <FormControlLabel value="public" control={<Radio />} label="Public" />
+                            <FormControlLabel value="private" control={<Radio />} label="Private" />
+                            <FormControlLabel value="friends" control={<Radio />} label="Friends" />
+                        </RadioGroup>
                     </Box>
                 </Drawer>
             </Box>
-            <Button variant="contained" color="primary" sx={{ marginTop: 0 }} onClick={handleSubmit}>
-                Post
-            </Button>
+            {openDialog && <CustomDialog open={openDialog} onClose={handleCloseDialog} data={dataDialog} />}
+            {/* Display preview for selected image */}
+            {/* Display preview for selected image */}
+            {selectedImage && (
+                <Box sx={{ mt: 2, position: "relative" }}>
+                    <IconButton
+                        onClick={handleRemoveMedia}
+                        sx={{
+                            position: "absolute",
+                            right: 8,
+                            top: 8,
+                            backgroundColor: "rgba(0, 0, 0, 0.5)",
+                            "&:hover": {
+                                backgroundColor: "rgba(0, 0, 0, 0.7)",
+                            },
+                        }}
+                    >
+                        <ClearIcon sx={{ color: "white" }} />
+                    </IconButton>
+                    <img
+                        src={selectedImage}
+                        alt="Selected"
+                        style={{ width: "100%", maxHeight: "300px", objectFit: "cover", borderRadius: "8px" }}
+                    />
+                </Box>
+            )}
+
+            {/* Display preview for selected video */}
+            {selectedVideo && (
+                <Box sx={{ mt: 2, position: "relative" }}>
+                    <IconButton
+                        onClick={handleRemoveMedia}
+                        sx={{
+                            position: "absolute",
+                            right: 8,
+                            top: 8,
+                            backgroundColor: "rgba(0, 0, 0, 0.5)",
+                            "&:hover": {
+                                backgroundColor: "rgba(0, 0, 0, 0.7)",
+                            },
+                        }}
+                    >
+                        <ClearIcon sx={{ color: "white" }} />
+                    </IconButton>
+                    <video
+                        src={selectedVideo}
+                        controls
+                        style={{ width: "100%", maxHeight: "300px", borderRadius: "8px" }}
+                    />
+                </Box>
+            )}
         </Box>
     );
 };

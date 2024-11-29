@@ -32,12 +32,19 @@ const NavHeader = () => {
     const theme = useTheme(); // Lấy theme hiện tại
 
     // Xử lý sự kiện logout
+    const handleLogout = async () => {
+        try {
+            sessionStorage.removeItem("darkMode");
+            sessionStorage.removeItem("themeColor");
+            sessionStorage.removeItem("themeSecondary");
+            logout();
+        } catch (error) {
+            alert("Not remove theme");
+        }
+    };
     useEffect(() => {
         if (isLogout) {
-            logout();
-            localStorage.removeItem("darkMode");
-            localStorage.removeItem("themeColor");
-            localStorage.removeItem("themeSecondary");
+            handleLogout();
             navigate("/login");
         }
     }, [isLogout, navigate]);

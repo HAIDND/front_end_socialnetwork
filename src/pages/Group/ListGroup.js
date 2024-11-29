@@ -1,19 +1,15 @@
 import React from "react";
-import { Link, Route, Router } from "react-router-dom";
+
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import GroupsIcon from "@mui/icons-material/Groups";
 import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
 import ChatIcon from "@mui/icons-material/Chat";
-import { Grid, Box, Typography, List, ListItem, ListItemText, Card, CardContent, Button, Avatar } from "@mui/material";
+import { Grid, Box, Typography, Card, CardContent, Button, Avatar } from "@mui/material";
 import Sidebar from "~/components/Layouts/Sidebar";
-import { Padding } from "@mui/icons-material";
-import CreateGroup from "./CreateGroup";
-import axios from "axios";
 import { listGroupJoin } from "~/services/groupServices/groupService";
-import DetailGroup from "./DetailGroup";
-import FormEditGroup from "./FormEditGroup";
+
 import AddMember from "./AddMember";
 import RemoveMember from "./RemoveMember";
 const GroupCard = ({ group, onJoin }) => {
@@ -37,7 +33,14 @@ const GroupCard = ({ group, onJoin }) => {
     };
 
     return (
-        <Card sx={{ maxWidth: 345, margin: "0 auto", boxShadow: 2 }}>
+        <Card
+            sx={{ maxWidth: 345, margin: "0 auto", boxShadow: 2 }}
+            onClick={() =>
+                navigate(`/groups/${group?._id}`, {
+                    state: { groupData: group },
+                })
+            }
+        >
             <CardContent sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                 <Avatar
                     alt={group.name}
@@ -57,26 +60,16 @@ const GroupCard = ({ group, onJoin }) => {
                 >
                     {group.privacy === "public" ? "Public Group" : "Private Group"}
                 </Typography>
+
                 <Button
                     variant="contained"
                     color="secondary"
-                    onClick={() =>
-                        navigate(`/groups/${group?._id}`, {
-                            state: { groupData: group },
-                        })
-                    }
-                    sx={{ textTransform: "none" }}
-                >
-                    Visit Group
-                </Button>
-                <Button
-                    variant="contained"
-                    color="secondary"
-                    onClick={() =>
+                    onClick={(event) => {
+                        event.stopPropagation();
                         navigate(`/groups/update`, {
                             state: { groupData: group },
-                        })
-                    }
+                        });
+                    }}
                     sx={{ textTransform: "none" }}
                 >
                     Update Group
@@ -84,27 +77,28 @@ const GroupCard = ({ group, onJoin }) => {
                 <Button
                     variant="contained"
                     color="secondary"
-                    onClick={() => openAddMember()}
                     sx={{ textTransform: "none" }}
+                    onClick={(event) => {
+                        event.stopPropagation();
+                        openAddMember();
+                    }}
                 >
                     Add member
                 </Button>
                 <Button
                     variant="contained"
                     color="secondary"
-                    onClick={() => openRemoveMember()}
                     sx={{ textTransform: "none" }}
+                    onClick={(event) => {
+                        event.stopPropagation();
+                        openRemoveMember();
+                    }}
                 >
                     Remove member
                 </Button>
             </CardContent>
-            <RemoveMember
-                open={isOpenRemoveMember}
-                members={group?.members}
-                groupId={group?._id}
-                close={closeRemoveMember}
-            />
-            <AddMember open={isOpenAddMember} users={group?.members} groupId={group?._id} close={closeAddMember} />
+            <RemoveMember open={isOpenRemoveMember} members={group?.members} group={group} close={closeRemoveMember} />
+            <AddMember open={isOpenAddMember} users={group?.members} group={group} close={closeAddMember} />
         </Card>
     );
 };
@@ -130,13 +124,14 @@ function ListGroup() {
     const fetchGroups = async () => {
         try {
             listGroupJoin().then((groups) => {
-                if (groups) {
-                    if (Array.isArray(groups)) setGroups(groups);
-                    else {
-                        setGroups([]);
-                        alert("You have 0 group!");
-                    }
-                }
+                setGroups(groups);
+                // if (groups) {
+                //     if (Array.isArray(groups)) setGroups(groups);
+                //     else {
+                //         setGroups([]);
+                //         alert("You have 0 group!");
+                //     }
+                // }
             });
         } catch (error) {
             console.log("Error fetching groups:", error);

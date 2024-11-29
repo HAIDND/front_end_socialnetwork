@@ -65,7 +65,7 @@ const FriendRequestCard = ({ request, handleDeleteFriend }) => {
             <YesNoDialog
                 yesno={yesno}
                 setYesNo={setYesNo}
-                onConfirm={handleDeleteFriend(request?._id)}
+                onConfirm={() => handleDeleteFriend(request?._id)}
                 title={"Xác nhận xóa"}
                 message={"Bạn có chắc chắn muốn xóa mục này không?"}
             />
@@ -129,14 +129,7 @@ const FriendList = () => {
 
     return (
         <Grid container>
-            {/* {data.lenght ? (
-                <FriendRequestList requests={data} handleDelete={deleleFriend} />
-            ) : (
-                <FriendRequestList requests={data} handleDelete={deleleFriend} />
-            )} */}
             <FriendRequestList requests={data} handleDeleteFriend={handleDeleteFriend} />
-
-            {/* Component YesNoPopup */}
         </Grid>
     );
 };

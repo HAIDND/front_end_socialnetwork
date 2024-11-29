@@ -17,13 +17,13 @@ import { getListFriend } from "~/services/friendServices/friendService";
 import { CurentUser } from "~/MainRoutes";
 import { addMemberToGroup, removeMemberToGroup } from "~/services/groupServices/groupService";
 
-const RemoveMember = ({ open, close, groupId, onAdd, members }) => {
+const RemoveMember = ({ open, close, group, onAdd, members }) => {
     const [searchTerm, setSearchTerm] = useState("");
     const navigate = useNavigate();
     // Lọc danh sách người dùng dựa trên từ khóa tìm kiếm
     // const filteredUsers = users.filter((user) => user.username.toLowerCase().includes(searchTerm.toLowerCase()));
     const filteredUsers = () => {
-        alert("checkl");
+        alert("check");
     };
 
     //call api list friend
@@ -40,7 +40,7 @@ const RemoveMember = ({ open, close, groupId, onAdd, members }) => {
         }
     }, []);
     return (
-        <Dialog open={open} onClose={close} fullWidth maxWidth="sm">
+        <Dialog open={open} onClose={close} fullWidth maxWidth="sm" onClick={(event) => event.stopPropagation()}>
             <DialogTitle>
                 <Typography variant="h6">Add Users to Group</Typography>
                 <Button sx={{ justifyItems: "flex-end" }} onClick={close}>
@@ -62,33 +62,35 @@ const RemoveMember = ({ open, close, groupId, onAdd, members }) => {
 
                 {/* Danh sách người dùng */}
                 <Box>
-                    {users.map((user) => (
-                        <Card
-                            key={user.id}
-                            sx={{
-                                mb: 2,
-                                display: "flex",
-                                justifyContent: "space-between",
-                                alignItems: "center",
-                                padding: 1,
-                            }}
-                        >
-                            <CardHeader
-                                avatar={<Avatar src={user.avatar} alt={user.username} />}
-                                title={user}
-                                titleTypographyProps={{ variant: "subtitle1" }}
-                            />
-                            <CardActions>
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    onClick={() => removeMemberToGroup(groupId, user)}
-                                >
-                                    Remove to Group
-                                </Button>
-                            </CardActions>
-                        </Card>
-                    ))}
+                    {users
+                        .filter((item) => item !== group?.creator)
+                        .map((user) => (
+                            <Card
+                                key={user.id}
+                                sx={{
+                                    mb: 2,
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    alignItems: "center",
+                                    padding: 1,
+                                }}
+                            >
+                                <CardHeader
+                                    avatar={<Avatar src={user.avatar} alt={user.username} />}
+                                    title={user}
+                                    titleTypographyProps={{ variant: "subtitle1" }}
+                                />
+                                <CardActions>
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        onClick={() => removeMemberToGroup(group?._id, user)}
+                                    >
+                                        Remove to Group
+                                    </Button>
+                                </CardActions>
+                            </Card>
+                        ))}
 
                     {/* Hiển thị khi không tìm thấy kết quả */}
                     {filteredUsers.length === 0 && (

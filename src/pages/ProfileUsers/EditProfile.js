@@ -82,7 +82,7 @@ const Profile = ({ Profiledata }) => {
 
     return (
         <>
-            <Grid container spacing={2} alignItems="center" sx={{ padding: 12, mt: 2 }}></Grid>
+            <Grid container spacing={2} alignItems="center" sx={{ padding: 6, mt: 2 }}></Grid>
             <Box
                 component={Paper}
                 sx={{

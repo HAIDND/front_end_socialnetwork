@@ -6,15 +6,17 @@ import { Box, Grid, TextField, Button, Typography, MenuItem, Select, FormControl
 import axios from "axios";
 import Sidebar from "~/components/Layouts/Sidebar";
 import { createGroup } from "~/services/groupServices/groupService";
+import YesNoDialog from "../YesNoDialog";
 
 function CreateGroup() {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [privacy, setPrivacy] = useState("public"); // Giá trị mặc định là "public"
+    const [yesno, setYesNo] = useState(false);
     const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleSubmit = async () => {
+        // e.preventDefault();
 
         try {
             const requestData = {
@@ -23,10 +25,10 @@ function CreateGroup() {
                 privacy,
             };
 
-            const response = createGroup(requestData).then((responseData) => {
-                if (response.message) {
-                    alert(response.message);
-                    // navigate("/group/mygroup");
+            const response = await createGroup(requestData).then((responseData) => {
+                if (responseData) {
+                    alert("Create group is success!");
+                    navigate("/groups/mygroup");
                 } else {
                     console.log(response);
                 }
@@ -55,7 +57,12 @@ function CreateGroup() {
                         <Typography variant="h5" sx={{ mb: 3, textAlign: "center" }}>
                             Create New Group
                         </Typography>
-                        <form onSubmit={handleSubmit}>
+                        <form
+                            onSubmit={(e) => {
+                                e.preventDefault();
+                                setYesNo(true);
+                            }}
+                        >
                             <TextField
                                 label="Group Name"
                                 variant="outlined"
@@ -85,6 +92,13 @@ function CreateGroup() {
                             <Button type="submit" variant="contained" color="primary" fullWidth>
                                 Create Group
                             </Button>
+                            <YesNoDialog
+                                yesno={yesno}
+                                setYesNo={setYesNo}
+                                onConfirm={handleSubmit}
+                                title={"onfirm action"}
+                                message={"Do you really want to do this?"}
+                            />
                         </form>
                     </Box>
                 </Grid>

@@ -21,7 +21,7 @@ function FormEditGroup() {
     //data curent group
     const location = useLocation();
     const data = location?.state?.groupData;
-
+    const navigate = useNavigate();
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [privacy, setPrivacy] = useState("public");
@@ -48,7 +48,8 @@ function FormEditGroup() {
             // Gọi API để gửi dữ liệu
             const response = await editGroup(formData).then((data) => {
                 if (data) {
-                    alert(data.message);
+                    alert("Success!");
+                    handleClose();
                 } else console(data);
             });
         } catch (error) {
@@ -57,7 +58,7 @@ function FormEditGroup() {
     };
 
     // Đóng Dialog
-    const navigate = useNavigate();
+
     const [open, setOpen] = useState(true);
     const handleClose = () => {
         setOpen(false);

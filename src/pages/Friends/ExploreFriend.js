@@ -5,8 +5,10 @@ import Sidebar from "~/components/Layouts/Sidebar";
 import { CurentUser } from "~/MainRoutes";
 import { addFriend, addFriendAPI, getListFriend } from "~/services/friendServices/friendService";
 import { listUser, readUser } from "~/services/userServices/userService";
+import { useNavigate } from "react-router-dom";
 
 const FriendRequestCard = ({ request, onAdd }) => {
+    const navigate = useNavigate();
     return (
         <Box
             sx={{
@@ -22,6 +24,9 @@ const FriendRequestCard = ({ request, onAdd }) => {
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "space-between", // Đẩy các nút xuống cuối thẻ
+            }}
+            onClick={() => {
+                navigate(`/profile/${request._id}`);
             }}
         >
             <Box>
@@ -39,8 +44,8 @@ const FriendRequestCard = ({ request, onAdd }) => {
                 <Button
                     variant="outlined"
                     color="primary"
-                    onClick={() => {
-                        console.log(request._id);
+                    onClick={(event) => {
+                        event.stopPropagation();
                         onAdd(request._id);
                     }}
                     sx={{ textTransform: "none" }}

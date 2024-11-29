@@ -14,67 +14,47 @@ import axios from "axios";
 import { joinToGroup, leaveGroup, listGroupAll, listGroupJoin } from "~/services/groupServices/groupService";
 import { CurentUser } from "~/MainRoutes";
 
-const GroupCard = ({ group, onJoin }) => {
+const GroupCard = ({ group, onJoin, onLeave }) => {
     //dèine
     const { curentUserID } = useContext(CurentUser);
     const navigate = useNavigate();
-    ///leave
-    const handleLeaveGroup = async (id) => {
-        try {
-            const response = await leaveGroup(id).then((data) => {
-                if (data) {
-                    alert(data?.message);
-                } else alert("Error");
-            });
-        } catch (error) {
-            console.log(error);
-        }
-    };
-    return (
-        <Card sx={{ maxWidth: 345, margin: "0 auto", boxShadow: 2 }}>
-            <CardContent sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                <Avatar
-                    alt={group.name}
-                    src={group.avatar || "/default-avatar.png"}
-                    sx={{ width: 80, height: 80, mb: 2 }}
-                />
-                <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1 }}>
-                    {group.name}
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                    {group?.members.length} Members
-                </Typography>
-                <Typography
-                    variant="body2"
-                    color={group.privacy === "public" ? "primary" : "secondary"}
-                    sx={{ fontStyle: "italic", mb: 2 }}
-                >
-                    {group.privacy === "public" ? "Public Group" : "Private Group"}
-                </Typography>
-                <Button
-                    variant="contained"
-                    color={group?.members.includes(curentUserID) ? "secondary" : "primary"}
-                    onClick={() =>
-                        group?.members.includes(curentUserID) ? handleLeaveGroup(group._id) : onJoin(group._id)
-                    }
-                    sx={{
-                        textTransform: "none",
-                        flex: 1, // Các nút chia đều không gian
-                        minWidth: 100, // Kích thước tối thiểu của nút
-                    }}
-                >
-                    {group?.members.includes(curentUserID) ? "Leave Group" : "Join Group"}
-                </Button>
 
-                {/* Nút Visit */}
-                {(group?.privacy === "public" || group?.creator.includes(curentUserID)) && (
+    return (
+        (group?.privacy === "public" || group?.creator.includes(curentUserID)) && (
+            <Card
+                sx={{ maxWidth: 345, margin: "0 auto", boxShadow: 2 }}
+                onClick={() =>
+                    navigate(`/groups/${group?._id}`, {
+                        state: { groupData: group },
+                    })
+                }
+            >
+                <CardContent sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                    <Avatar
+                        alt={group.name}
+                        src={group.avatar || "/default-avatar.png"}
+                        sx={{ width: 80, height: 80, mb: 2 }}
+                    />
+                    <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1 }}>
+                        {group.name}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                        {group?.members.length} Members
+                    </Typography>
+                    <Typography
+                        variant="body2"
+                        color={group.privacy === "public" ? "primary" : "secondary"}
+                        sx={{ fontStyle: "italic", mb: 2 }}
+                    >
+                        {group.privacy === "public" ? "Public Group" : "Private Group"}
+                    </Typography>
                     <Button
                         variant="contained"
-                        color="primary"
-                        onClick={() =>
-                            navigate(`/groups/${group?._id}`, {
-                                state: { groupData: group },
-                            })
+                        color={group?.members.includes(curentUserID) ? "secondary" : "primary"}
+                        onClick={(event) =>
+                            group?.members.includes(curentUserID)
+                                ? (event.stopPropagation(), onLeave(group._id))
+                                : (event.stopPropagation(), onJoin(group._id))
                         }
                         sx={{
                             textTransform: "none",
@@ -82,16 +62,16 @@ const GroupCard = ({ group, onJoin }) => {
                             minWidth: 100, // Kích thước tối thiểu của nút
                         }}
                     >
-                        Visit
+                        {group?.members.includes(curentUserID) ? "Leave Group" : "Join Group"}
                     </Button>
-                )}
-            </CardContent>
-        </Card>
+                </CardContent>
+            </Card>
+        )
     );
 };
 function ListGroupAll() {
     const navigate = useNavigate();
-
+    const [reload, setReload] = useState(false);
     const handleCardClick = (path) => {
         navigate(path);
     };
@@ -119,20 +99,33 @@ function ListGroupAll() {
 
     useEffect(() => {
         fetchGroups();
-    }, []);
+    }, [reload]);
 
     const handleJoinGroup = async (groupId) => {
         try {
             const response = await joinToGroup(groupId).then((data) => {
                 {
                     alert(data?.message);
+                    setReload(!reload);
                 }
             });
         } catch (error) {
             alert("Failed to join group.");
         }
     };
-
+    ///leave
+    const handleLeaveGroup = async (id) => {
+        try {
+            const response = await leaveGroup(id).then((data) => {
+                if (data) {
+                    alert(data?.message);
+                    setReload(!reload);
+                } else alert("Error");
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    };
     if (loading) {
         return <Typography>Loading...</Typography>;
     }
@@ -158,7 +151,7 @@ function ListGroupAll() {
                                     lg={3}
                                     key={group._id}
                                 >
-                                    <GroupCard group={group} onJoin={handleJoinGroup} />
+                                    <GroupCard group={group} onJoin={handleJoinGroup} onLeave={handleLeaveGroup} />
                                 </Grid>
                             ))}
                         </Grid>

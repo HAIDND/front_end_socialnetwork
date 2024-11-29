@@ -39,14 +39,7 @@ message={
     // <Button variant="contained" color="error" onClick={() => setYesNo(true)}>
     // Delete
     // </Button>
-    // {/* Component YesNoPopup */}
-    // <YesNoDialog
-    // yesno={yesno}
-    // setYesNo={setYesNo}
-    // onConfirm={handleDeleteFriend}
-    // title={"Xác nhận xóa"}
-    // message={"Bạn có chắc chắn muốn xóa mục này không?"}
-    // />
+    //<YesNoDialog yesno={yesno} setYesNo={setYesNo} onConfirm={handleDeleteFriend} title={"Confirm action"} message={"Do you really want to do this?"} />
 }
 const YesNoDialog = ({
     yesno,

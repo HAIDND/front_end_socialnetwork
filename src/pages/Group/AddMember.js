@@ -17,7 +17,7 @@ import { getListFriend } from "~/services/friendServices/friendService";
 import { CurentUser } from "~/MainRoutes";
 import { addMemberToGroup } from "~/services/groupServices/groupService";
 
-const AddMember = ({ open, close, groupId, onAdd }) => {
+const AddMember = ({ open, close, group, onAdd }) => {
     const [searchTerm, setSearchTerm] = useState("");
     const navigate = useNavigate();
     // Lọc danh sách người dùng dựa trên từ khóa tìm kiếm
@@ -40,7 +40,7 @@ const AddMember = ({ open, close, groupId, onAdd }) => {
         }
     }, []);
     return (
-        <Dialog open={open} onClose={close} fullWidth maxWidth="sm">
+        <Dialog open={open} onClose={close} fullWidth maxWidth="sm" onClick={(event) => event.stopPropagation()}>
             <DialogTitle>
                 <Typography variant="h6">Add Users to Group</Typography>
                 <Button sx={{ justifyItems: "flex-end" }} onClick={close}>
@@ -62,33 +62,35 @@ const AddMember = ({ open, close, groupId, onAdd }) => {
 
                 {/* Danh sách người dùng */}
                 <Box>
-                    {users.map((user) => (
-                        <Card
-                            key={user.id}
-                            sx={{
-                                mb: 2,
-                                display: "flex",
-                                justifyContent: "space-between",
-                                alignItems: "center",
-                                padding: 1,
-                            }}
-                        >
-                            <CardHeader
-                                avatar={<Avatar src={user.avatar} alt={user.username} />}
-                                title={user.username}
-                                titleTypographyProps={{ variant: "subtitle1" }}
-                            />
-                            <CardActions>
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    onClick={() => addMemberToGroup(groupId, user._id)}
-                                >
-                                    Add to Group
-                                </Button>
-                            </CardActions>
-                        </Card>
-                    ))}
+                    {users
+                        .filter((item) => !group.members.includes(item._id))
+                        .map((user) => (
+                            <Card
+                                key={user.id}
+                                sx={{
+                                    mb: 2,
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    alignItems: "center",
+                                    padding: 1,
+                                }}
+                            >
+                                <CardHeader
+                                    avatar={<Avatar src={user.avatar} alt={user.username} />}
+                                    title={user.username}
+                                    titleTypographyProps={{ variant: "subtitle1" }}
+                                />
+                                <CardActions>
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        onClick={() => addMemberToGroup(group?._id, user?._id)}
+                                    >
+                                        Add to Group
+                                    </Button>
+                                </CardActions>
+                            </Card>
+                        ))}
 
                     {/* Hiển thị khi không tìm thấy kết quả */}
                     {filteredUsers.length === 0 && (
