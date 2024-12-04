@@ -52,14 +52,14 @@ const ThemeSettings = ({ themeColor, setThemeColor, darkMode, setDarkMode, theme
 
             <List>
                 <ListItem sx={{ display: "flex", justifyContent: "space-between" }}>
-                    <Typography variant="body2">Header Background</Typography>
+                    <Typography variant="body2">Hight light </Typography>
                     <Switch checked={headerBackground} onChange={() => setHeaderBackground(!headerBackground)} />
                 </ListItem>
-
+                {/* 
                 <ListItem sx={{ display: "flex", justifyContent: "space-between" }}>
                     <Typography variant="body2">Menu Position</Typography>
                     <Switch checked={menuPosition} onChange={() => setMenuPosition(!menuPosition)} />
-                </ListItem>
+                </ListItem> */}
 
                 <ListItem sx={{ display: "flex", justifyContent: "space-between" }}>
                     <Typography variant="body2">Dark Mode</Typography>
