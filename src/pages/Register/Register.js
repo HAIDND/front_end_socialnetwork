@@ -20,7 +20,7 @@ import {
     DialogActions,
     DialogContentText,
 } from "@mui/material";
-import styles from "./Register.module.scss";
+
 import { API_BASE_URL } from "~/config/apiConfig";
 import { createUser } from "~/services/userServices/userService";
 
@@ -65,7 +65,6 @@ export default function Register() {
     };
     return (
         <Box
-            className={styles.RegisterFrom}
             component="form"
             sx={{
                 display: "flex",
@@ -102,7 +101,7 @@ export default function Register() {
                                 onChange={handleChange}
                             />
                         </Grid>
-                        <Grid item xs={12}>
+                        {/* <Grid item xs={12}>
                             <TextField
                                 variant="outlined"
                                 required
@@ -114,7 +113,7 @@ export default function Register() {
                                 value={formData.lastName}
                                 onChange={handleChange}
                             />
-                        </Grid>
+                        </Grid> */}
                         <Grid item xs={12}>
                             <TextField
                                 variant="outlined"
@@ -166,7 +165,7 @@ export default function Register() {
                                 onChange={handleChange}
                             />
                         </Grid>
-                        <Grid item xs={12}>
+                        {/* <Grid item xs={12}>
                             <TextField
                                 variant="outlined"
                                 fullWidth
@@ -176,7 +175,7 @@ export default function Register() {
                                 // value={formData.address}
                                 onChange={handleChange}
                             />
-                        </Grid>
+                        </Grid> */}
                         <Grid item xs={12}>
                             <FormControl variant="outlined" fullWidth>
                                 <InputLabel id="gender-label">Giới Tính</InputLabel>
@@ -221,7 +220,7 @@ export default function Register() {
                         <DialogContentText>Tài khoản của bạn đã được tạo thành công.</DialogContentText>
                     </DialogContent>
                     <DialogActions>
-                        <Link to="/login" style={{ textDecoration: "none" }}>
+                        <Link to="/login">
                             <Button color="primary" autoFocus variant="contained">
                                 Đăng Nhập
                             </Button>

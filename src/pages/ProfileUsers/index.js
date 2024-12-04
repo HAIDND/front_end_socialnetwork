@@ -69,7 +69,7 @@ const Profile = () => {
     };
 
     return (
-        <Grid container>
+        <Grid container sx={{ mb: 12 }}>
             <Grid item flex={2} sx={{ overflow: "auto" }} display={{ xs: "none", md: "block" }}>
                 <Sidebar />
             </Grid>

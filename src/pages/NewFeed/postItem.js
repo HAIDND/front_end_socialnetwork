@@ -94,10 +94,38 @@ export default function Post({ visibility }) {
     const handleShowComments = (postId) => {
         setShowComments((prev) => ({ ...prev, [postId]: !prev[postId] }));
     };
+    // border: "1px solid #ddd",
+    // borderRadius: 2,
+    // boxShadow: 1,
+    // p: 2,
+    // textAlign: "center",
+    // mb: 2,
+    // mt: 2,
+    // display: "flex",
+    // flexDirection: "column",
+    // justifyContent: "space-between",
     return (
         <>
             {postList.map((item) => (
-                <Card key={item._id} sx={{ maxWidth: 800, margin: "auto", mt: 3, bgcolor: "background.paper" }}>
+                <Card
+                    key={item._id}
+                    sx={{
+                        maxWidth: 800,
+                        margin: "auto",
+                        mt: 3,
+                        bgcolor: "background.paper",
+                        border: "1px solid #ddd",
+                        borderRadius: 2,
+                        boxShadow: 1,
+                        p: 2,
+                        // textAlign: "center",
+                        mb: 2,
+                        mt: 2,
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "space-between",
+                    }}
+                >
                     <CardHeader
                         avatar={<Avatar src={item?.userId?.avatar} />}
                         title={item?.userId?.username}

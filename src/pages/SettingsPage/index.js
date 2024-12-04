@@ -104,10 +104,10 @@ import CustomDialog from "../CustomDialog";
 function SettingsPage() {
     // Danh sách các tùy chọn cài đặt
     const settingsOptions = [
-        { title: "Account Information", link: "account-information.html" },
+        // { title: "Account Information", link: "account-information.html" },
         { title: "Edit Profile", link: "editprofile" },
-        { title: "Account Password", link: "account-password.html" },
-        { title: "Help Information", link: "help-information.html" },
+        // { title: "Account Password", link: "account-password.html" },
+        // { title: "Help Information", link: "help-information.html" },
         { title: "Delete Account", link: "deleteaccount" },
     ];
 

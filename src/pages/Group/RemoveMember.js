@@ -43,15 +43,15 @@ const RemoveMember = ({ open, close, group, members, handleReload }) => {
     return (
         <Dialog open={open} onClose={close} fullWidth maxWidth="sm" onClick={(event) => event.stopPropagation()}>
             <DialogTitle>
-                <Typography variant="h6">Add Users to Group</Typography>
-                <Button sx={{ justifyItems: "flex-end" }} onClick={close}>
+                <Typography variant="h6">Remove Users to Group</Typography>
+                {/* <Button sx={{ justifyItems: "flex-end" }} onClick={close}>
                     Close
-                </Button>
+                </Button> */}
             </DialogTitle>
 
             <DialogContent>
                 {/* Thanh tìm kiếm */}
-                <Box sx={{ mb: 2 }}>
+                {/* <Box sx={{ mb: 2 }}>
                     <TextField
                         fullWidth
                         variant="outlined"
@@ -59,7 +59,7 @@ const RemoveMember = ({ open, close, group, members, handleReload }) => {
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
-                </Box>
+                </Box> */}
 
                 {/* Danh sách người dùng */}
                 <Box>
@@ -102,11 +102,11 @@ const RemoveMember = ({ open, close, group, members, handleReload }) => {
                         ))}
 
                     {/* Hiển thị khi không tìm thấy kết quả */}
-                    {filteredUsers.length === 0 && (
+                    {/* {filteredUsers.length === 0 && (
                         <Typography variant="body2" color="textSecondary" align="center">
                             No users found.
                         </Typography>
-                    )}
+                    )} */}
                 </Box>
             </DialogContent>
         </Dialog>

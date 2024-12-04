@@ -19,7 +19,7 @@ import ChatList from "~/pages/Chatting/ChatList";
 import ThemeSettings from "~/Theme";
 
 const NavHeader = () => {
-    const { curentUserProfile, setThemeColor, darkMode, setDarkMode, themeSecondary, setThemeSecondary } =
+    const { contextValue, curentUserProfile, setThemeColor, darkMode, setDarkMode, themeSecondary, setThemeSecondary } =
         useContext(CurentUser);
 
     const [anchorEl, setAnchorEl] = useState(null);
@@ -135,7 +135,7 @@ const NavHeader = () => {
 
                     {/* Profile Avatar */}
                     <IconButton color="inherit" sx={{ fontSize: 30 }}>
-                        <Avatar src={curentUserProfile?.avatar} />
+                        <Avatar src={contextValue.curentUserProfile?.avatar} />
                     </IconButton>
                     <IconButton color="inherit" sx={{ fontSize: 30 }} onClick={() => setIsLogout(true)}>
                         <LogoutIcon fontSize="small" />

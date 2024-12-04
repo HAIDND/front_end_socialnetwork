@@ -43,14 +43,14 @@ const AddMember = ({ open, close, group, onAdd, handleReload }) => {
         <Dialog open={open} onClose={close} fullWidth maxWidth="sm" onClick={(event) => event.stopPropagation()}>
             <DialogTitle>
                 <Typography variant="h6">Add Users to Group</Typography>
-                <Button sx={{ justifyItems: "flex-end" }} onClick={close}>
+                {/* <Button sx={{ justifyItems: "flex-end" }} onClick={close}>
                     Close
-                </Button>
+                </Button> */}
             </DialogTitle>
 
             <DialogContent>
                 {/* Thanh tìm kiếm */}
-                <Box sx={{ mb: 2 }}>
+                {/* <Box sx={{ mb: 2 }}>
                     <TextField
                         fullWidth
                         variant="outlined"
@@ -58,7 +58,7 @@ const AddMember = ({ open, close, group, onAdd, handleReload }) => {
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
-                </Box>
+                </Box> */}
 
                 {/* Danh sách người dùng */}
                 <Box>

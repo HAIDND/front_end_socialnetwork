@@ -95,7 +95,7 @@ export default function Login(props) {
                 alignItems: "center",
                 justifyContent: "center",
                 minHeight: "0vh",
-                backgroundColor: "#f0f2f5",
+                // backgroundColor: "#f0f2f5",
                 padding: 2,
             }}
         >

@@ -490,7 +490,17 @@ export default function PostInGroup({ groupID }) {
     return (
         <>
             {postList.map((item) => (
-                <Card key={item._id} sx={{ maxWidth: 635, mb: 3, bgcolor: "background.paper" }}>
+                <Card
+                    key={item._id}
+                    sx={{
+                        maxWidth: 635,
+                        mb: 3,
+                        bgcolor: "background.paper",
+                        border: "1px solid #ddd",
+                        borderRadius: 2,
+                        boxShadow: 1,
+                    }}
+                >
                     <CardHeader
                         avatar={<Avatar src={item?.userId?.avatar} />}
                         title={item?.userId.username || "Member" || item?.userId?.username}

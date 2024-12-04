@@ -92,7 +92,7 @@ const ChatWindow = ({ onClose, friend }) => {
                                 }}
                             />
                             Active now
-                            <Typography variant="h6">{friend?.username}</Typography>
+                            <Typography variant="h6"></Typography>
                             <Typography variant="body2" color="textSecondary">
                                 <span className="status-dot" /> {messages?.content}
                             </Typography>
