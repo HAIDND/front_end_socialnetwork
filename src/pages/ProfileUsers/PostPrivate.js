@@ -99,7 +99,7 @@ export default function PostPrivate({ visibility }) {
     return (
         <>
             {postList
-                .filter((item) => item?.visibility == "private")
+                .filter((item) => item?.visibility === "private")
                 .map((item) => (
                     <Card key={item._id} sx={{ maxWidth: 800, margin: "auto", mt: 3, bgcolor: "background.paper" }}>
                         <CardHeader

@@ -26,13 +26,13 @@ import { createUser } from "~/services/userServices/userService";
 
 export default function Register() {
     const [formData, setFormData] = useState({
-        firstName: "",
-        lastName: "",
-        name: "",
+        username: "",
         email: "",
         password: "",
-        open: false,
-        error: "",
+        confirmPassword: "",
+        phone: "",
+        dateOfBirth: "",
+        gender: "",
     });
     const handleChange = (e) => {
         setFormData({
@@ -40,20 +40,17 @@ export default function Register() {
             [e.target.name]: e.target.value,
         });
     };
-    const handleSubmit = (e) => {
-        e.preventDefault();
-    };
     const navigate = useNavigate();
     const clickSubmit = () => {
-        const user = {
-            username: formData.firstName + formData.lastName || undefined,
-            email: formData.email || undefined,
-            password: formData.password || undefined,
-        };
-        createUser(user).then((data) => {
+        createUser(formData).then((data) => {
             if (data) {
                 setFormData({ ...formData, error: data.message });
                 alert("create success");
+                // Navigate after 1 second if successful
+                setTimeout(() => {
+                    navigate("/login");
+                    window.location.reload();
+                }, 1000);
             } else {
                 setFormData({ ...formData, error: "", open: true });
             }
@@ -62,6 +59,35 @@ export default function Register() {
         setTimeout(() => {
             navigate("/login");
         }, 500);
+    };
+    const handleSubmit = (e) => {
+        e.preventDefault(); // Prevent the default form submission behavior
+
+        // Destructure formData for easy access
+        const { username, email, password, confirmPassword, phone, dateOfBirth, gender } = formData;
+
+        // Check if any required field is empty
+        if (!username || !email || !password || !confirmPassword || !dateOfBirth || !gender) {
+            alert("Please fill in all required fields.");
+            return;
+        }
+
+        // Check if password matches confirmPassword
+        if (password !== confirmPassword) {
+            alert("Passwords do not match.");
+            return;
+        }
+        // Check if the user is at least 18 years old
+        const today = new Date();
+        const birthDate = new Date(dateOfBirth);
+        const age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        if (age < 18 || (age === 18 && monthDiff < 0)) {
+            alert("You must be at least 18 years old to register.");
+            return;
+        }
+        // If all checks pass, proceed to submit
+        clickSubmit();
     };
     return (
         <Box
@@ -83,7 +109,7 @@ export default function Register() {
             <Container component="main" maxWidth="xs" sx={{ textAlign: "center" }}>
                 <CssBaseline />
                 <Typography component="h1" variant="h5" sx={{ fontWeight: "bold", mb: 3 }}>
-                    Đăng Ký
+                    Register
                 </Typography>
 
                 <form onSubmit={handleSubmit} noValidate>
@@ -94,33 +120,21 @@ export default function Register() {
                                 required
                                 fullWidth
                                 id="firstName"
-                                label="Tên"
-                                name="firstName"
+                                label="Username"
+                                name="username"
                                 autoComplete="fname"
-                                value={formData.firstName}
+                                value={formData.username}
                                 onChange={handleChange}
                             />
                         </Grid>
-                        {/* <Grid item xs={12}>
-                            <TextField
-                                variant="outlined"
-                                required
-                                fullWidth
-                                id="lastName"
-                                label="Họ"
-                                name="lastName"
-                                autoComplete="lname"
-                                value={formData.lastName}
-                                onChange={handleChange}
-                            />
-                        </Grid> */}
+
                         <Grid item xs={12}>
                             <TextField
                                 variant="outlined"
                                 required
                                 fullWidth
                                 id="email"
-                                label="Địa chỉ Email"
+                                label="Email address"
                                 name="email"
                                 autoComplete="email"
                                 value={formData.email}
@@ -133,7 +147,7 @@ export default function Register() {
                                 required
                                 fullWidth
                                 name="password"
-                                label="Mật khẩu"
+                                label="Password"
                                 type="password"
                                 id="password"
                                 autoComplete="current-password"
@@ -144,11 +158,25 @@ export default function Register() {
                         <Grid item xs={12}>
                             <TextField
                                 variant="outlined"
+                                required
+                                fullWidth
+                                name="confirmPassword"
+                                label="Confirm Password"
+                                type="password"
+                                id="password"
+                                autoComplete="current-password"
+                                value={formData.confirmPassword}
+                                onChange={handleChange}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                variant="outlined"
                                 fullWidth
                                 id="phone"
-                                label="Số Điện Thoại"
+                                label="Phone number"
                                 name="phone"
-                                // value={formData.phone}
+                                value={formData.phone}
                                 onChange={handleChange}
                             />
                         </Grid>
@@ -157,39 +185,28 @@ export default function Register() {
                                 variant="outlined"
                                 fullWidth
                                 id="dateOfBirth"
-                                label="Ngày Sinh"
+                                label="Date of birth"
                                 name="dateOfBirth"
                                 type="date"
                                 InputLabelProps={{ shrink: true }}
-                                // value={formData.dateOfBirth}
+                                value={formData.dateOfBirth}
                                 onChange={handleChange}
                             />
                         </Grid>
-                        {/* <Grid item xs={12}>
-                            <TextField
-                                variant="outlined"
-                                fullWidth
-                                id="address"
-                                label="Địa Chỉ"
-                                name="address"
-                                // value={formData.address}
-                                onChange={handleChange}
-                            />
-                        </Grid> */}
                         <Grid item xs={12}>
                             <FormControl variant="outlined" fullWidth>
-                                <InputLabel id="gender-label">Giới Tính</InputLabel>
+                                <InputLabel id="gender-label">Gender</InputLabel>
                                 <Select
                                     labelId="gender-label"
                                     id="gender"
-                                    label="Giới Tính"
+                                    label="Gender"
                                     name="gender"
-                                    // value={formData.gender}
+                                    value={formData.gender}
                                     onChange={handleChange}
                                 >
-                                    <MenuItem value="male">Nam</MenuItem>
-                                    <MenuItem value="female">Nữ</MenuItem>
-                                    <MenuItem value="other">Khác</MenuItem>
+                                    <MenuItem value="male">Male</MenuItem>
+                                    <MenuItem value="female">Female</MenuItem>
+                                    <MenuItem value="other">Orther</MenuItem>
                                 </Select>
                             </FormControl>
                         </Grid>
@@ -208,9 +225,9 @@ export default function Register() {
                         variant="contained"
                         color="primary"
                         sx={{ mt: 3, py: 1.5, fontWeight: "bold" }}
-                        onClick={clickSubmit}
+                        onClick={handleSubmit}
                     >
-                        Đăng Ký
+                        Register
                     </Button>
                 </form>
 

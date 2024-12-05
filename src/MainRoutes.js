@@ -1,6 +1,6 @@
 import React, { useState, useEffect, createContext, useMemo } from "react";
 import { Navigate, Route, Routes, useRoutes } from "react-router-dom";
-import { createTheme, GlobalStyles, ThemeProvider } from "@mui/material";
+import { createTheme, GlobalStyles, ThemeProvider, useMediaQuery } from "@mui/material";
 import auth from "./services/authService/authHelper";
 
 import { readUser } from "./services/userServices/userService";
@@ -52,12 +52,11 @@ const MainRoutes = () => {
                 if (data) {
                     setCurrentUserProfile(data);
                 } else {
-                    alert("No profile!");
+                    console.log("No profile!");
                 }
             });
         }
-    }, [curentUserID]);
-    console.log(curentUserProfile);
+    }, [curentUserID, curentUser]);
     // Theme settings
     const [themeColor, setThemeColor] = useState(sessionStorage.getItem("themeColor") || "#2196f3");
     const [themeSecondary, setThemeSecondary] = useState(sessionStorage.getItem("themeSecondary") || "#FFB347");
@@ -70,7 +69,7 @@ const MainRoutes = () => {
             secondary: { main: themeSecondary },
         },
     });
-
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm")); // Xác định kích thước màn hình mobile
     useEffect(() => {
         sessionStorage.setItem("themeColor", themeColor);
         sessionStorage.setItem("themeSecondary", themeSecondary);
@@ -323,6 +322,7 @@ const MainRoutes = () => {
             value={{
                 contextValue,
                 curentUserID,
+                setCurrentUser,
                 curentUserToken,
                 themeColor,
                 setThemeColor,
@@ -330,6 +330,7 @@ const MainRoutes = () => {
                 setDarkMode,
                 themeSecondary,
                 setThemeSecondary,
+                isMobile,
             }}
         >
             <ThemeProvider theme={theme}>

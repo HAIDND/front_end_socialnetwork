@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link, redirect, useNavigate } from "react-router-dom";
-import { AppBar, Toolbar, IconButton, Typography, Box, Menu, Avatar, useTheme } from "@mui/material";
+import { AppBar, Toolbar, IconButton, Typography, Box, Menu, Avatar, useTheme, useMediaQuery } from "@mui/material";
 import {
     Search as SearchIcon,
     Home as HomeIcon,
@@ -8,6 +8,7 @@ import {
     Message as MessageIcon,
     Settings as SettingsIcon,
     Logout as LogoutIcon,
+    ListAlt,
 } from "@mui/icons-material";
 
 import { logout } from "~/services/authService/authService";
@@ -17,10 +18,20 @@ import SearchComponent from "./SearchComponent";
 import NotificationPanel from "./Notifi";
 import ChatList from "~/pages/Chatting/ChatList";
 import ThemeSettings from "~/Theme";
+import Sidebar from "../Sidebar";
+import SidebarMobile from "./SideBarMobile";
 
 const NavHeader = () => {
-    const { contextValue, curentUserProfile, setThemeColor, darkMode, setDarkMode, themeSecondary, setThemeSecondary } =
-        useContext(CurentUser);
+    const {
+        contextValue,
+        curentUserProfile,
+        setThemeColor,
+        darkMode,
+        setDarkMode,
+        themeSecondary,
+        setThemeSecondary,
+        isMobile,
+    } = useContext(CurentUser);
 
     const [anchorEl, setAnchorEl] = useState(null);
     const [settingsAnchorEl, setSettingsAnchorEl] = useState(null);
@@ -43,6 +54,7 @@ const NavHeader = () => {
         }
     };
     useEffect(() => {
+        // contextValue.setCurrentUserProfile("");
         if (isLogout) {
             handleLogout();
             navigate("/login");
@@ -60,7 +72,7 @@ const NavHeader = () => {
     // Xử lý toggle thông báo và chat
     const handleNotifi = () => setNotifi(!notifi);
     const enableChatList = () => setChatList(!chatList);
-
+    const [isSidebar, setIsSidebar] = useState(false);
     return (
         <AppBar
             position="fixed"
@@ -74,6 +86,19 @@ const NavHeader = () => {
         >
             <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
                 {/* Logo */}
+                {isMobile && (
+                    <>
+                        <IconButton
+                            edge="start"
+                            color="primary"
+                            sx={{ fontSize: 30 }}
+                            onClick={() => setIsSidebar(!isSidebar)}
+                        >
+                            <ListAlt fontSize="large" />
+                        </IconButton>
+                        {isSidebar && <SidebarMobile close={setIsSidebar} />}
+                    </>
+                )}
                 <Link to="/home" style={{ textDecoration: "none" }}>
                     <Typography
                         variant="h5"
@@ -83,14 +108,12 @@ const NavHeader = () => {
                         <IconButton edge="start" color="primary" sx={{ fontSize: 30 }}>
                             <HomeIcon fontSize="large" />
                         </IconButton>
-                        Sociala
+                        {!isMobile && "Sociala"}
                     </Typography>
                 </Link>
 
                 {/* Search Component */}
-                <Box sx={{ display: "flex", alignItems: "center" }}>
-                    <SearchComponent />
-                </Box>
+                <Box sx={{ display: "flex", alignItems: "center" }}>{!isMobile && <SearchComponent />}</Box>
 
                 {/* Icon Section */}
                 <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
@@ -103,10 +126,11 @@ const NavHeader = () => {
                     </IconButton>
 
                     <NotificationPanel open={notifi} close={handleNotifi} />
-
-                    <IconButton color="inherit" onClick={handleSettingsMenuOpen} sx={{ fontSize: 30 }}>
-                        <SettingsIcon fontSize="large" />
-                    </IconButton>
+                    {!isMobile && (
+                        <IconButton color="inherit" onClick={handleSettingsMenuOpen} sx={{ fontSize: 30 }}>
+                            <SettingsIcon fontSize="large" />
+                        </IconButton>
+                    )}
 
                     {/* Settings Menu */}
                     <Menu

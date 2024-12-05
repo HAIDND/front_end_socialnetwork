@@ -19,7 +19,7 @@ import YesNoDialog from "../YesNoDialog";
 import { useNavigate } from "react-router-dom";
 
 const Profile = ({ Profiledata }) => {
-    const { curentUserID, contextValue } = useContext(CurentUser);
+    const { curentUserID, contextValue, setCurrentUser } = useContext(CurentUser);
     const [avatar, setAvatar] = useState([]);
     const [postContent, setPostContent] = useState("");
     const [avatarPreview, setAvatarPreview] = useState(contextValue.curentUserProfile.avatar);
@@ -75,6 +75,7 @@ const Profile = ({ Profiledata }) => {
         // if (avatarPreview !== selectedImage) setSelectedImage(avatarPreview);
         const response = await updateUser(formData, selectedImage, curentUserID);
         if (response?.message !== "Server error") {
+            setCurrentUser(null);
             alert("Success update profile");
             navigate("/settings");
         }
