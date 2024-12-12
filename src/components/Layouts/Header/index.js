@@ -12,13 +12,11 @@ import {
 } from "@mui/icons-material";
 
 import { logout } from "~/services/authService/authService";
-import auth from "~/services/authService/authHelper";
 import { CurentUser } from "~/MainRoutes";
 import SearchComponent from "./SearchComponent";
 import NotificationPanel from "./Notifi";
 import ChatList from "~/pages/Chatting/ChatList";
 import ThemeSettings from "~/Theme";
-import Sidebar from "../Sidebar";
 import SidebarMobile from "./SideBarMobile";
 
 const NavHeader = () => {

@@ -414,7 +414,7 @@ import {
 } from "~/services/postServices/postService";
 
 import EditPostDialog from "~/pages/NewFeed/EditPostDialog";
-import CommentList from "~/pages/NewFeed/Comment";
+import CommentList from "~/pages/Group/Comment";
 import { getPostInGroup } from "~/services/groupServices/groupService";
 import EditPostGroupDialog from "./EditPostDialog";
 export default function PostInGroup({ groupID }) {
@@ -503,7 +503,7 @@ export default function PostInGroup({ groupID }) {
                 >
                     <CardHeader
                         avatar={<Avatar src={item?.userId?.avatar} />}
-                        title={item?.userId.username || "Member" || item?.userId?.username}
+                        title={item?.userId?.username || "Member" || item?.userId?.username}
                         subheader={`${item?.createdAt} role  ${item?.visibility}`}
                         action={
                             (item?.userId?._id === curentUserID || item?.userId) === curentUserID && (
@@ -550,7 +550,7 @@ export default function PostInGroup({ groupID }) {
 
                     {showComments[item?._id] && (
                         <CommentList
-                            curentUserID={curentUserID}
+                            groupID={groupID}
                             comments={item?.comments || []}
                             postID={item._id}
                             setPostList={setPostList}

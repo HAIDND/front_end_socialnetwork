@@ -65,19 +65,19 @@ function AdminPage() {
         { field: "phone", label: "Số điện thoại" }, // Số điện thoại
         { field: "gender", label: "Giới tính" }, // Giới tính
         { field: "dateOfBirth", label: "Ngày sinh" }, // Ngày sinh
-        { field: "avatar", label: "Avatar" }, // Ảnh đại diện (nếu cần)
+        // { field: "avatar", label: "Avatar" }, // Ảnh đại diện (nếu cần)
     ];
 
     const groupColumns = [
         { field: "_id", label: "ID Nhóm" },
         { field: "name", label: "Tên Nhóm" },
-        { field: "members", label: "Thành viên" },
-        { field: "posts", label: "Số bài viết" },
+        { field: "members.length", label: "Thành viên" },
+        // { field: "posts.length", label: "Số bài viết" },
         { field: "description", label: "Mô tả" },
     ];
 
     const friendColumns = [
-        { field: "_id", label: "id" }, // Truy cập vào recipient.username
+        // { field: "_id", label: "id" }, // Truy cập vào recipient.username
         { field: "requester.username", label: "Người gửi" }, // Lấy username của requester
         { field: "requester.email", label: "Email người gửi" }, // Lấy email của requester
         { field: "recipient.username", label: "Người nhận" }, // Lấy username của recipient

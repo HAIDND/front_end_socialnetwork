@@ -90,7 +90,7 @@ const FriendRequestList = ({ requests, handleAccept, handleDeny }) => {
                 sx={{ cursor: "pointer", mt: 2 }}
                 onClick={() => console.log("View all clicked")}
             >
-                See all
+                {`You have ${requests.length}  request`}
             </Typography>
         </Box>
     );

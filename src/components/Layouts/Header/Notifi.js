@@ -58,6 +58,9 @@ const NotificationPanel = ({ open, close }) => {
                 }}
             >
                 <Box sx={{ display: "flex", justifyContent: "flex-end", p: 1 }}>
+                    <Typography sx={{ display: "flex", justifyContent: "flex-start", mr: 15, fontSize: 24 }}>
+                        Notification
+                    </Typography>
                     <IconButton onClick={close} size="small" color="inherit">
                         <CloseIcon />
                     </IconButton>
@@ -68,22 +71,23 @@ const NotificationPanel = ({ open, close }) => {
                         <Paper
                             key={index}
                             sx={{
-                                mb: 1,
+                                m: 2,
+
                                 p: 2,
-                                borderLeft: `4px solid ${getBorderColor(notification.type, theme)}`, // Dynamic border color
+                                // borderLeft: `4px solid ${getBorderColor(notification.type, theme)}`, // Dynamic border color
                                 backgroundColor: notification?.isRead
                                     ? theme.palette.background.paper
-                                    : theme.palette.warning.light,
+                                    : theme.palette.info.light,
                                 boxShadow: 3,
                                 "&:hover": { boxShadow: 6 },
                                 cursor: "pointer",
                             }}
                             onClick={() => handleReadNotifi(notification?._id)}
                         >
-                            <Typography variant="body1" fontWeight="bold">
+                            <Typography variant="body1" fontWeight="bold" sx={{ ml: 3 }}>
                                 {notification.type}
                             </Typography>
-                            <Typography variant="body2" color="text.secondary">
+                            <Typography variant="body2" color="text.secondary" sx={{ pl: 2 }}>
                                 {notification.message + " " + new Date(notification.createdAt).toLocaleString()}
                             </Typography>
                         </Paper>
@@ -102,9 +106,9 @@ const NotificationPanel = ({ open, close }) => {
 const getBorderColor = (type, theme) => {
     switch (type) {
         case "new_message":
-            return theme.palette.success.main; // Xanh lá từ theme
+            return theme.palette.success.light; // Xanh nhạt
         case "new_post":
-            return theme.palette.error.main; // Đỏ từ theme
+            return theme.palette.warning.light; // Vàng nhạt// Đỏ từ theme
         case "warning":
             return theme.palette.warning.main; // Cam từ theme
         default:

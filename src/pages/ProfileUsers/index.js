@@ -84,6 +84,7 @@ const Profile = () => {
                         boxShadow: theme.shadows[5],
                         backgroundColor: theme.palette.background.paper,
                         color: theme.palette.text.primary,
+                        mb: 5,
                     }}
                 >
                     <Grid container spacing={2} alignItems="center">
@@ -142,17 +143,17 @@ const Profile = () => {
                         </Grid>
                         <Grid item xs={12}>
                             <Typography variant="body1">
-                                <strong>Số Điện Thoại:</strong> {profile?.phone}
+                                <strong>Phone number:</strong> {profile?.phone}
                             </Typography>
                         </Grid>
                         <Grid item xs={12}>
                             <Typography variant="body1">
-                                <strong>Ngày Sinh:</strong> {profile?.dateOfBirth || ""}
+                                <strong>Date of birth:</strong> {profile?.dateOfBirth || ""}
                             </Typography>
                         </Grid>
                         <Grid item xs={12}>
                             <Typography variant="body1">
-                                <strong>Giới Tính:</strong> {profile?.gender}
+                                <strong>Gender:</strong> {profile?.gender}
                             </Typography>
                         </Grid>
                     </Grid>

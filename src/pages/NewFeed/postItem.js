@@ -19,7 +19,7 @@ import {
     ListItemText,
     Box,
 } from "@mui/material";
-import { Settings, Favorite, Comment } from "@mui/icons-material";
+import { Settings, Favorite, Comment, Public, Lock, People } from "@mui/icons-material";
 
 import { CurentUser } from "~/MainRoutes";
 import {
@@ -94,16 +94,7 @@ export default function Post({ visibility }) {
     const handleShowComments = (postId) => {
         setShowComments((prev) => ({ ...prev, [postId]: !prev[postId] }));
     };
-    // border: "1px solid #ddd",
-    // borderRadius: 2,
-    // boxShadow: 1,
-    // p: 2,
-    // textAlign: "center",
-    // mb: 2,
-    // mt: 2,
-    // display: "flex",
-    // flexDirection: "column",
-    // justifyContent: "space-between",
+
     return (
         <>
             {postList.map((item) => (
@@ -129,7 +120,16 @@ export default function Post({ visibility }) {
                     <CardHeader
                         avatar={<Avatar src={item?.userId?.avatar} />}
                         title={item?.userId?.username}
-                        subheader={`${item?.createdAt} role  ${item?.visibility}`}
+                        // subheader={`${item?.createdAt} role  ${item?.visibility}`}
+                        subheader={
+                            <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                                <span>{item?.createdAt}</span>
+                                {item?.visibility === "public" && <Public fontSize="small" />}
+                                {item?.visibility === "private" && <Lock fontSize="small" />}
+                                {item?.visibility === "friends" && <People fontSize="small" />}
+                                {/* <span>{item?.visibility}</span> */}
+                            </Box>
+                        }
                         action={
                             item?.userId?._id === curentUserID && (
                                 <IconButton
@@ -157,7 +157,7 @@ export default function Post({ visibility }) {
                     <CardContent>
                         <Typography variant="body2">{item.content}</Typography>
                     </CardContent>
-
+                    <Divider />
                     {item?.image && <CardMedia component="img" image={item?.image} alt="Post Image" />}
 
                     <CardActions disableSpacing>

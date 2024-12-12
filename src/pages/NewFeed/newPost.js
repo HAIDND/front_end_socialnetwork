@@ -7,7 +7,6 @@ import {
     Button,
     IconButton,
     FormControlLabel,
-    Switch,
     Tooltip,
     Radio,
     Drawer,
@@ -23,7 +22,16 @@ import CustomDialog from "../CustomDialog";
 import ClearIcon from "@mui/icons-material/Clear";
 
 const NewPost = () => {
-    const { curentUserProfile } = useContext(CurentUser);
+    const {
+        contextValue,
+        curentUserProfile,
+        // setThemeColor,
+        // darkMode,
+        // setDarkMode,
+        // themeSecondary,
+        // setThemeSecondary,
+        // isMobile,
+    } = useContext(CurentUser);
     const theme = useTheme(); // Using MUI theme
     const [postContent, setPostContent] = useState("");
     const [image, setImage] = useState(null);
@@ -106,7 +114,7 @@ const NewPost = () => {
             }}
         >
             <Box display="flex" alignItems="center" mb={2}>
-                <Avatar alt={curentUserProfile?.username} src={curentUserProfile?.avatar} />
+                <Avatar alt={curentUserProfile?.username} src={contextValue.curentUserProfile?.avatar} />
                 <Typography variant="h6" sx={{ marginLeft: 2 }} color="primary">
                     {curentUserProfile?.username}
                 </Typography>

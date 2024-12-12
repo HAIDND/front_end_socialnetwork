@@ -101,7 +101,10 @@ export default function PostPrivate({ visibility }) {
             {postList
                 .filter((item) => item?.visibility === "private")
                 .map((item) => (
-                    <Card key={item._id} sx={{ maxWidth: 800, margin: "auto", mt: 3, bgcolor: "background.paper" }}>
+                    <Card
+                        key={item._id}
+                        sx={{ maxWidth: 800, margin: "auto", mt: 3, mb: 3, bgcolor: "background.paper" }}
+                    >
                         <CardHeader
                             avatar={<Avatar src={item?.userId?.avatar} />}
                             title={item?.userId?.username}

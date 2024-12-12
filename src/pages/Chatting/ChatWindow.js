@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { Box, Avatar, Typography, IconButton, TextField, Button, Paper } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import SendIcon from "@mui/icons-material/Send";
@@ -13,12 +13,13 @@ const ChatWindow = ({ onClose, friend }) => {
     const [newMessage, setNewMessage] = useState(""); //new mess
     ///call lít chat
     // const [chats, setChats] = useState([]); // Khởi tạo mảng rỗng
-
+    const messagesEndRef = useRef(null);
     useEffect(() => {
         const fetchChatList = async () => {
             try {
                 const data = await getChatWithUser(friend?._id);
                 setMessages(data); // Cập nhật mảng chats với dữ liệu từ API
+                messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
             } catch (error) {
                 console.error("Failed to fetch chats:", error);
             }
@@ -145,7 +146,7 @@ const ChatWindow = ({ onClose, friend }) => {
                                     display: "block",
                                     textAlign: "right",
                                     marginTop: 0.5,
-                                    color: "#8a8d91", // Màu thời gian giống Facebook
+                                    color: "black", // Màu thời gian giống Facebook
                                 }}
                             >
                                 {message?.createdAt}
@@ -153,6 +154,7 @@ const ChatWindow = ({ onClose, friend }) => {
                         </Box>
                     </Box>
                 ))}
+                <div ref={messagesEndRef} />
             </Box>
 
             {/* Input Section */}

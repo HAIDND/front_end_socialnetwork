@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -12,10 +12,11 @@ import { listGroupJoin } from "~/services/groupServices/groupService";
 
 import AddMember from "./AddMember";
 import RemoveMember from "./RemoveMember";
+import { CurentUser } from "~/MainRoutes";
 const GroupCard = ({ group, onJoin, handleReload }) => {
     const [dataGroup, setDataGroup] = useState(group);
     const navigate = useNavigate();
-
+    const { curentUserID } = useContext(CurentUser);
     //open add member
     const [isOpenAddMember, setOpenAddMember] = useState(null);
     const openAddMember = () => {
@@ -36,14 +37,14 @@ const GroupCard = ({ group, onJoin, handleReload }) => {
 
     return (
         <Card
-            sx={{ maxWidth: 345, margin: "0 auto", boxShadow: 2 }}
+            sx={{ maxWidth: 345, minHeight: 345, maxHeight: 345, margin: "0 auto", boxShadow: 2 }}
             onClick={() =>
                 navigate(`/groups/${group?._id}`, {
                     state: { groupData: group },
                 })
             }
         >
-            <CardContent sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+            {/* <CardContent sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                 <Avatar
                     alt={group.name}
                     src={group.avatar || "/default-avatar.png"}
@@ -98,7 +99,89 @@ const GroupCard = ({ group, onJoin, handleReload }) => {
                 >
                     Remove member
                 </Button>
+            </CardContent> */}
+            <CardContent
+                sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    gap: 2, // Thêm khoảng cách giữa các phần tử
+                }}
+            >
+                <Avatar
+                    alt={group.name}
+                    src={group.avatar || "/default-avatar.png"}
+                    sx={{ width: 80, height: 80, mb: 2 }}
+                />
+                <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1, textAlign: "center" }}>
+                    {group.name}
+                </Typography>
+                <Typography variant="body2" color="textSecondary" sx={{ textAlign: "center" }}>
+                    {group?.members.length} Members
+                </Typography>
+                <Typography
+                    variant="body2"
+                    color={group.privacy === "public" ? "primary" : "secondary"}
+                    sx={{ fontStyle: "italic", mb: 2, textAlign: "center" }}
+                >
+                    {group.privacy === "public" ? "Public Group" : "Private Group"}
+                </Typography>
+
+                {/* Container để sắp xếp các button */}
+                <Box
+                    sx={{
+                        display: "flex",
+                        flexDirection: { xs: "column", sm: "row" }, // Mobile: cột, Desktop: hàng
+                        gap: 1, // Khoảng cách giữa các button
+                        width: "100%", // Đảm bảo container chiếm toàn bộ chiều rộng
+                        justifyContent: "center", // Canh giữa các button
+                    }}
+                >
+                    {group?.creator?._id == curentUserID && (
+                        <Button
+                            variant="contained"
+                            color="white"
+                            fullWidth // Đảm bảo button chiếm toàn bộ chiều rộng trên mobile
+                            onClick={(event) => {
+                                event.stopPropagation();
+                                navigate(`/groups/update`, {
+                                    state: { groupData: group },
+                                });
+                            }}
+                            sx={{ textTransform: "none" }}
+                        >
+                            Update Group
+                        </Button>
+                    )}
+                    <Button
+                        variant="contained"
+                        color="white"
+                        fullWidth
+                        onClick={(event) => {
+                            event.stopPropagation();
+                            openAddMember();
+                        }}
+                        sx={{ textTransform: "none" }}
+                    >
+                        Add Member
+                    </Button>
+                    {group?.creator?._id == curentUserID && (
+                        <Button
+                            variant="contained"
+                            color="white"
+                            fullWidth
+                            onClick={(event) => {
+                                event.stopPropagation();
+                                openRemoveMember();
+                            }}
+                            sx={{ textTransform: "none" }}
+                        >
+                            Remove Member
+                        </Button>
+                    )}
+                </Box>
             </CardContent>
+
             <RemoveMember
                 handleReload={handleReload}
                 open={isOpenRemoveMember}
